@@ -22,25 +22,25 @@ function goBack() {
 		<div class="col-sm-8 col-12">
 			<div class="row">
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="main_theme_li_bg p-4">
 						<div class="row">
-							<div class="col-sm-2 col-3">
-								<img src="<?= $_SESSION['user_image'] ?>" alt="<?= $_SESSION['user_fname'] ?>" title="<?= $_SESSION['user_fname'] ?>" class="rounded account_page_header_image">
+							<div class="col-sm-2 col-2">
+								<img src="<?= $_SESSION['user_image'] ?>" class="medicine_cart_item_image" onerror=this.src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png">
 							</div>
-							<div class="col-sm-9 col-9 text-left">
-								<span class="select_chemist_name"><?= $_SESSION['user_fname'] ?></span><br>
-								<span class="select_chemist_code">Code : <?= $_SESSION['user_altercode'] ?></span>
+							<div class="col-sm-10 col-10 text-left">
+								<span class="chemist_user_name"><?= $_SESSION['user_fname'] ?></span><br>
+								<span class="chemist_altercode">Code : <?= $_SESSION['user_altercode'] ?></span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg load_page">
+					<div class="main_theme_li_bg p-4 load_page">
 						
 					</div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="main_theme_li_bg p-4">
 						<a href="<?= base_url('home/change_image')?>" title="Update Image">
 							<img class="img-circle" src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/photo1.png" width="30" alt="Update Image" title="Update Image">
 							<span style="margin-left:20px;">Update image</span>
@@ -48,7 +48,7 @@ function goBack() {
 					</div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="main_theme_li_bg p-4">
 						<a href="<?= base_url('home/change_password')?>" title="Update Password">
 							<img class="img-circle" src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="30" alt="Update Password" title="Update Password">
 							<span style="margin-left:20px;">Update password</span>

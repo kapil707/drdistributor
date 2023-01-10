@@ -67,7 +67,8 @@ class Home_json extends CI_Controller {
 						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/outofstockicon.png" class="home_page_outofstockiconcss" alt>
 						<?php } ?>
 						</center>
-						<div class="home_page_title"><?= ($row["item_name"]); ?> <span class="home_page_packing">(<?= $row["packing"]; ?> Packing)</span>
+						<div class="home_page_title"><?= ($row["item_name"]); ?> 
+						<span class="home_page_packing">(<?= $row["packing"]; ?> Packing)</span>
 						</div>
 						<div class="home_page_margin_icon">
 							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/ribbonicon1.png" style="" alt>
@@ -246,6 +247,48 @@ class Home_json extends CI_Controller {
 			<script type="text/javascript" src="<?= base_url(); ?>assets/website/magicscroll/magicscroll.js"></script>
 			<?php
 		}
+	}
+
+	public function kk()
+	{
+echo "hello";
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => 'https://staging.eko.in:25004/ekoapi/v2/aeps',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'POST',
+  CURLOPT_POSTFIELDS =>'{
+    "service_type": 2,
+    "initiator_id": "9962981729",
+    "user_code": "20810200",
+    "customer_id": "9999999999",
+    "bank_code": "HDFC",
+    "amount": "100",
+    "client_ref_id": "202105311125123456",
+    "pipe": "0",
+    "aadhar": "YrvFh+QFLmHXPjUWOXsDmFff0mRuAcCgazutSpBglgWuinHQMYzcBcO5tJ30vvxvyIXMb6d05l8j70cMpu7+96pG8n3Yla0/mVKQs4kIwqiFdJBAyox3oreZAhb6qilxjg7Apy6jSH6BMZwXUiRpFDaIZMb+cHXhCabeTzP1/fU=",
+    "notify_customer": "0",
+    "piddata": "<?xml version=\"1.0\"?><PidData>\n  <Resp errCode=\"0\" errInfo=\"Success\"...</PidData>"
+}',
+  CURLOPT_HTTPHEADER => array(
+    'Content-Type: application/json',
+    'developer_key: becbbce45f79c6f5109f848acd540567',
+    'secret-key: IdYPu1czdJfCvRoG4eZLydirO/a+pOUqWmhJBUu0Ktk=',
+    'secret-key-timestamp: 1625643468456',
+    'request_hash: wo5+U7VRdl7cObpBh704x8cvKVKFThMdFfWE9j59UQE='
+  ),
+));
+
+$response = curl_exec($curl);
+print_r($response);
+curl_close($curl);
+echo $response;
 	}
 }
 ?>

@@ -8,10 +8,11 @@ require_once APPPATH."/third_party/PHPExcel.php";
 class Chemist_Model extends CI_Model  
 { 	
 	function new_clean($string) {
-		$string = str_replace('\n', '<br>', $string);
-		return preg_replace('/[^A-Za-z0-9\#]/', '', $string); // Removes special chars.
-	}
-	
+		$k= str_replace('\n', '<br>', $string);
+		$k= preg_replace('/[^A-Za-z0-9\#]/', ' ', $k);
+		return $k;
+		//return preg_replace('/[^A-Za-z0-9\#]/', '', $string); // Removes special chars.
+	}	
 	public function create_new($chemist_code,$phone_number)
 	{
 		$items = "";		
@@ -32,6 +33,8 @@ class Chemist_Model extends CI_Model
 				'code'=>$code,
 				'new_request'=>$new_request,
 				'order_limit'=>"500",
+				'website_limit'=>"500",
+				'android_limit'=>"500",
 				'user_phone'=>$phone_number,
 				);
 				$this->Scheme_Model->insert_fun("tbl_acm_other",$dt);
@@ -39,24 +42,37 @@ class Chemist_Model extends CI_Model
 				$subject = "Request for New Account";
 				$message = "Request for New Account <br><br>Chemist Code : $chemist_code <br><br>Phone Number : $phone_number";
 				
-				$subject = base64_encode($subject);
-				$message = base64_encode($message);
 				$email_function = "new_account";
 				$mail_server = "";		
 				$user_email_id = "vipul@drdindia.com";
 
+				$date = date('Y-m-d');
+				$time = date("H:i",time());
+
 				$dt = array(
-				'user_email_id'=>$user_email_id,
-				'subject'=>$subject,
-				'message'=>$message,
-				'email_function'=>$email_function,
-				'mail_server'=>$mail_server,
+					'user_email_id'=>$user_email_id,
+					'subject'=>$subject,
+					'message'=>$message,
+					'email_function'=>$email_function,
+					'mail_server'=>$mail_server,
+					'date'=>$date,
+					'time'=>$time,
 				);
 				$x = $this->Scheme_Model->insert_fun("tbl_email_send",$dt);
 				if($x){
 					$status1 = "1";
 					$status = "Thank you for submitting your request we will get in touch with you shortly.";
 				}
+
+				/******************group message******************************/
+				$group1_message 	= "Request for New Account<br><br>Chemist Code : $chemist_code<br><br>Phone Number : $phone_number";
+				$whatsapp_group1 = $this->Scheme_Model->get_website_data("whatsapp_group1");
+				$this->Message_Model->insert_whatsapp_group_message($whatsapp_group1,$group1_message);
+
+				$group2_message 	= $group1_message;
+				$whatsapp_group2 = $this->Scheme_Model->get_website_data("whatsapp_group2");
+				$this->Message_Model->insert_whatsapp_group_message($whatsapp_group2,$group2_message);
+				/**********************************************************/
 			}
 			else{
 				$status = "User account already exists.";
@@ -71,8 +87,73 @@ if ($items != '') {
 	return $items;
 	}
 
-	public function login($user_name1,$password1)
+	public function otp($altercode,$otp_sms)
 	{
+		$query = $this->db->query("select tbl_acm.id,tbl_acm.code,tbl_acm.altercode,tbl_acm.name,tbl_acm.address,tbl_acm.mobile,tbl_acm.invexport,tbl_acm.email,tbl_acm.status as status1,tbl_acm_other.status,tbl_acm_other.password as password,tbl_acm_other.exp_date,tbl_acm_other.block,tbl_acm_other.image from tbl_acm left join tbl_acm_other on tbl_acm.code = tbl_acm_other.code where tbl_acm.altercode='$altercode' and tbl_acm.code=tbl_acm_other.code limit 1")->row();
+		if($query->altercode)
+		{
+			$w_number 		= "+91".$query->mobile;//$c_cust_mobile;
+			$w_altercode 	= $altercode;
+			$w_message 		= $otp_sms." is otp for D.R. distributor login. Do not share it with anyone.";
+			$this->Message_Model->insert_whatsapp_message($w_number,$w_message,$w_altercode);
+
+			$subject = "D.R. distributor OTP Verify";
+			$message = $w_message;
+
+			$subject = ($subject);
+			$message = ($message);
+			$email_function = "password";
+			$mail_server = "";
+
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
+
+			$user_email_id = $query->email;
+			if (filter_var($user_email_id, FILTER_VALIDATE_EMAIL)) {		
+				$dt = array(
+					'user_email_id'=>$user_email_id,
+					'subject'=>$subject,
+					'message'=>$message,
+					'email_function'=>$email_function,
+					'mail_server'=>$mail_server,
+					'date'=>$date,
+					'time'=>$time,
+					);
+				$this->Scheme_Model->insert_fun("tbl_email_send",$dt);
+			}
+			
+			$mobile = $query->mobile;
+			$email 	= $query->email;
+
+			$mobile = str_repeat('*', strlen($mobile) - 3) . substr($mobile, -3);
+			$x = explode("@",$email);
+			$e1 = substr($x[0], 0, 2);
+			$e2 = str_repeat('*', strlen($x[0]) - 4) . substr($x[0], -2);
+			$email = $e1.$e2."@".$x[1];
+
+			return "OTP has been sent to you  on your mobile number (".$mobile.") or email address (".$email."). Please enter it below.";
+		}
+	}
+
+	public function otp_resent($altercode)
+	{
+		$otp_sms  		  	= rand(9999,99999);
+		$otp_massage_txt  	= $this->otp($altercode,$otp_sms);
+
+$items=<<<EOD
+{"otp_sms":"{$otp_sms}","otp_massage_txt":"{$otp_massage_txt}"},
+EOD;
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function login($user_name1,$password1,$type="")
+	{		
+		$otp_type  = "0";		
+		$otp_sms = $otp_massage_txt = "";
+		
 		$user_session = $user_fname = $user_code = $user_altercode = $user_division = $user_compcode = $user_type = $user_image = "";
 		$items = "";
 		$defaultpassword= $this->Scheme_Model->get_website_data("defaultpassword");
@@ -93,14 +174,23 @@ if ($items != '') {
 						$user_fname		= 	ucwords(strtolower($query->name));
 						$user_code	 	= 	$query->code;
 						$user_altercode	= 	$query->altercode;
-						$user_image 	= 	constant('img_url_site')."user_profile/".$query->image;
+
+						$user_image 	= 	constant('main_site')."user_profile/".$query->image;
 						if(empty($query->image))
 						{
-							$user_image = constant('img_url_site')."img_v".constant('site_v')."/logo.png";
+							$user_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
 						}
 						$user_type 		= 	"chemist";
 						$user_return 	= 	"1";
 						$user_alert 	= 	"Logged in successfully";
+
+						if($type=="mobile")
+						{							
+							$otp_type 			= "1";
+							$otp_sms  		  	= rand(9999,99999);
+							$otp_massage_txt  	= $this->otp($query->altercode,$otp_sms);
+							$user_alert 	= 	"OTP sent successfully";
+						}
 					}
 					else
 					{
@@ -121,10 +211,10 @@ if ($items != '') {
 					{
 						$user_session 	= 	$query->id;
 						$user_fname		= 	ucwords(strtolower($query->customer_name));
-						$user_image 	= 	constant('img_url_site')."user_profile/".$query->image;
+						$user_image 	= 	constant('main_site')."user_profile/".$query->image;
 						if(empty($query->image))
 						{
-							$user_image = constant('img_url_site')."img_v".constant('site_v')."/logo.png";
+							$user_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
 						}
 						$user_code	 	= 	$query->customer_code;
 						$user_altercode	= 	$query->customer_code;
@@ -174,8 +264,9 @@ if ($items != '') {
 			}
 		}
 		
+
 $items.= <<<EOD
-{"user_session":"{$user_session}","user_fname":"{$user_fname}","user_code":"{$user_code}","user_altercode":"{$user_altercode}","user_type":"{$user_type}","user_password":"{$user_password}","user_alert":"{$user_alert}","user_image":"{$user_image}","user_return":"{$user_return}","user_division":"{$user_division}","user_compcode":"{$user_compcode}"},
+{"user_session":"$user_session","user_fname":"$user_fname","user_code":"$user_code","user_altercode":"$user_altercode","user_type":"$user_type","user_password":"$user_password","user_alert":"$user_alert","user_image":"$user_image","user_return":"$user_return","user_division":"$user_division","user_compcode":"$user_compcode","otp_type":"$otp_type","otp_sms":"$otp_sms","otp_massage_txt":"$otp_massage_txt"},
 EOD;
 if ($items != '') {
 	$items = substr($items, 0, -1);
@@ -187,7 +278,17 @@ if ($items != '') {
 	{		
 		$session_arr = array('user_session'=>$user_session,'user_fname'=>$user_fname,'user_code'=>$user_code,'user_altercode'=>$user_altercode,'user_type'=>$user_type,'user_password'=>$user_password,'user_division'=>$user_division,'user_compcode'=>$user_compcode,'user_image'=>$user_image);
 
-		$this->session->set_userdata($session_arr);
+		setcookie("user_session", $user_session, time() + (86400 * 30), "/");
+		setcookie("user_fname", $user_fname, time() + (86400 * 30), "/");
+		setcookie("user_code", $user_code, time() + (86400 * 30), "/");
+		setcookie("user_altercode", $user_altercode, time() + (86400 * 30), "/");
+		setcookie("user_type", $user_type, time() + (86400 * 30), "/");
+		setcookie("user_password", $user_password, time() + (86400 * 30), "/");
+		setcookie("user_division", $user_division, time() + (86400 * 30), "/");
+		setcookie("user_compcode", $user_compcode, time() + (86400 * 30), "/");
+		setcookie("user_image", $user_image, time() + (86400 * 30), "/");
+
+		//$this->session->set_userdata($session_arr);
 		
 		$login_time = time();
 		$update_time = date("YmdHi", strtotime("+15 minutes", $login_time));
@@ -606,15 +707,15 @@ if ($items != ''){
 		$i_code				=	$row->i_code;
 		$item_code			=	$row->item_code;
 		$title				=	$row->title;
-		$item_name			=	ucwords(strtolower($row->item_name));
-		$company_name		=	ucwords(strtolower($row->company_name));
-		$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
+		$item_name			=	htmlentities(ucwords(strtolower($row->item_name)));
+		$company_name		=	htmlentities(ucwords(strtolower($row->company_name)));
+		$company_full_name 	=  	htmlentities(ucwords(strtolower($row->company_full_name)));
 		$batchqty			=	$row->batchqty;
-		$batch_no			=	$row->batch_no;
-		$packing			=	$row->packing;
-		$sale_rate			=	round($row->sale_rate,2);
-		$mrp				=	round($row->mrp,2);
-		$final_price		=	round($row->final_price,2);
+		$batch_no			=	htmlentities($row->batch_no);
+		$packing			=	htmlentities($row->packing);
+		$sale_rate			=	sprintf('%0.2f',round($row->sale_rate,2));
+		$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+		$final_price		=	sprintf('%0.2f',round($row->final_price,2));
 		$scheme				=	$row->salescm1."+".$row->salescm2;
 		$expiry				=	$row->expiry;				
 		$compcode 			=   $row->compcode;				
@@ -683,6 +784,128 @@ if ($items != ''){
 
 $items= <<<EOD
 {"count":"{$count}","i_code":"{$i_code}","item_code":"{$item_code}","date_time":"{$date_time}","title":"{$title}","item_name":"{$item_name}","company_name":"{$company_name}","company_full_name":"{$company_full_name}","image1":"{$image1}","image2":"{$image2}","image3":"{$image3}","image4":"{$image4}","description1":"{$description1}","description2":"{$description2}","batchqty":"{$batchqty}","sale_rate":"{$sale_rate}","mrp":"{$mrp}","final_price":"{$final_price}","batch_no":"{$batch_no}","packing":"{$packing}","expiry":"{$expiry}","scheme":"{$scheme}","margin":"{$margin}","featured":"{$featured}","gstper":"{$gstper}","discount":"{$discount}","misc_settings":"{$misc_settings}","itemjoinid":"{$itemjoinid}"$items1},
+EOD;
+		return $items;
+	}
+
+
+	public function medicine_search_api($keyword="",$search_type="",$get_record="")
+	{
+		//error_reporting(0);
+		$sameid = "";
+		$items = "";
+		$count = 1;
+		$date_time = date('d-M h:i A');
+		$items = "";
+		$keyword = str_replace("'","",$keyword);
+		$keyword_title = str_replace("-","",$keyword);
+		$keyword_title = str_replace(".","",$keyword_title);
+		$keyword_title = str_replace("`","",$keyword_title);
+		$keyword_title = str_replace("'","",$keyword_title);
+		$keyword_title = str_replace("/","",$keyword_title);
+		$keyword_title = str_replace("(","",$keyword_title);
+		$keyword_title = str_replace(")","",$keyword_title);
+		$keyword_title = str_replace("%","",$keyword_title);
+		$keyword_title = str_replace(",","",$keyword_title);		
+		$keyword_title = str_replace("%20","",$keyword_title);
+		$keyword_title = str_replace(" ","",$keyword_title);
+		
+		$keyword_name = str_replace("%20"," ",$keyword);
+
+		$this->db->select("m.*");
+		$this->db->where("(title='$keyword_title' or title like '".$keyword_title."%' or item_name='$keyword_title' or item_name='$keyword_name' or item_name like '".$keyword_name."%') and status=1");
+		if($search_type=="all")
+		{
+			$this->db->limit(12,$get_record);
+			$this->db->order_by('m.item_name asc');
+		}
+		else
+		{
+			$this->db->limit(25);
+			$this->db->order_by('m.batchqty desc','m.item_name asc');
+		}
+		$query = $this->db->get("tbl_medicine as m")->result();
+		foreach ($query as $row)
+		{
+			$get_record++;
+			$id		=	$row->id;
+			$items.=$this->search_medicine2_new($row,$id,$count,$date_time,$get_record);
+			$count++;
+			
+			$sameid.= $id.",";
+		}
+		$sameid = substr($sameid,0,-1);
+		if(!empty($sameid))
+		{
+			$sameid = " and m.id not in(".$sameid.")";
+		}
+		
+		$this->db->select("m.*");
+		$this->db->where("(title like '%".$keyword_title."%' or item_name like '%".$keyword_name."%' or company_full_name like '%".$keyword_name."%' or packing like '".$keyword_name."' or title2 like '".$keyword_name."%' or description like '%".$keyword_name."' or company_full_name='$keyword_title' or company_full_name like '".$keyword_name."%') and status=1 ".$sameid);
+		if($search_type=="all")
+		{
+			$this->db->limit(12,$get_record);
+			$this->db->order_by('m.item_name asc');
+		}
+		else
+		{
+			$this->db->limit(25);
+			$this->db->order_by('m.batchqty desc','m.item_name asc');
+		}
+		$query = $this->db->get("tbl_medicine as m")->result();
+		foreach ($query as $row)
+		{			
+			$get_record++;
+			$id	= $row->id;
+			$items.=$this->search_medicine2_new($row,$id,$count,$date_time,$get_record);
+			$count++;
+		}
+if ($items != ''){
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+	
+	public function search_medicine2_new($row,$id,$count,$date_time,$get_record)
+	{
+		$item_code			=	$row->i_code;
+		$item_name			=	htmlentities(ucwords(strtolower($row->item_name)));
+		$item_packing		=	htmlentities($row->packing);
+		$item_expiry		=	htmlentities($row->expiry);
+		$item_company		=	htmlentities(ucwords(strtolower($row->company_full_name)));
+		$item_quantity		=	$row->batchqty;
+		$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+		$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+		$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+		
+		$item_description1  = 	htmlentities(trim($row->title2));
+		$item_description1  =   $this->new_clean($item_description1);
+		$item_image = constant('img_url_site')."uploads/default_img.jpg";
+		if(!empty($row->image1))
+		{
+			$item_image = constant('img_url_site').$row->image1;
+		}
+		$item_image = str_replace(" ","%20",$item_image);
+
+		$item_scheme		=	$row->salescm1."+".$row->salescm2;
+		$item_margin 		=   round($row->margin);
+		$item_featured 		= 	$row->featured;
+		$misc_settings 		= 	$row->misc_settings;
+
+		$item_stock = "";
+		if($misc_settings=="#NRX" && $item_quantity>=10){
+			$item_stock = "Available";
+		}
+		
+		$similar_items = "";
+		$itemjoinid = 	$row->itemjoinid;
+		if($itemjoinid!="")
+		{
+			$similar_items = "View similar items";
+		}
+
+$items=<<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_expiry":"{$item_expiry}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_stock":"{$item_stock}","item_ptr":"{$item_ptr}","item_mrp":"{$item_mrp}","item_price":"{$item_price}","item_scheme":"{$item_scheme}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_description1":"{$item_description1}","similar_items":"{$similar_items}","count":"{$count}","get_record":"{$get_record}"},
 EOD;
 		return $items;
 	}
@@ -1021,179 +1244,45 @@ EOD;
 		return $ret;
 	}
 	
-	public function get_medicine_image($i_code)
-	{
-		$img1 = $img2 =  $img3 =  $img4 = constant('img_url_site')."uploads/default_img.jpg";
-		
-		$where = array('i_code'=>$i_code);
-		$this->db->where($where);
-		$row = $this->db->get("tbl_med_info")->row();	
-		if(!empty($row->id))
-		{
-			$img1_ck = constant('img_url_site')."medicine_images/".$row->table_name."/".$row->img1;
-			if(!empty($row->img1))
-			{
-				$img1 = constant('img_url_site')."medicine_images/".$row->table_name."/".$row->img1;
-				$img2 = constant('img_url_site')."medicine_images/".$row->table_name."/".$row->img2;
-				$img3 = constant('img_url_site')."medicine_images/".$row->table_name."/".$row->img3;
-				$img4 = constant('img_url_site')."medicine_images/".$row->table_name."/".$row->img4;
-			}
-			if($row->update_url=="1" && file_exists($row->img1)==1)
-			{
-				$img1 = $row->img1;
-				$img2 = $row->img2;
-				$img3 = $row->img3;
-				$img4 = $row->img4;
-			}
-			$dis1 = $row->a1;
-			$dis2 = $row->a5;
-		}
-		else
-		{
-			$old_image = constant('img_url_site')."uploads/manage_medicine_image/photo/resize/";
-			$where = array('itemid'=>$i_code);
-			$this->db->where($where);
-			$row1 = $this->db->get("tbl_medicine_image")->row();
-			if(!empty($row1->image))
-			{
-				$img1 = $img2 = $img3 = $img4 = $old_image.$row1->image;
-				if(!empty($row1->image2))
-				{
-					$img2 = $img3 = $img4 = $old_image.$row1->image2;
-				}
-
-				if(!empty($row1->image3))
-				{
-					$img3 = $img4 = $old_image.$row1->image3;
-				}
-
-				if(!empty($row1->image4))
-				{
-					$img4 = $old_image.$row1->image4;
-				}
-			}
-			if(!empty($row1->description))
-			{
-				$dis2 = ($row1->description);
-			}
-		}
-			
-		$dt[0] = $img1;
-		$dt[1] = $img2;
-		$dt[2] = $img3;
-		$dt[3] = $img4;
-		$dt[4] = "";
-		$dt[5] = "";
-		if(!empty($dis1))
-		{
-			$dt[4] = "*".$dis1;
-		}
-		if(!empty($dis2))
-		{
-			$dt[5] = "*".$dis2;
-		}
-		return $dt;
-	}
-	
-	public function get_medicine_featured($i_code)
-	{
-		$featured = "";		
-		$where = array('itemid'=>$i_code);
-		$this->db->where($where);
-		$row = $this->db->get("tbl_medicine_image")->row();
-		if(!empty($row->featured))
-		{
-			$featured = $row->featured;
-		}
-		else
-		{
-			$featured = 0;
-		}
-		return $featured;
-	}
-	
-	public function get_company_discount($compcode)
-	{
-		$discount	=	"4.5";		
-		$where = array('compcode'=>$compcode,'status'=>'1',);
-		$this->db->where($where);
-		$row = $this->db->get("tbl_company_discount")->row();
-		if(!empty($row->discount))
-		{
-			$discount	=	$row->discount;
-		}
-		return $discount;
-	}
-	
 	public function get_itemjoinid($item_code)
 	{
 		//error_reporting(0);
 		$items2 = "";
-		$date_time = date('d-M h:i A');
 		$this->db->select("m.*");
 		$where = array('item_code'=>$item_code);
 		$this->db->where($where);
 		$row = $this->db->get("tbl_medicine as m")->row();
 		if(!empty($row->id))
 		{
-			$i_code				=	$row->i_code;
-			$item_code			=	$row->item_code;
-			$title				=	$row->title;
+			$item_code			=	$row->i_code;
 			$item_name			=	ucwords(strtolower($row->item_name));
-			$company_name		=	ucwords(strtolower($row->company_name));
-			$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
-			$batchqty			=	$row->batchqty;
-			$batch_no			=	$row->batch_no;
-			$packing			=	$row->packing;
-			$sale_rate			=	$row->sale_rate;
-			$mrp				=	$row->mrp;
-			$scheme				=	$row->salescm1."+".$row->salescm2;
-			$expiry				=	$row->expiry;				
-			$compcode 			=   $row->compcode;				
-			$item_date 			=   $row->item_date;
-			$margin 			=   round($row->margin);				
-			$misc_settings		=   $row->misc_settings;
-			$gstper				=	$row->gstper;
-			$itemjoinid			=	$row->itemjoinid;
-			$featured 			= 	$row->featured;
-			$discount 			= 	$row->discount;
+			$item_packing		=	$row->packing;
+			$item_company 		=  	ucwords(strtolower($row->company_full_name));
+			$item_quantity		=	$row->batchqty;
+			$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+			$item_price			=	sprintf('%0.2f',round($row->final_price,2));
 			
-			if(empty($discount))
-			{
-				$discount = "4.5";
-			}
-			
-			$description1 = $this->new_clean(trim($row->title2));
-			$description2 = $this->new_clean(trim($row->description));
-			$image1 = constant('img_url_site')."uploads/default_img.jpg";
-			$image2 = constant('img_url_site')."uploads/default_img.jpg";
-			$image3 = constant('img_url_site')."uploads/default_img.jpg";
-			$image4 = constant('img_url_site')."uploads/default_img.jpg";
+			$item_margin 		=   round($row->margin);
+			$item_featured 		= 	$row->featured;
+
+			$item_image  = constant('img_url_site')."uploads/default_img.jpg";
 			if(!empty($row->image1))
 			{
-				$image1 = constant('img_url_site').$row->image1;
+				$item_image = constant('img_url_site').$row->image1;
 			}
-			if(!empty($row->image2))
-			{
-				$image2 = constant('img_url_site').$row->image2;
-			}
-			if(!empty($row->image3))
-			{
-				$image3 = constant('img_url_site').$row->image3;
-			}
-			if(!empty($row->image4))
-			{
-				$image4 = constant('img_url_site').$row->image4;
-			}
+
+			$item_header_title = "Similar items";
+			$get_record = "";
 			
-$items2 .= <<<EOD
-{"i_code":"{$i_code}","item_code":"{$item_code}","date_time":"{$date_time}","title":"{$title}","item_name":"{$item_name}","company_name":"{$company_name}","company_full_name":"{$company_full_name}","image1":"{$image1}","image2":"{$image2}","image3":"{$image3}","image4":"{$image4}","description1":"{$description1}","description2":"{$description2}","batchqty":"{$batchqty}","sale_rate":"{$sale_rate}","mrp":"{$mrp}","final_price":"{$final_price}","batch_no":"{$batch_no}","packing":"{$packing}","expiry":"{$expiry}","scheme":"{$scheme}","margin":"{$margin}","featured":"{$featured}","gstper":"{$gstper}","discount":"{$discount}","misc_settings":"{$misc_settings}","itemjoinid":"{$itemjoinid}"},
+$items2.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
 EOD;
 		}
 		return $items2;
 	}
 	
-	public function get_single_medicine_info($i_code,$chemist_id,$selesman_id,$user_type)
+	public function get_single_medicine_info($i_code,$chemist_id,$salesman_id,$user_type)
 	{		
 		$items = "";
 		//error_reporting(0);
@@ -1216,9 +1305,9 @@ EOD;
 			$batchqty			=	$row->batchqty;
 			$batch_no			=	$row->batch_no;
 			$packing			=	$row->packing;
-			$sale_rate			=	round($row->sale_rate,2);
-			$mrp				=	round($row->mrp,2);
-			$final_price		=	round($row->final_price,2);
+			$sale_rate			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+			$final_price		=	sprintf('%0.2f',round($row->final_price,2));
 			$scheme				=	$row->salescm1."+".$row->salescm2;
 			$expiry				=	$row->expiry;				
 			$compcode 			=   $row->compcode;				
@@ -1256,8 +1345,7 @@ EOD;
 			if(!empty($row->image4))
 			{
 				$image4 = constant('img_url_site').$row->image4;
-			}
-			
+			}			
 
 			/********************************************************/
 			$itemjoinid = "";
@@ -1285,6 +1373,148 @@ EOD;
 			
 $items .= <<<EOD
 {"i_code":"{$i_code}","item_code":"{$item_code}","date_time":"{$date_time}","title":"{$title}","item_name":"{$item_name}","company_name":"{$company_name}","company_full_name":"{$company_full_name}","image1":"{$image1}","image2":"{$image2}","image3":"{$image3}","image4":"{$image4}","description1":"{$description1}","description2":"{$description2}","batchqty":"{$batchqty}","sale_rate":"{$sale_rate}","mrp":"{$mrp}","final_price":"{$final_price}","batch_no":"{$batch_no}","packing":"{$packing}","expiry":"{$expiry}","scheme":"{$scheme}","margin":"{$margin}","featured":"{$featured}","gstper":"{$gstper}","discount":"{$discount}","misc_settings":"{$misc_settings}","itemjoinid":"{$itemjoinid}","hotdeals":"{$hotdeals}","hotdeals_short":"{$hotdeals_short}"$items1},
+EOD;
+	}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function insert_top_search($user_type,$user_altercode,$salesman_id,$item_code)
+	{
+		$result = $this->db->query("SELECT id FROM `tbl_top_search` WHERE `user_altercode`='$user_altercode' and user_type='$user_type' and salesman_id='$salesman_id' order by id desc LIMIT 25,10")->result();
+		foreach($result as $row)
+		{
+			$this->db->query("delete from tbl_top_search where id='$row->id'");
+		}
+
+		$where = array('user_altercode'=>$user_altercode,'salesman_id'=>$salesman_id,'user_type'=>$user_type,'item_code'=>$item_code);
+		$row = $this->Scheme_Model->select_row("tbl_top_search",$where);
+		if(empty($row))
+		{
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
+			$datetime = time();
+
+			$dt = array(
+				'user_altercode'=>$user_altercode,
+				'salesman_id'=>$salesman_id,
+				'user_type'=>$user_type,
+				'item_code'=>$item_code,
+				'date'=>$date,
+				'time'=>$time,
+				'datetime'=>$datetime,
+			);
+			$this->Scheme_Model->insert_fun("tbl_top_search",$dt);
+		}
+	}
+
+	public function medicine_details_api($user_type,$user_altercode,$salesman_id,$item_code)
+	{		
+		$this->insert_top_search($user_type,$user_altercode,$salesman_id,$item_code);
+		$items = "";
+		$item_date_time = date('d-M h:i A');
+		
+		$this->db->select("m.*");
+		$where = array('i_code'=>$item_code);
+		$this->db->where($where);
+		$row = $this->db->get("tbl_medicine as m")->row();
+		if(!empty($row->id))
+		{
+			$item_code			=	$row->i_code;
+			$item_name			=	htmlentities(ucwords(strtolower($row->item_name)));
+			$item_packing		=	htmlentities($row->packing);
+			$item_expiry		=	htmlentities($row->expiry);
+			$item_batch_no		=	htmlentities($row->batch_no);
+			$item_company 		=  	ucwords(strtolower($row->company_full_name));
+			$item_quantity		=	$row->batchqty;
+			$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+			$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+			$item_scheme		=	$row->salescm1."+".$row->salescm2;
+			
+			$item_margin 		=   round($row->margin);				
+			$misc_settings		=   $row->misc_settings;
+			$item_gst			=	$row->gstper;
+			$item_featured 		= 	$row->featured;
+			$item_discount 		= 	$row->discount;
+
+			if($item_quantity==0)
+			{
+				$this->add_low_stock_alert($item_code);
+			}
+			
+			if(empty($item_discount))
+			{
+				$item_discount = "4.5";
+			}
+			
+			$item_description1 = htmlentities(trim($row->title2));
+			$item_description2 = htmlentities(trim($row->description));
+			$item_description1  =   $this->new_clean($item_description1);
+			$item_description2  =   $this->new_clean($item_description2);
+			$item_image  = constant('img_url_site')."uploads/default_img.jpg";
+			$item_image2 = constant('img_url_site')."uploads/default_img.jpg";
+			$item_image3 = constant('img_url_site')."uploads/default_img.jpg";
+			$item_image4 = constant('img_url_site')."uploads/default_img.jpg";
+			if(!empty($row->image1))
+			{
+				$item_image = constant('img_url_site').$row->image1;
+			}
+			if(!empty($row->image2))
+			{
+				$item_image2 = constant('img_url_site').$row->image2;
+			}
+			if(!empty($row->image3))
+			{
+				$item_image3 = constant('img_url_site').$row->image3;
+			}
+			if(!empty($row->image4))
+			{
+				$item_image4 = constant('img_url_site').$row->image4;
+			}
+
+			/*******************************************************
+			$itemjoinid			=	$row->itemjoinid;
+			/********************************************************/
+			$itemjoinid = "";
+			$items1 = "";
+			if($itemjoinid!="")
+			{
+				$itemjoinid1 = explode (",", $itemjoinid);
+				foreach($itemjoinid1 as $item_code_n)
+				{
+					$items1.= $this->get_itemjoinid($item_code_n);
+				}
+				if ($items1 != '') {
+					$items1 = substr($items1, 0, -1);
+				}
+				$items1 = ',"items1":['.$items1.']';
+			}
+			else
+			{
+				$items1 = ',"items1":""';
+			}
+
+			$item_stock = "";
+			if($misc_settings=="#NRX")
+			{
+				if($item_quantity>=10){
+					$item_stock = "Available";
+				}
+			}
+			
+			$item_order_quantity = "";
+			$where1 = array('chemist_id'=>$user_altercode,'selesman_id'=>$salesman_id,'user_type'=>$user_type,'i_code'=>$item_code,'status'=>'0');
+			$row1 = $this->Scheme_Model->select_row("drd_temp_rec",$where1);
+			if(!empty($row1->id))
+			{
+				$item_order_quantity = $row1->quantity;
+			}
+			
+$items.= <<<EOD
+{"item_date_time":"{$item_date_time}","item_code":"{$item_code}","item_image":"{$item_image}","item_image2":"{$item_image2}","item_image3":"{$item_image3}","item_image4":"{$item_image4}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_expiry":"{$item_expiry}","item_batch_no":"{$item_batch_no}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_stock":"{$item_stock}","item_ptr":"{$item_ptr}","item_mrp":"{$item_mrp}","item_price":"{$item_price}","item_scheme":"{$item_scheme}","item_margin":"{$item_margin}","item_gst":"{$item_gst}","item_featured":"{$item_featured}","item_discount":"{$item_discount}","item_description1":"{$item_description1}","item_description2":"{$item_description2}","item_order_quantity":"{$item_order_quantity}"},
 EOD;
 	}
 if ($items != '') {
@@ -1322,6 +1552,48 @@ if ($items != '') {
 
 $items .= <<<EOD
 {"id":"{$id}","user_name":"{$user_name}","chemist_id":"{$chemist_id}","user_image":"{$user_image}","code":"{$code}"},
+EOD;
+			}
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function chemist_search_api($user_type="",$user_altercode="",$keyword="")
+	{
+		$items = "";
+		$salesman_id 	= $user_altercode;
+		$count = 0;
+
+		//"select tbl_acm.name,tbl_acm.altercode,tbl_acm_other.image,(select count(id) as user_cart from drd_temp_rec where user_type='sales' and selesman_id='$salesman_id' and chemist_id=tbl_acm.altercode and status=0) as user_cart,(select sum(quantity*sale_rate) as user_cart_total from drd_temp_rec where user_type='sales' and selesman_id='$salesman_id' and chemist_id=tbl_acm.altercode and status=0) as user_cart_total from tbl_acm left JOIN tbl_acm_other on tbl_acm.code=tbl_acm_other.code where (name like '".$keyword."%' or altercode='$keyword' or altercode like '%".$keyword."' or altercode like '".$keyword."%' or altercode like '%".$keyword."%') and slcd='CL' limit 50"
+
+		$result = $this->db->query("select tbl_acm.name,tbl_acm.altercode,tbl_acm_other.image from tbl_acm left JOIN tbl_acm_other on tbl_acm.code=tbl_acm_other.code where (name like '".$keyword."%' or altercode='$keyword' or altercode like '%".$keyword."' or altercode like '".$keyword."%' or altercode like '%".$keyword."%') and slcd='CL' limit 50")->result();		
+		$user_cart = $user_cart_total = 0;
+		foreach ($result as $row)
+		{
+			if(substr($row->name,0,1)==".")
+			{
+			}
+			else
+			{
+				$chemist_name		=	ucwords(strtolower($row->name));
+				$chemist_altercode	=	$row->altercode;
+
+				/*$user_cart 		 = $row->user_cart;
+				$user_cart_total = $row->user_cart_total;*/
+				$user_cart_total = sprintf('%0.2f',round($user_cart_total,2));
+				
+				$chemist_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
+				if(!empty($row->image))
+				{
+					$chemist_image = constant('main_site')."user_profile/".$row->image;
+				}
+				$count++;				
+
+$items .= <<<EOD
+{"chemist_altercode":"{$chemist_altercode}","chemist_name":"{$chemist_name}","chemist_image":"{$chemist_image}","user_cart":"{$user_cart}","user_cart_total":"{$user_cart_total}","count":"{$count}"},
 EOD;
 			}
 		}
@@ -1425,107 +1697,60 @@ if ($items != '') {
 }
 	return $items;
 	}
-	
-	public function my_orders($user_type='',$chemist_id='',$lastid1='')
+
+	public function my_order_api($user_type="",$user_altercode="",$salesman_id="",$get_record="")
 	{
 		$items = "";
-		if($lastid1=="kapil")
+		if($user_type=="sales")
 		{
-			if($user_type=="sales")
-			{
-				$this->db->distinct();
-				$this->db->group_by('order_id');
-				$this->db->where('selesman_id',$chemist_id);
-				$this->db->order_by('id','desc');
-				$this->db->limit(8);
-				$query = $this->db->get("tbl_order")->result();
-			}
-			else
-			{
-				$this->db->distinct();
-				$this->db->group_by('order_id');
-				$this->db->where('chemist_id',$chemist_id);
-				$this->db->order_by('id','desc');
-				$this->db->limit(8);
-				$query = $this->db->get("tbl_order")->result();
-			}
+			$this->db->distinct();
+			$this->db->group_by('order_id');
+			$this->db->where('selesman_id',$salesman_id);
+			$this->db->where('chemist_id',$user_altercode);
+			$this->db->order_by('id','desc');
+			$this->db->limit(12,$get_record);
+			$query = $this->db->get("tbl_order")->result();
 		}
-		if($lastid1!="kapil")
+		else
 		{
-			if($user_type=="sales")
-			{
-				$this->db->distinct();
-				$this->db->group_by('order_id');
-				$this->db->where('selesman_id',$chemist_id);
-				$this->db->where('order_id<',$lastid1);
-				$this->db->order_by('id','desc');
-				$this->db->limit(8);
-				$query = $this->db->get("tbl_order")->result();
-			}
-			else
-			{
-				$this->db->distinct();
-				$this->db->group_by('order_id');
-				$this->db->where('chemist_id',$chemist_id);
-				$this->db->where('order_id<',$lastid1);
-				$this->db->order_by('id','desc');
-				$this->db->limit(8);
-				$query = $this->db->get("tbl_order")->result();
-			}
-		}		
-
-		$i = 1;
+			$this->db->distinct();
+			$this->db->group_by('order_id');
+			$this->db->where('chemist_id',$user_altercode);
+			$this->db->order_by('id','desc');
+			$this->db->limit(12,$get_record);
+			$query = $this->db->get("tbl_order")->result();
+		}
 		foreach($query as $row)
 		{
-			$myval = 0;
+			$get_record++;
 			$order_id = $row->order_id;
 			
-			$where1 = array('order_id'=>$order_id,);
-			$query1 = $this->Scheme_Model->select_all_result("tbl_order",$where1,"order_id","desc");
-			foreach($query1 as $row1)
+			$row1 = $this->db->query("SELECT sum(`sale_rate` * `quantity`) as total FROM `tbl_order` as t2 where t2.order_id='$order_id'")->row();			
+			$item_total = round($row1->total,2);
+			if($row->gstvno=="")
 			{
-				$myval = $myval + ($row1->sale_rate * $row1->quantity);
-			}
-			$total = round($myval,2);
-			if($row1->gstvno=="")
-			{
-				$status = "Pending";
+				$item_title = "Pending / Order no. ".$order_id;
 			}
 			else
 			{
-				$status = "Generated";
+				$item_title = "Generated / Order no. ".$row->gstvno;
 			}
-			$url 		= base64_encode($order_id);
-			$gstvno 	= $row1->gstvno;
-			$date_time 	= date("d-M-y h:i a",$row1->time);
-			$i++;
-			if($i%2==0) 
-			{ 
-				$css = "search_page_gray"; 
-			} 
-			else
-			{
-				$css = "search_page_gray1"; 
-			}
-			
-			$where= array('altercode'=>$row1->chemist_id,);
-			$row = $this->Scheme_Model->select_row("tbl_acm",$where);
-			$where= array('code'=>$row->code);
-			$row1 = $this->Scheme_Model->select_row("tbl_acm_other",$where);
-			$user_image = constant('img_url_site')."user_profile/$row1->image";
+			$item_date_time	= $row->date." ".$row->time;			
+			$item_id = $order_id;
+
+			$row1 = $this->db->query("SELECT tbl_acm.name,tbl_acm.altercode,tbl_acm_other.image from tbl_acm,tbl_acm_other where tbl_acm.altercode='$row->chemist_id' and tbl_acm.code = tbl_acm_other.code")->row();
+			$user_image = constant('main_site')."user_profile/$row1->image";
 			if(empty($row1->image))
 			{
-				$user_image = constant('img_url_site')."img_v".constant('site_v')."/logo.png";
+				$user_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
 			}
-			$user_name = "";
-			if($user_type=="sales")
-			{
-				$user_name 		= $row->name;
-				$chemist_id 	= $row->altercode;				
-			}			
+			$item_message   	= $item_total;
+			$item_image 		= $user_image;
+
+			$item_image 		= htmlentities($item_image);
 
 $items.= <<<EOD
-{"url":"{$url}","css":"{$css}","order_id":"{$order_id}","gstvno":"{$gstvno}","total":"{$total}","date_time":"{$date_time}","user_type":"{$user_type}","user_name":"{$user_name}","chemist_id":"{$chemist_id}","user_image":"{$user_image}","status":"{$status}"},
+{"item_id":"{$item_id}","item_title":"{$item_title}","item_message":"{$item_message}","item_date_time":"{$item_date_time}","item_image":"{$item_image}","get_record":"{$get_record}"},
 EOD;
 		}
 if ($items != ''){
@@ -1533,67 +1758,54 @@ if ($items != ''){
 }
 	return $items;
 	}
-	
-	public function my_orders_view($user_type='',$chemist_id='',$order_id='')
+
+	public function my_order_details_api($user_type="",$user_altercode="",$salesman_id="",$order_id="")
 	{
 		$items = "";
 		if($user_type=="sales")
 		{
-			$this->db->where('selesman_id',$chemist_id);
-			$this->db->where('order_id',$order_id);
-			$this->db->order_by('id','desc');
-			$query = $this->db->get("tbl_order")->result();
+			$this->db->select("o.*,m.packing,m.expiry,m.company_full_name,m.packing,m.salescm1,m.salescm2,m.image1");
+			$this->db->where('o.selesman_id',$salesman_id);
+			$this->db->where('o.chemist_id',$user_altercode);
+			$this->db->where('o.order_id',$order_id);
+			$this->db->order_by('o.id','desc');
+			$this->db->from('tbl_order as o');
+			$this->db->join('tbl_medicine as m', 'm.i_code = o.i_code', 'left');
+			$query = $this->db->get()->result();
 		}
 		else
 		{
-			$this->db->where('chemist_id',$chemist_id);
-			$this->db->where('order_id',$order_id);
-			$this->db->order_by('id','desc');
-			$query = $this->db->get("tbl_order")->result();
+			$this->db->select("o.*,m.packing,m.expiry,m.company_full_name,m.packing,m.salescm1,m.salescm2,m.image1");
+			$this->db->where('o.chemist_id',$user_altercode);
+			$this->db->where('o.order_id',$order_id);
+			$this->db->order_by('o.id','desc');
+			$this->db->from('tbl_order as o');
+			$this->db->join('tbl_medicine as m', 'm.i_code = o.i_code', 'left');
+			$query = $this->db->get()->result();
 		}
-		$i = 1;
 		foreach($query as $row)
 		{
-			$i++;
-			if($i%2==0) 
-			{ 
-				$css = "search_page_gray"; 
-			} 
-			else
-			{
-				$css = "search_page_gray1"; 
-			}
-			$item_code 	= $row->item_code;			
-			$i_code 	= $row->i_code;
-			$ptr 		= $row->sale_rate;
-			$qty 		= $row->quantity;
-			$total		= round($row->quantity * $row->sale_rate,2);
-			$date_time 	= date("d-M-y h:i a",$row->time);
-			$acm_name 	= "";
-			if($user_type=="sales")
-			{
-				$where1= array('altercode'=>$row->chemist_id,);
-				$row1 = $this->Scheme_Model->select_row("tbl_acm",$where1);
-				$acm_name 		= $row1->name;
-				$chemist_id 	= $row1->altercode;
-			}
+			$item_code 			= $row->i_code;
+			$item_price 		= sprintf('%0.2f',round($row->sale_rate,2));
+			$item_quantity 		= $row->quantity;
+			$item_quantity_price= sprintf('%0.2f',round($row->quantity * $row->sale_rate,2));
+			$item_date_time 	= $row->date." ".$row->time;
+			$item_modalnumber 	= "Pc / Laptop"; //$row->modalnumber;
 			
-			$where2 = array('i_code'=>$row->i_code,);
-			$row2  = $this->Scheme_Model->select_row("tbl_medicine",$where2);
-			$item_name 	= htmlentities(ucwords(strtolower($row2->item_name)));
-			$packing 	= htmlentities($row2->packing);
-			$expiry 	= htmlentities($row2->expiry);
-			$company_full_name 	= htmlentities($row2->company_full_name);
+			$item_name 		= htmlentities(ucwords(strtolower($row->item_name)));
+			$item_packing 	= htmlentities($row->packing);
+			$item_expiry 	= htmlentities($row->expiry);
+			$item_company 	= htmlentities(ucwords(strtolower($row->company_full_name)));
+			$item_scheme 	= $row->salescm1."+".$row->salescm2;
 
-			$get_medicine_image	= 	$this->get_medicine_image($i_code);
-			$image = $get_medicine_image[0];
-			if(empty($image))
+			$item_image = constant('img_url_site')."uploads/default_img.jpg";
+			if(!empty($row->image1))
 			{
-				$image = constant('img_url_site')."uploads/default_img.jpg";
+				$item_image = constant('img_url_site').$row->image1;
 			}
 
 $items.= <<<EOD
-{"css":"{$css}","order_id":"{$order_id}","i_code":"{$i_code}","item_code":"{$item_code}","item_name":"{$item_name}","packing":"{$packing}","expiry":"{$expiry}","company_full_name":"{$company_full_name}","image":"{$image}","ptr":"{$ptr}","qty":"{$qty}","total":"{$total}","date_time":"{$date_time}","user_type":"{$user_type}","acm_name":"{$acm_name}","chemist_id":"{$chemist_id}"},
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_expiry":"{$item_expiry}","item_company":"{$item_company}","item_scheme":"{$item_scheme}","item_price":"{$item_price}","item_quantity":"{$item_quantity}","item_quantity_price":"{$item_quantity_price}","item_date_time":"{$item_date_time}","item_modalnumber":"{$item_modalnumber}"},
 EOD;
 		}
 if ($items != '') {
@@ -1647,49 +1859,37 @@ if ($items != '') {
 {"items":[<?= $items;?>]}
 		<?php*/
 	}
-	
-	public function my_notification($user_type,$chemist_id,$lastid1)
+
+	public function my_notification_api($user_type="",$user_altercode="",$salesman_id="",$get_record="")
 	{
-		$items = "";
-		if($lastid1=="kapil")
-		{
-			$this->db->where('user_type',$user_type);
-			$this->db->where('chemist_id',$chemist_id);
-			$this->db->where('device_id','default');
-			$this->db->order_by('id','desc');
-			$this->db->limit(8);
-			$query = $this->db->get("tbl_android_notification")->result();
-		}
-		if($lastid1!="kapil")
-		{
-			$this->db->where('user_type',$user_type);
-			$this->db->where('chemist_id',$chemist_id);
-			$this->db->where('device_id','default');
-			$this->db->where('id<',$lastid1);
-			$this->db->order_by('id','desc');
-			$this->db->limit(8);
-			$query = $this->db->get("tbl_android_notification")->result();
-		}	
-		$i = 1;
+		$items = "";		
+		//$this->db->where('user_type',$user_type);
+		$this->db->where('chemist_id',$user_altercode);
+		$this->db->where('device_id','default');
+		$this->db->order_by('id','desc');
+		$this->db->limit(12,$get_record);
+		$query = $this->db->get("tbl_android_notification")->result();
 		foreach($query as $row)
 		{
-			if($row->status==1) {
-				$css = "search_page_gray";
-			} else { 
-				$css = "search_page_gray1";
+			$get_record++;
+			$item_id		=	$row->id;
+			$item_title		=	($row->title);
+			$item_message	=	($row->message);
+			$item_message	=   str_replace("<br>"," ",$item_message);
+			$item_date_time = 	$row->date." ".$row->time;
+
+			$item_message	= 	substr($item_message, 0, 50)."....";
+
+			$row1 = $this->db->query("SELECT tbl_acm.name,tbl_acm.altercode,tbl_acm_other.image from tbl_acm,tbl_acm_other where tbl_acm.altercode='$row->chemist_id' and tbl_acm.code = tbl_acm_other.code")->row();
+			$user_image = constant('main_site')."user_profile/$row1->image";
+			if(empty($row1->image))
+			{
+				$user_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
 			}
-			$id				=	$row->id;
-			$chemist_id		=	$row->chemist_id;
-			$user_type		=	$row->user_type;
-			$title			=	($row->title);
-			$message		=	($row->message);
-			$date_time 		= 	date('d-M h:i A',$row->time);
-			$lastid1 		= 	$row->id;
-			$url			= 	base64_encode($row->id);
-			$image			= 	constant('img_url_site')."img_v".constant('site_v')."/logo.png";
+			$item_image 	= 	$user_image;
 			
 $items.= <<<EOD
-{"lastid1":"{$lastid1}","id":"{$id}","user_type":"{$user_type}","chemist_id":"{$chemist_id}","title":"{$title}","message":"{$message}","date_time":"{$date_time}","css":"{$css}","url":"{$url}","image":"{$image}"},
+{"item_id":"{$item_id}","item_title":"{$item_title}","item_message":"{$item_message}","item_date_time":"{$item_date_time}","item_image":"{$item_image}","get_record":"{$get_record}"},
 EOD;
 		}
 if ($items != '') {
@@ -1698,58 +1898,75 @@ if ($items != '') {
 	return $items;
 	}
 	
-	public function my_notification_view($notification_id)
+	public function my_notification_details_api($user_type="",$user_altercode="",$salesman_id="",$item_id="")
 	{
 		$items = "";
-		$this->db->query("update tbl_android_notification set status='1' where id='$notification_id'");
+		/*$this->db->query("update tbl_android_notification set status='1' where id='$notification_id'");*/
+
 		//$this->db->where('user_type',$user_type);
-		//$this->db->where('chemist_id',$chemist_id);
+		$this->db->where('chemist_id',$user_altercode);
 		$this->db->where('device_id','default');
-		$this->db->where('id',$notification_id);
+		$this->db->where('id',$item_id);
 		$this->db->order_by('id','desc');
 		$this->db->limit(8);
 		$query = $this->db->get("tbl_android_notification")->result();
-			
-		/*$query = $this->db->query("select * from tbl_new_notification where id='$id' and device_id='default' order by id desc limit 1")->result();*/
 		foreach($query as $row)
 		{
-			$id				=	$row->id;
-			$user_type		=	$row->user_type;
-			$chemist_id		=	$row->chemist_id;
-			$title			=	$row->title;
-			$message		=	$row->message;
-			$date_time 		= 	date('d-M-y h:i A',$row->time);
+			$item_id		=	$row->id;
+			$item_title		=	($row->title);
+			$item_message	=	($row->message);
+			$item_date_time = 	$row->date." ".$row->time;
 			
-			$funtype		= 	($row->funtype);
+			$item_fun_type	= 	($row->funtype);
 			$itemid			= 	($row->itemid);
+			$compid			= 	($row->compid);
 			$division		= 	($row->division);
-			$image1			= 	$row->image;
-			$image = $company_full_name = "";
-			if($funtype=="2")
+			$item_image2	= 	$row->image;
+			
+			$item_fun_id = $item_fun_id2 = "";
+			if(!empty($item_image2))
 			{
-				$itemid =  $row->compid;
-				$where1= array('compcode'=>$itemid,);
-				$row1 = $this->Scheme_Model->select_row("tbl_medicine",$where1);
-				/*$row1   =  $this->db->query("select company_full_name from tbl_medicine where compcode='$itemid'")->row();*/
-				$company_full_name = ($row1->company_full_name);
-				
-				$where2= array('compcode'=>$itemid,);
-				$row2 = $this->Scheme_Model->select_row("tbl_featured_brand",$where2);
-				
-				/*$row1  =  $this->db->query("select image from tbl_featured_brand where compcode='$itemid'")->row();*/
-				if(!empty($row2->image)){
-					$image =  constant('img_url_site')."uploads/manage_featured_brand/photo/resize/".$row2->image;
-				}
-				else{
-					$image = constant('img_url_site')."uploads/manage_users/photo/photo_1562659909.png";
-				}
+				$item_image2 =   constant('img_url_site')."uploads/manage_notification/photo/resize/".$item_image2;
 			}
-			if(!empty($image1))
+
+			if($item_fun_type=="1")
 			{
-				$image =   constant('img_url_site')."uploads/manage_notification/photo/resize/".$image1;
+				$item_fun_name = "get_single_medicine_info";
+				$item_fun_id   = $itemid;
 			}
+
+			if($item_fun_type=="2")
+			{
+				$item_fun_name = "featured_brand";
+				$item_fun_id   = $compid;
+				$item_fun_id2  = $division;
+			}
+
+			if($item_fun_type=="3")
+			{
+				$item_fun_name = "map";
+			}
+
+			if($item_fun_type=="4")
+			{
+				$item_fun_name = "my_order";
+			}
+
+			if($item_fun_type=="5")
+			{
+				$item_fun_name = "my_invoice";
+			}
+
+			$row1 = $this->db->query("SELECT tbl_acm.name,tbl_acm.altercode,tbl_acm_other.image from tbl_acm,tbl_acm_other where tbl_acm.altercode='$row->chemist_id' and tbl_acm.code = tbl_acm_other.code")->row();
+			$user_image = constant('main_site')."user_profile/$row1->image";
+			if(empty($row1->image))
+			{
+				$user_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
+			}
+			$item_image 	= 	$user_image;
+
 $items.= <<<EOD
-{"id":"{$id}","user_type":"{$user_type}","chemist_id":"{$chemist_id}","title":"{$title}","message":"{$message}","date_time":"{$date_time}","image":"{$image}","funtype":"{$funtype}","itemid":"{$itemid}","division":"{$division}","company_full_name":"{$company_full_name}"},
+{"item_id":"{$item_id}","item_title":"{$item_title}","item_message":"{$item_message}","item_date_time":"{$item_date_time}","item_image":"{$item_image}","item_image2":"{$item_image2}","item_fun_type":"{$item_fun_type}","item_fun_name":"{$item_fun_name}","item_fun_id":"{$item_fun_id}","item_fun_id2":"{$item_fun_id2}"},
 EOD;
 		}
 if ($items != '') {
@@ -1758,6 +1975,7 @@ if ($items != '') {
 	return $items;
 	}
 	
+	// yha off karna ha base64encode laga ha iss ke bina use kar rahay ha 
 	public function website_menu()
 	{
 		//error_reporting(0);
@@ -1784,7 +2002,33 @@ if ($items != '') {
 }
 	return $items;
 	}
+
+	public function website_menu_json_new()
+	{
+		//error_reporting(0);
+		$items = "";
+		$where = array('status'=>1,);
+		$query = $this->Scheme_Model->select_all_result("tbl_medicine_category",$where,"short_order","asc");
+		foreach ($query as $row)
+		{
+			$item_code		=	$row->code;
+			$item_company	=	ucwords(strtolower($row->menu));
+			$item_image		=  constant('img_url_site')."uploads/manage_medicine_category/photo/resize/".$row->image;
+			if (empty($row->image)){
+				$item_image 	= constant('img_url_site')."uploads/default_img.jpg";
+			}
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_company":"{$item_company}","item_image":"{$item_image}"},
+EOD;
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
 	
+	// yha off karna ha base64encode laga ha iss ke bina use kar rahay ha 
 	public function featured_brand_json()
 	{
 		//error_reporting(0);
@@ -1813,6 +2057,41 @@ if ($items != '') {
 	return $items;
 	}
 
+	public function featured_brand_json_new()
+	{
+		//error_reporting(0);
+		$items = "";
+		$image = "";
+		/*$where = array('status'=>1,);
+		$query = $this->Scheme_Model->select_all_result("tbl_featured_brand",$where,"id","RANDOM");*/
+
+		$this->db->select("compcode,company_full_name,image");
+		$this->db->where('status',1);
+		$this->db->order_by('id','RANDOM');
+		$this->db->limit('15');
+		$query = $this->db->get("tbl_featured_brand")->result();
+		foreach ($query as $row)
+		{
+			$item_code			=	($row->compcode);
+			$item_company		=	ucwords(strtolower($row->company_full_name));
+			$item_division 		= 	"";
+			$item_image			=   constant('img_url_site')."uploads/manage_featured_brand/photo/resize/".$row->image;
+			if (empty($row->image)){
+				$item_image 	= constant('img_url_site')."uploads/default_img.jpg";
+			}
+
+			$item_image 	= htmlentities($item_image);
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_company":"{$item_company}","item_division":"{$item_division}","item_image":"{$item_image}"},
+EOD;
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
 	
 
 	public function new_medicine_this_month()
@@ -1831,57 +2110,73 @@ if ($items != '') {
 		{			
 			$i_code				=	$row->i_code;
 			$item_code			=	$row->item_code;
-			$title				=	$row->title;
 			$item_name			=	ucwords(strtolower($row->item_name));
-			$company_name		=	ucwords(strtolower($row->company_name));
 			$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
 			$batchqty			=	$row->batchqty;
 			$batch_no			=	$row->batch_no;
 			$packing			=	$row->packing;
-			$sale_rate			=	number_format($row->sale_rate,2);
-			$mrp				=	number_format($row->mrp,2);
-			$final_price		=	number_format($row->final_price,2);
+			$sale_rate			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+			$final_price		=	sprintf('%0.2f',round($row->final_price,2));
 			$scheme				=	$row->salescm1."+".$row->salescm2;
-			$expiry				=	$row->expiry;				
-			$compcode 			=   $row->compcode;				
-			$item_date 			=   $row->item_date;
-			$margin 			=   round($row->margin);				
-			$misc_settings		=   $row->misc_settings;
-			$gstper				=	$row->gstper;
-			$itemjoinid			=	$row->itemjoinid;
+			$expiry				=	$row->expiry;
+			$margin 			=   round($row->margin);
 			$featured 			= 	$row->featured;
-			$discount 			= 	$row->discount;
 			
-			if(empty($discount))
-			{
-				$discount = "4.5";
-			}
 			
-			$description1 = $this->new_clean(trim($row->title2));
-			$description2 = $this->new_clean(trim($row->description));
 			$image1 = constant('img_url_site')."uploads/default_img.jpg";
-			$image2 = constant('img_url_site')."uploads/default_img.jpg";
-			$image3 = constant('img_url_site')."uploads/default_img.jpg";
-			$image4 = constant('img_url_site')."uploads/default_img.jpg";
 			if(!empty($row->image1))
 			{
 				$image1 = constant('img_url_site').$row->image1;
 			}
-			if(!empty($row->image2))
-			{
-				$image2 = constant('img_url_site').$row->image2;
-			}
-			if(!empty($row->image3))
-			{
-				$image3 = constant('img_url_site').$row->image3;
-			}
-			if(!empty($row->image4))
-			{
-				$image4 = constant('img_url_site').$row->image4;
-			}
 			
 $items.= <<<EOD
 {"i_code":"{$i_code}","item_code":"{$item_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","image":"{$image1}","featured":"{$featured}","packing":"{$packing}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","final_price":"{$final_price}","batchqty":"{$batchqty}","scheme":"{$scheme}","batch_no":"{$batch_no}","expiry":"{$expiry}","margin":"{$margin}"},
+EOD;
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function new_medicine_this_month_json_new()
+	{
+		$items = "";
+		$time  = time();
+		$vdt60 = date("Y-m-d", strtotime("-60 days", $time));
+		
+		$this->db->select("i_code,item_name,packing,company_name,batchqty,mrp,sale_rate,final_price,margin,featured,image1");
+		$this->db->where('item_date>=',$vdt60);
+		$this->db->order_by("RAND()");
+		$this->db->limit('15');
+		$query = $this->db->get("tbl_medicine")->result();
+		foreach ($query as $row)
+		{			
+
+			$item_code			=	$row->i_code;
+			$item_name			=	ucwords(strtolower($row->item_name));
+			$item_packing		=	$row->packing;
+			$item_company		=  	ucwords(strtolower($row->company_name));
+			$item_quantity		=	$row->batchqty;
+			$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+			$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+			$item_margin 		=   round($row->margin);
+			$item_featured 		= 	$row->featured;
+			
+			$item_image = constant('img_url_site')."uploads/default_img.jpg";
+			if(!empty($row->image1))
+			{
+				$item_image = constant('img_url_site').$row->image1;
+			}
+			$item_image 		= htmlentities($item_image);
+
+			$item_header_title = "New arrivals";
+			$get_record = "";
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
 EOD;
 		}
 if ($items != '') {
@@ -1899,24 +2194,17 @@ if ($items != '') {
 		{
 			$i_code				=	$row->i_code;
 			$item_code			=	$row->item_code;
-			$title				=	$row->title;
 			$item_name			=	ucwords(strtolower($row->item_name));
-			$company_name		=	ucwords(strtolower($row->company_name));
 			$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
 			$batchqty			=	$row->batchqty;
 			$batch_no			=	$row->batch_no;
 			$packing			=	$row->packing;
-			$sale_rate			=	number_format($row->sale_rate,2);
-			$mrp				=	number_format($row->mrp,2);
-			$final_price		=	number_format($row->final_price,2);
+			$sale_rate			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+			$final_price		=	sprintf('%0.2f',round($row->final_price,2));
 			$scheme				=	$row->salescm1."+".$row->salescm2;
-			$expiry				=	$row->expiry;				
-			$compcode 			=   $row->compcode;				
-			$item_date 			=   $row->item_date;
-			$margin 			=   round($row->margin);				
-			$misc_settings		=   $row->misc_settings;
-			$gstper				=	$row->gstper;
-			$itemjoinid			=	$row->itemjoinid;
+			$expiry				=	$row->expiry;
+			$margin 			=   round($row->margin);
 			$featured 			= 	$row->featured;
 			$discount 			= 	$row->discount;
 			
@@ -1925,31 +2213,59 @@ if ($items != '') {
 				$discount = "4.5";
 			}
 			
-			$description1 = $this->new_clean(trim($row->title2));
-			$description2 = $this->new_clean(trim($row->description));
 			$image1 = constant('img_url_site')."uploads/default_img.jpg";
-			$image2 = constant('img_url_site')."uploads/default_img.jpg";
-			$image3 = constant('img_url_site')."uploads/default_img.jpg";
-			$image4 = constant('img_url_site')."uploads/default_img.jpg";
 			if(!empty($row->image1))
 			{
 				$image1 = constant('img_url_site').$row->image1;
 			}
-			if(!empty($row->image2))
-			{
-				$image2 = constant('img_url_site').$row->image2;
-			}
-			if(!empty($row->image3))
-			{
-				$image3 = constant('img_url_site').$row->image3;
-			}
-			if(!empty($row->image4))
-			{
-				$image4 = constant('img_url_site').$row->image4;
-			}
 			
 $items.= <<<EOD
 {"i_code":"{$i_code}","item_code":"{$item_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","image":"{$image1}","featured":"{$featured}","packing":"{$packing}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","final_price":"{$final_price}","batchqty":"{$batchqty}","scheme":"{$scheme}","batch_no":"{$batch_no}","expiry":"{$expiry}","margin":"{$margin}"},
+EOD;
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function hot_selling_today_json_new()
+	{
+		$items = "";
+		/*$query = $this->db->query("select m.* from tbl_hot_selling INNER JOIN tbl_medicine as m on tbl_hot_selling.item_code=m.i_code order by tbl_hot_selling.id desc,RAND() limit 25")->result();*/
+
+		$this->db->select("m.i_code,m.item_name,m.packing,m.company_name,m.batchqty,m.mrp,m.sale_rate,m.final_price,m.margin,m.featured,m.image1");
+		$this->db->order_by("RAND()");
+		$this->db->limit('15');
+		$this->db->from('tbl_medicine as m');
+		$this->db->join('tbl_hot_selling', 'tbl_hot_selling.item_code=m.i_code', 'right outer');
+		$query = $this->db->get()->result();
+		foreach ($query as $row)
+		{
+			$item_code			=	$row->i_code;
+			$item_name			=	ucwords(strtolower($row->item_name));
+			$item_packing		=	$row->packing;
+			$item_company		=  	ucwords(strtolower($row->company_name));
+			$item_quantity		=	$row->batchqty;
+			$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+			$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+			$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+			$item_margin 		=   round($row->margin);
+			$item_featured 		= 	$row->featured;
+			
+			$item_image = constant('img_url_site')."uploads/default_img.jpg";
+			if(!empty($row->image1))
+			{
+				$item_image = constant('img_url_site').$row->image1;
+			}
+
+			$item_image 		= htmlentities($item_image);
+
+			$item_header_title  = "Hot selling";
+			$get_record = "";
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
 EOD;
 		}
 if ($items != '') {
@@ -1965,7 +2281,7 @@ if ($items != '') {
 		$date = date("Y-m-d");
 		
 		$sameid = "";
-		$query = $this->db->query("select DISTINCT i_code, COUNT(*) as `quantity` FROM tbl_order where date='$date' GROUP BY item_name HAVING COUNT(*) > 1 order by quantity desc,RAND() limit 25")->result();
+		$query = $this->db->query("select DISTINCT i_code, COUNT(*) as `quantity` FROM tbl_order where date='$date' GROUP BY i_code,item_name HAVING COUNT(*) > 1 order by quantity desc,RAND() limit 25")->result();
 		foreach ($query as $row)
 		{
 			$sameid.=$row->i_code.",";
@@ -1986,58 +2302,93 @@ if ($items != '') {
 			foreach ($query as $row)
 			{				
 				$i_code				=	$row->i_code;
-			$item_code			=	$row->item_code;
-			$title				=	$row->title;
-			$item_name			=	ucwords(strtolower($row->item_name));
-			$company_name		=	ucwords(strtolower($row->company_name));
-			$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
-			$batchqty			=	$row->batchqty;
-			$batch_no			=	$row->batch_no;
-			$packing			=	$row->packing;
-			$sale_rate			=	number_format($row->sale_rate,2);
-			$mrp				=	number_format($row->mrp,2);
-			$final_price		=	number_format($row->final_price,2);
-			$scheme				=	$row->salescm1."+".$row->salescm2;
-			$expiry				=	$row->expiry;				
-			$compcode 			=   $row->compcode;				
-			$item_date 			=   $row->item_date;
-			$margin 			=   round($row->margin);				
-			$misc_settings		=   $row->misc_settings;
-			$gstper				=	$row->gstper;
-			$itemjoinid			=	$row->itemjoinid;
-			$featured 			= 	$row->featured;
-			$discount 			= 	$row->discount;
+				$item_code			=	$row->item_code;
+				$item_name			=	ucwords(strtolower($row->item_name));
+				$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
+				$batchqty			=	$row->batchqty;
+				$batch_no			=	$row->batch_no;
+				$packing			=	$row->packing;
+				$sale_rate			=	sprintf('%0.2f',round($row->sale_rate,2));
+				$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+				$final_price		=	sprintf('%0.2f',round($row->final_price,2));
+				$scheme				=	$row->salescm1."+".$row->salescm2;
+				$expiry				=	$row->expiry;
+				$margin 			=   round($row->margin);
+				$featured 			= 	$row->featured;
+				$discount 			= 	$row->discount;
 				
 				if(empty($discount))
 				{
 					$discount = "4.5";
 				}
 				
-				$description1 = $this->new_clean(trim($row->title2));
-				$description2 = $this->new_clean(trim($row->description));
 				$image1 = constant('img_url_site')."uploads/default_img.jpg";
-				$image2 = constant('img_url_site')."uploads/default_img.jpg";
-				$image3 = constant('img_url_site')."uploads/default_img.jpg";
-				$image4 = constant('img_url_site')."uploads/default_img.jpg";
 				if(!empty($row->image1))
 				{
 					$image1 = constant('img_url_site').$row->image1;
 				}
-				if(!empty($row->image2))
-				{
-					$image2 = constant('img_url_site').$row->image2;
-				}
-				if(!empty($row->image3))
-				{
-					$image3 = constant('img_url_site').$row->image3;
-				}
-				if(!empty($row->image4))
-				{
-					$image4 = constant('img_url_site').$row->image4;
-				}
 			
 $items.= <<<EOD
 {"i_code":"{$i_code}","item_code":"{$item_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","image":"{$image1}","featured":"{$featured}","packing":"{$packing}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","final_price":"{$final_price}","batchqty":"{$batchqty}","scheme":"{$scheme}","batch_no":"{$batch_no}","expiry":"{$expiry}","margin":"{$margin}"},
+EOD;
+			}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+		}
+	return $items;
+	}
+
+	public function must_buy_medicines_json_new()
+	{
+		$items = "";
+		$date = date("Y-m-d");
+		
+		$sameid = "";
+		$query = $this->db->query("select DISTINCT i_code, COUNT(*) as `quantity` FROM tbl_order where date='$date' GROUP BY i_code,item_name HAVING COUNT(*) > 1 order by quantity desc,RAND() limit 15")->result();
+		foreach ($query as $row)
+		{
+			$sameid.=$row->i_code.",";
+		}
+		$sameid = substr($sameid,0,-1);
+		if(!empty($sameid))
+		{
+			$sameid = "m.i_code in(".$sameid.")";
+		}
+		
+		if(!empty($sameid))
+		{
+			$this->db->select("m.*");
+			$this->db->where($sameid);
+			$this->db->order_by("RAND()");
+			$this->db->limit('25');
+			$query = $this->db->get("tbl_medicine as m")->result();
+			foreach ($query as $row)
+			{				
+				$item_code			=	$row->i_code;
+				$item_name			=	ucwords(strtolower($row->item_name));
+				$item_packing		=	$row->packing;
+				$item_company		=  	ucwords(strtolower($row->company_name));
+				$item_quantity		=	$row->batchqty;
+				$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+				$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+				$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+				$item_margin 		=   round($row->margin);
+				$item_featured 		= 	$row->featured;
+				
+				$item_image = constant('img_url_site')."uploads/default_img.jpg";
+				if(!empty($row->image1))
+				{
+					$item_image = constant('img_url_site').$row->image1;
+				}
+
+				$item_image 		= htmlentities($item_image);
+
+				$item_header_title  = "Must buy";
+				$get_record = "";
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
 EOD;
 			}
 if ($items != '') {
@@ -2075,24 +2426,17 @@ if ($items != '') {
 			{				
 				$i_code				=	$row->i_code;
 				$item_code			=	$row->item_code;
-				$title				=	$row->title;
 				$item_name			=	ucwords(strtolower($row->item_name));
-				$company_name		=	ucwords(strtolower($row->company_name));
 				$company_full_name 	=  	ucwords(strtolower($row->company_full_name));
 				$batchqty			=	$row->batchqty;
 				$batch_no			=	$row->batch_no;
 				$packing			=	$row->packing;
-				$sale_rate			=	number_format($row->sale_rate,2);
-				$mrp				=	number_format($row->mrp,2);
-				$final_price		=	number_format($row->final_price,2);
+				$sale_rate			=	sprintf('%0.2f',round($row->sale_rate,2));
+				$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+				$final_price		=	sprintf('%0.2f',round($row->final_price,2));
 				$scheme				=	$row->salescm1."+".$row->salescm2;
-				$expiry				=	$row->expiry;				
-				$compcode 			=   $row->compcode;				
-				$item_date 			=   $row->item_date;
-				$margin 			=   round($row->margin);				
-				$misc_settings		=   $row->misc_settings;
-				$gstper				=	$row->gstper;
-				$itemjoinid			=	$row->itemjoinid;
+				$expiry				=	$row->expiry;
+				$margin 			=   round($row->margin);
 				$featured 			= 	$row->featured;
 				$discount 			= 	$row->discount;
 				
@@ -2100,28 +2444,11 @@ if ($items != '') {
 				{
 					$discount = "4.5";
 				}
-				
-				$description1 = $this->new_clean(trim($row->title2));
-				$description2 = $this->new_clean(trim($row->description));
+
 				$image1 = constant('img_url_site')."uploads/default_img.jpg";
-				$image2 = constant('img_url_site')."uploads/default_img.jpg";
-				$image3 = constant('img_url_site')."uploads/default_img.jpg";
-				$image4 = constant('img_url_site')."uploads/default_img.jpg";
 				if(!empty($row->image1))
 				{
 					$image1 = constant('img_url_site').$row->image1;
-				}
-				if(!empty($row->image2))
-				{
-					$image2 = constant('img_url_site').$row->image2;
-				}
-				if(!empty($row->image3))
-				{
-					$image3 = constant('img_url_site').$row->image3;
-				}
-				if(!empty($row->image4))
-				{
-					$image4 = constant('img_url_site').$row->image4;
 				}
 			
 $items.= <<<EOD
@@ -2134,15 +2461,194 @@ if ($items != '') {
 		}
 	return $items;
 	}
+
+	public function frequently_use_medicines_json_new()
+	{
+		$items = "";
+		
+		$sameid = "";
+		$query = $this->db->query("select * from tbl_must_buy_medicines where status='1'")->result();
+		foreach ($query as $row)
+		{
+			$sameid.=$row->itemid.",";
+		}
+		$sameid = substr($sameid,0,-1);
+		if(!empty($sameid))
+		{
+			$sameid = "m.i_code in(".$sameid.")";
+		}
+		
+		if(!empty($sameid))
+		{
+			$this->db->select("m.*");
+			$this->db->where($sameid);
+			$this->db->order_by("RAND()");
+			$this->db->limit('15');
+			$query = $this->db->get("tbl_medicine as m")->result();
+			foreach ($query as $row)
+			{				
+				$item_code			=	$row->i_code;
+				$item_name			=	ucwords(strtolower($row->item_name));
+				$item_packing		=	$row->packing;
+				$item_company		=  	ucwords(strtolower($row->company_name));
+				$item_quantity		=	$row->batchqty;
+				$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+				$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+				$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+				$item_margin 		=   round($row->margin);
+				$item_featured 		= 	$row->featured;
+				
+				$item_image = constant('img_url_site')."uploads/default_img.jpg";
+				if(!empty($row->image1))
+				{
+					$item_image = constant('img_url_site').$row->image1;
+				}
+
+				$item_image 		= htmlentities($item_image);
+
+				$item_header_title  = "Frequently use";
+				$get_record = "";
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
+			}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+		}
+	return $items;
+	}
+
+
+	public function stock_now_available()
+	{
+		$items = "";
+		
+		$sameid = "";
+		$query = $this->db->query("SELECT tbl_medicine.i_code FROM `tbl_low_stock_alert` inner join tbl_medicine on tbl_medicine.i_code=tbl_low_stock_alert.i_code where tbl_medicine.batchqty!='0' order by RAND() LIMIT 15")->result();
+		foreach ($query as $row)
+		{
+			$sameid.=$row->i_code.",";
+		}
+		$sameid = substr($sameid,0,-1);
+		if(!empty($sameid))
+		{
+			$sameid = "m.i_code in(".$sameid.")";
+		}
+		
+		if(!empty($sameid))
+		{
+			$this->db->select("m.*");
+			$this->db->where($sameid);
+			//$this->db->order_by("RAND()");
+			$this->db->limit('25');
+			$query = $this->db->get("tbl_medicine as m")->result();
+			foreach ($query as $row)
+			{				
+				$item_code			=	$row->i_code;
+				$item_name			=	ucwords(strtolower($row->item_name));
+				$item_packing		=	$row->packing;
+				$item_company		=  	ucwords(strtolower($row->company_name));
+				$item_quantity		=	$row->batchqty;
+				$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+				$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+				$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+				$item_margin 		=   round($row->margin);
+				$item_featured 		= 	$row->featured;
+				
+				$item_image = constant('img_url_site')."uploads/default_img.jpg";
+				if(!empty($row->image1))
+				{
+					$item_image = constant('img_url_site').$row->image1;
+				}
+
+				$item_image 		= htmlentities($item_image);
+
+				$item_header_title  = "Stock available now";
+				$get_record = "";
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
+			}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+		}
+	return $items;
+	}
+
+	public function user_top_search_items($user_type,$user_altercode,$salesman_id)
+	{
+		$items = "";
+		
+		$sameid = "";
+		$query = $this->db->query("select item_code from tbl_top_search where user_type='$user_type' and user_altercode='$user_altercode' and salesman_id='$salesman_id' limit 15")->result();
+		foreach ($query as $row)
+		{
+			if(!empty($row->item_code))
+			{
+				$sameid.=$row->item_code.",";
+			}
+		}
+		
+		$sameid = substr($sameid,0,-1);
+		if(!empty($sameid))
+		{
+			$sameid = "m.i_code in(".$sameid.")";
+		}
+		
+		if(!empty($sameid))
+		{
+			$this->db->select("m.*");
+			$this->db->where($sameid);
+			//$this->db->order_by("RAND()");
+			$this->db->limit('25');
+			$query = $this->db->get("tbl_medicine as m")->result();
+			foreach ($query as $row)
+			{				
+				$item_code			=	$row->i_code;
+				$item_name			=	ucwords(strtolower($row->item_name));
+				$item_packing		=	$row->packing;
+				$item_company		=  	ucwords(strtolower($row->company_name));
+				$item_quantity		=	$row->batchqty;
+				$item_mrp			=	sprintf('%0.2f',round($row->mrp,2));
+				$item_ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+				$item_price			=	sprintf('%0.2f',round($row->final_price,2));
+				$item_margin 		=   round($row->margin);
+				$item_featured 		= 	$row->featured;
+				
+				$item_image = constant('img_url_site')."uploads/default_img.jpg";
+				if(!empty($row->image1))
+				{
+					$item_image = constant('img_url_site').$row->image1;
+				}
+
+				$item_image 		= htmlentities($item_image);
+
+				$item_header_title  = "Top Search";
+				$get_record = "";
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
+			}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+		}
+	return $items;
+	}
 	
 	public function featured_brand($compcode,$division,$orderby)
 	{
 		//error_reporting(0);
-		//$this->db->order_by('batchqty','desc');
 		if($orderby=="not")
 		{			
 			if($division=="")
 			{
+				$this->db->order_by('batchqty','desc');
 				$this->db->order_by('item_name','asc');
 				$this->db->where('compcode',$compcode);
 				//$this->db->where('division',$division);
@@ -2266,18 +2772,15 @@ if ($items != '') {
 					}
 					else
 					{						
-						$id			=	$row->id;
-						$compcode	=	$row->compcode;
-						$i_code		=	$row->i_code;
+						$id					=	$row->id;
+						$compcode			=	$row->compcode;
+						$i_code				=	$row->i_code;
+						$featured 			= 	$row->featured;
 						
-						$get_medicine_image	= 	$this->get_medicine_image($i_code);
-						$featured 	= 	$this->Chemist_Model->get_medicine_featured($i_code);
-						$discount 	= 	$this->Chemist_Model->get_company_discount($compcode);
-						
-						$image = $get_medicine_image[0];
-						if(empty($image))
+						$image1 = constant('img_url_site')."uploads/default_img.jpg";
+						if(!empty($row->image1))
 						{
-							$image = constant('img_url_site')."uploads/default_img.jpg";
+							$image1 = constant('img_url_site').$row->image1;
 						}
 						if($featured=="1")
 						{
@@ -2285,45 +2788,21 @@ if ($items != '') {
 							if($i<4)
 							{								
 								$sameid[$id]    =	$id;
-								$item_name		=	ucwords(strtolower($row->item_name));						
-								$company_full_name = ucwords(strtolower($row->company_full_name));
-								$item_code		=	$row->item_code;
-								$mrp			=	($row->mrp);
-								$sale_rate		=	($row->sale_rate);
-								$batchqty		=	$row->batchqty;
-								$packing		=	$row->packing;
-								$expiry			=	$row->expiry;
-								$scheme			=	$row->salescm1."+".$row->salescm2;
-								$gstper			=	$row->gstper;
+								$name		=	ucwords(strtolower($row->item_name));
+								$company 	= ucwords(strtolower($row->company_full_name));
+								$qty		=	$row->batchqty;
+								$packing	=	$row->packing;
+								$expiry		=	$row->expiry;
+								$scheme		=	$row->salescm1."+".$row->salescm2;
+								$misc_settings=	$row->misc_settings;
+								$margin		=	$row->margin;
 								
-								/*********************yha decount karta h**************/
-								$final_price0=  $sale_rate * $discount / 100;
-								$final_price0=	$sale_rate - $final_price0;
-								
-								/*********************yha gst add karta h**************/
-								$final_price=   $final_price0 * $gstper / 100;
-								$final_price=	$final_price0 + $final_price;
-								
-								$final_price= 	round($final_price,2);
-								
-								/***************************************/
-								/***************************************/
-								$mrp_xx = $mrp;
-								if($mrp==0)
-								{
-									$mrp_xx = 1;
-								}
-								$margin = $mrp - $final_price;
-								$margin = $margin / $mrp_xx;
-								$margin = $margin * 100;
-								$margin = round($margin);
-								/***************************************/
-								/***************************************/
-								$mrp			=	number_format($row->mrp,2);
-								$sale_rate		=	number_format($row->sale_rate,2);
+								$mrp		=	sprintf('%0.2f',round($row->mrp,2));
+								$ptr		=	sprintf('%0.2f',round($row->sale_rate,2));
+								$price		=	sprintf('%0.2f',round($row->final_price,2));
 
 $items .= <<<EOD
-{"i_code":"{$i_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","batchqty":"{$batchqty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","final_price":"{$final_price}"},
+{"i_code":"{$i_code}","name":"{$name}","company":"{$company}","qty":"{$qty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image1}","mrp":"{$mrp}","ptr":"{$ptr}","price":"{$price}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","misc_settings":"{$misc_settings}"},
 EOD;
 							}
 						}
@@ -2350,61 +2829,133 @@ EOD;
 					else
 					{						
 						$id			=	$row->id;						
-						$compcode	=	$row->compcode;
-						$i_code		=	$row->i_code;
-						$get_medicine_image	= 	$this->get_medicine_image($i_code);
-						$featured 	= 	$this->Chemist_Model->get_medicine_featured($i_code);
-						$discount 	= 	$this->Chemist_Model->get_company_discount($compcode);
-						$image = $get_medicine_image[0];
-						if(empty($image))
+						$name		=	ucwords(strtolower($row->item_name));
+						$company 	= ucwords(strtolower($row->company_full_name));
+						$qty		=	$row->batchqty;
+						$packing	=	$row->packing;
+						$expiry		=	$row->expiry;
+						$scheme		=	$row->salescm1."+".$row->salescm2;
+						$misc_settings=	$row->misc_settings;
+						$margin		=	$row->margin;
+						
+						$mrp		=	sprintf('%0.2f',round($row->mrp,2));
+						$ptr		=	sprintf('%0.2f',round($row->sale_rate,2));
+						$price		=	sprintf('%0.2f',round($row->final_price,2));
+						
+						$image1 = constant('img_url_site')."uploads/default_img.jpg";
+						if(!empty($row->image1))
 						{
-							$image = constant('img_url_site')."uploads/default_img.jpg";
+							$image1 = constant('img_url_site').$row->image1;
 						}
-						
-						$item_name		=	ucwords(strtolower($row->item_name));						
-						$company_full_name = ucwords(strtolower($row->company_full_name));
-						$item_code		=	$row->item_code;
-						$mrp			=	($row->mrp);
-						$sale_rate		=	($row->sale_rate);
-						$batchqty		=	$row->batchqty;
-						$packing		=	$row->packing;
-						$expiry			=	$row->expiry;
-						$scheme			=	$row->salescm1."+".$row->salescm2;
-						$gstper			=	$row->gstper;
-						
-						/*********************yha decount karta h**************/
-						$final_price0=  $sale_rate * $discount / 100;
-						$final_price0=	$sale_rate - $final_price0;
-						
-						/*********************yha gst add karta h**************/
-						$final_price=   $final_price0 * $gstper / 100;
-						$final_price=	$final_price0 + $final_price;
-						
-						$final_price= 	round($final_price,2);
-						/***************************************/
-						/***************************************/
-						$mrp_xx = $mrp;
-						if($mrp==0)
-						{
-							$mrp_xx = 1;
-						}
-						$margin = $mrp - $final_price;
-						$margin = $margin / $mrp_xx;
-						$margin = $margin * 100;
-						$margin = round($margin);
-						/***************************************/
-						/***************************************/
-						
-						$mrp			=	number_format($row->mrp,2);
-						$sale_rate		=	number_format($row->sale_rate,2);
-						
 						if(empty($sameid[$id]))
 						{
 $items .= <<<EOD
-{"i_code":"{$i_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","batchqty":"{$batchqty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","final_price":"{$final_price}"},
+{"i_code":"{$i_code}","name":"{$name}","company":"{$company}","qty":"{$qty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image1}","mrp":"{$mrp}","ptr":"{$ptr}","price":"{$price}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","misc_settings":"{$misc_settings}"},
 EOD;
 						}
 					}
+				}
+			}
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function featured_brand_api($compcode="",$division="",$get_record="")
+	{
+		$this->db->where('compcode',$compcode);
+		if($division!="")
+		{
+			$this->db->where('division',$division);
+		}
+		$this->db->where('status','1');
+		$this->db->order_by('featured','desc');
+		$this->db->order_by('batchqty','desc');
+		$this->db->order_by('item_name','asc');
+		$this->db->limit(12,$get_record);
+		$query = $this->db->get("tbl_medicine")->result();
+		$i = 0;
+		$items = "";
+		foreach ($query as $row)
+		{
+			if((substr($row->item_name,0,1)==".") && ($row->misc_settings=="#ITNOTE" && $row->batchqty=="0.000") && ($row->sale_rate=="0" || $row->sale_rate=="0.0"))
+			{
+			}
+			else
+			{						
+				$item_featured 		= 	$row->featured;
+				if($item_featured=="1")
+				{			
+					$id					=	$row->id;	
+					$i++;
+					if($i<4)
+					{		
+						$get_record++;						
+						$sameid[$id]    =	$id;
+
+						$item_code		=	$row->i_code;
+						$item_name		=	ucwords(strtolower($row->item_name));		
+						$item_packing	=	$row->packing;				
+						$item_company 	= 	ucwords(strtolower($row->company_full_name));
+						$item_margin	=	$row->margin;
+						$item_quantity	=	$row->batchqty;
+						$item_featured 	= 	$row->featured;				
+						
+						$item_mrp		=	sprintf('%0.2f',round($row->mrp,2));
+						$item_ptr		=	sprintf('%0.2f',round($row->sale_rate,2));
+						$item_price		=	sprintf('%0.2f',round($row->final_price,2));
+						
+						$item_image = constant('img_url_site')."uploads/default_img.jpg";
+						if(!empty($row->image1))
+						{
+							$item_image = constant('img_url_site').$row->image1;
+						}
+
+						$item_header_title = ucwords(strtolower($row->company_full_name)); 
+
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
+					}
+				}
+			}
+		}
+		foreach ($query as $row)
+		{
+			if((substr($row->item_name,0,1)==".") && ($row->misc_settings=="#ITNOTE" && $row->batchqty=="0.000") && ($row->sale_rate=="0" || $row->sale_rate=="0.0"))
+			{
+			}
+			else
+			{						
+				$id		=	$row->id;
+				if(empty($sameid[$id]))
+				{
+					$get_record++;
+					$item_code		=	$row->i_code;
+					$item_name		=	ucwords(strtolower($row->item_name));		
+					$item_packing	=	$row->packing;				
+					$item_company 	= 	ucwords(strtolower($row->company_full_name));
+					$item_margin	=	$row->margin;
+					$item_quantity	=	$row->batchqty;
+					$item_featured 	= 	$row->featured;
+					
+					$item_mrp		=	sprintf('%0.2f',round($row->mrp,2));
+					$item_ptr		=	sprintf('%0.2f',round($row->sale_rate,2));
+					$item_price		=	sprintf('%0.2f',round($row->final_price,2));
+					
+					$item_image = constant('img_url_site')."uploads/default_img.jpg";
+					if(!empty($row->image1))
+					{
+						$item_image = constant('img_url_site').$row->image1;
+					}
+
+					$item_header_title = ucwords(strtolower($row->company_full_name)); 
+				
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
 				}
 			}
 		}
@@ -2421,6 +2972,7 @@ if ($items != '') {
 		if($orderby=="not")
 		{
 			$this->db->order_by('item_name','asc');
+			$this->db->order_by('batchqty','desc');
 		}
 		if($orderby=="sort_price")
 		{
@@ -2469,16 +3021,14 @@ if ($items != '') {
 					}
 					else
 					{						
-						$id			=	$row->id;
-						$compcode	=	$row->compcode;
-						$i_code		=	$row->i_code;
-						$get_medicine_image	= 	$this->get_medicine_image($i_code);
-						$featured 	= 	$this->Chemist_Model->get_medicine_featured($i_code);
-						$discount 	= 	$this->Chemist_Model->get_company_discount($compcode);
-						$image = $get_medicine_image[0];
-						if(empty($image))
+						$id					=	$row->id;
+						$i_code				=	$row->i_code;
+						$featured 			= 	$row->featured;
+						
+						$image1 = constant('img_url_site')."uploads/default_img.jpg";
+						if(!empty($row->image1))
 						{
-							$image = constant('img_url_site')."uploads/default_img.jpg";
+							$image1 = constant('img_url_site').$row->image1;
 						}
 						if($featured=="1")
 						{
@@ -2486,45 +3036,21 @@ if ($items != '') {
 							if($i<4)
 							{								
 								$sameid[$id]    =	$id;
-								$item_name		=	ucwords(strtolower($row->item_name));						
-								$company_full_name = ucwords(strtolower($row->company_full_name));
-								$item_code		=	$row->item_code;
-								$mrp			=	($row->mrp);
-								$sale_rate		=	($row->sale_rate);
-								$batchqty		=	$row->batchqty;
+								$name			=	ucwords(strtolower($row->item_name));						
+								$company 		= ucwords(strtolower($row->company_full_name));
+								$qty			=	$row->batchqty;
 								$packing		=	$row->packing;
 								$expiry			=	$row->expiry;
 								$scheme			=	$row->salescm1."+".$row->salescm2;
-								$gstper			=	$row->gstper;
+								$misc_settings	=	$row->misc_settings;
+								$margin			=	$row->margin;
 								
-								/*********************yha decount karta h**************/
-								$final_price0=  $sale_rate * $discount / 100;
-								$final_price0=	$sale_rate - $final_price0;
-								
-								/*********************yha gst add karta h**************/
-								$final_price=   $final_price0 * $gstper / 100;
-								$final_price=	$final_price0 + $final_price;
-								
-								$final_price= 	round($final_price,2);
-								
-								/***************************************/
-								/***************************************/
-								$mrp_xx = $mrp;
-								if($mrp==0)
-								{
-									$mrp_xx = 1;
-								}
-								$margin = $mrp - $final_price;
-								$margin = $margin / $mrp_xx;
-								$margin = $margin * 100;
-								$margin = round($margin);
-								/***************************************/
-								/***************************************/
-								$mrp			=	number_format($row->mrp,2);
-								$sale_rate		=	number_format($row->sale_rate,2);
+								$mrp				=	sprintf('%0.2f',round($row->mrp,2));
+								$ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+								$price		=	sprintf('%0.2f',round($row->final_price,2));
 
 $items .= <<<EOD
-{"i_code":"{$i_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","batchqty":"{$batchqty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","final_price":"{$final_price}"},
+{"i_code":"{$i_code}","name":"{$name}","company":"{$company}","qty":"{$qty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image1}","mrp":"{$mrp}","ptr":"{$ptr}","price":"{$price}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","misc_settings":"{$misc_settings}"},
 EOD;
 							}
 						}
@@ -2550,59 +3076,29 @@ EOD;
 					}
 					else
 					{						
-						$id			=	$row->id;						
-						$compcode	=	$row->compcode;
-						$i_code		=	$row->i_code;
-						$get_medicine_image	= 	$this->get_medicine_image($i_code);
-						$featured 	= 	$this->Chemist_Model->get_medicine_featured($i_code);
-						$discount 	= 	$this->Chemist_Model->get_company_discount($compcode);
-						$image = $get_medicine_image[0];
-						if(empty($image))
-						{
-							$image = constant('img_url_site')."uploads/default_img.jpg";
-						}
-						
-						$item_name		=	ucwords(strtolower($row->item_name));						
-						$company_full_name = ucwords(strtolower($row->company_full_name));
-						$item_code		=	$row->item_code;
-						$mrp			=	($row->mrp);
-						$sale_rate		=	($row->sale_rate);
-						$batchqty		=	$row->batchqty;
+						$id				=	$row->id;
+						$name			=	ucwords(strtolower($row->item_name));						
+						$company 		= ucwords(strtolower($row->company_full_name));
+						$qty			=	$row->batchqty;
 						$packing		=	$row->packing;
 						$expiry			=	$row->expiry;
 						$scheme			=	$row->salescm1."+".$row->salescm2;
-						$gstper			=	$row->gstper;
+						$misc_settings	=	$row->misc_settings;
+						$margin			=	$row->margin;
 						
-						/*********************yha decount karta h**************/
-						$final_price0=  $sale_rate * $discount / 100;
-						$final_price0=	$sale_rate - $final_price0;
+						$mrp			=	sprintf('%0.2f',round($row->mrp,2));
+						$ptr			=	sprintf('%0.2f',round($row->sale_rate,2));
+						$price			=	sprintf('%0.2f',round($row->final_price,2));
 						
-						/*********************yha gst add karta h**************/
-						$final_price=   $final_price0 * $gstper / 100;
-						$final_price=	$final_price0 + $final_price;
-						
-						$final_price= 	round($final_price,2);
-						/***************************************/
-						/***************************************/
-						$mrp_xx = $mrp;
-						if($mrp==0)
+						$image1 = constant('img_url_site')."uploads/default_img.jpg";
+						if(!empty($row->image1))
 						{
-							$mrp_xx = 1;
+							$image1 = constant('img_url_site').$row->image1;
 						}
-						$margin = $mrp - $final_price;
-						$margin = $margin / $mrp_xx;
-						$margin = $margin * 100;
-						$margin = round($margin);
-						/***************************************/
-						/***************************************/
-						
-						$mrp			=	number_format($row->mrp,2);
-						$sale_rate		=	number_format($row->sale_rate,2);
-						
 						if(empty($sameid[$id]))
 						{
 $items .= <<<EOD
-{"i_code":"{$i_code}","item_name":"{$item_name}","company_full_name":"{$company_full_name}","batchqty":"{$batchqty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image}","mrp":"{$mrp}","sale_rate":"{$sale_rate}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","final_price":"{$final_price}"},
+{"i_code":"{$i_code}","name":"{$name}","company":"{$company}","qty":"{$qty}","packing":"{$packing}","expiry":"{$expiry}","image":"{$image1}","mrp":"{$mrp}","ptr":"{$ptr}","price":"{$price}","margin":"{$margin}","scheme":"{$scheme}","featured":"{$featured}","misc_settings":"{$misc_settings}"},
 EOD;
 						}
 					}
@@ -2614,62 +3110,148 @@ if ($items != '') {
 }
 	return $items;
 	}
-	
-	public function my_invoices($user_type,$chemist_id,$lastid1)
+
+	public function medicine_category_api($itemcat="",$get_record="")
 	{
+		$this->db->where('itemcat',$itemcat);
+		$this->db->where('status','1');
+		$this->db->order_by('featured','desc');
+		$this->db->order_by('batchqty','desc');
+		$this->db->order_by('item_name','asc');
+		$this->db->limit(12,$get_record);
+		$query = $this->db->get("tbl_medicine")->result();
+
+		$row1 = $this->db->query("select * from tbl_medicine_category where code='$itemcat'")->row();
+		$i = 0;
 		$items = "";
-		if($lastid1=="kapil")
+		foreach ($query as $row)
 		{
-			if($user_type=="sales")
+			if((substr($row->item_name,0,1)==".") && ($row->misc_settings=="#ITNOTE" && $row->batchqty=="0.000") && ($row->sale_rate=="0" || $row->sale_rate=="0.0"))
 			{
-				
 			}
 			else
 			{
-				//$this->db->distinct();
-				//$this->db->group_by('order_id');
-				$this->db->where('altercode',$chemist_id);
-				$this->db->order_by('id','desc');
-				$this->db->limit(8);
-				$query = $this->db->get("tbl_invoice")->result();
+				$item_featured 		= 	$row->featured;
+				if($item_featured=="1")
+				{			
+					$id					=	$row->id;	
+					$i++;
+					if($i<4)
+					{		
+						$get_record++;						
+						$sameid[$id]    =	$id;
+
+						$item_code		=	$row->i_code;
+						$item_name		=	ucwords(strtolower($row->item_name));		
+						$item_packing	=	$row->packing;				
+						$item_company 	= 	ucwords(strtolower($row->company_full_name));
+						$item_margin	=	$row->margin;
+						$item_quantity	=	$row->batchqty;
+						$item_featured 	= 	$row->featured;						
+						
+						$item_mrp		=	sprintf('%0.2f',round($row->mrp,2));
+						$item_ptr		=	sprintf('%0.2f',round($row->sale_rate,2));
+						$item_price		=	sprintf('%0.2f',round($row->final_price,2));
+						
+						$item_image = constant('img_url_site')."uploads/default_img.jpg";
+						if(!empty($row->image1))
+						{
+							$item_image = constant('img_url_site').$row->image1;
+						}
+
+						$item_header_title	=	ucwords(strtolower($row1->menu));
+
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
+					}
+				}
 			}
 		}
-		if($lastid1!="kapil")
+		foreach ($query as $row)
 		{
-			if($user_type=="sales")
+			if((substr($row->item_name,0,1)==".") && ($row->misc_settings=="#ITNOTE" && $row->batchqty=="0.000") && ($row->sale_rate=="0" || $row->sale_rate=="0.0"))
 			{
-				
 			}
 			else
-			{
-				$this->db->where('altercode',$chemist_id);
-				$this->db->where('id<',$lastid1);
-				$this->db->order_by('id','desc');
-				$this->db->limit(8);
-				$query = $this->db->get("tbl_invoice")->result();
-			}
-		}		
+			{						
+				$id		=	$row->id;
+				if(empty($sameid[$id]))
+				{
+					$get_record++;
+					$item_code		=	$row->i_code;
+					$item_name		=	ucwords(strtolower($row->item_name));		
+					$item_packing	=	$row->packing;				
+					$item_company 	= 	ucwords(strtolower($row->company_full_name));
+					$item_margin	=	$row->margin;
+					$item_quantity	=	$row->batchqty;
+					$item_featured 	= 	$row->featured;					
+					
+					$item_mrp		=	sprintf('%0.2f',round($row->mrp,2));
+					$item_ptr		=	sprintf('%0.2f',round($row->sale_rate,2));
+					$item_price		=	sprintf('%0.2f',round($row->final_price,2));
+					
+					$item_image = constant('img_url_site')."uploads/default_img.jpg";
+					if(!empty($row->image1))
+					{
+						$item_image = constant('img_url_site').$row->image1;
+					}
 
-		$i = 1;
+					$item_header_title	=	ucwords(strtolower($row1->menu));
+				
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_company":"{$item_company}","item_quantity":"{$item_quantity}","item_mrp":"{$item_mrp}","item_ptr":"{$item_ptr}","item_price":"{$item_price}","item_margin":"{$item_margin}","item_featured":"{$item_featured}","item_header_title":"{$item_header_title}","get_record":"{$get_record}"},
+EOD;
+				}
+			}
+		}
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+	return $items;
+	}
+
+	public function my_invoice_api($user_type="",$user_altercode="",$salesman_id="",$get_record="")
+	{
+		$items = "";
+		if($user_type=="sales")
+		{
+			$this->db->where('altercode',$user_altercode);
+			$this->db->order_by('id','desc');
+			$this->db->limit(12,$get_record);
+			$query = $this->db->get("tbl_invoice")->result();
+		}
+		else
+		{
+			$this->db->where('altercode',$user_altercode);
+			$this->db->order_by('id','desc');
+			$this->db->limit(12,$get_record);
+			$query = $this->db->get("tbl_invoice")->result();
+		}
 		foreach($query as $row)
 		{
-			$id		= $row->id;
-			$gstvno = $row->gstvno;
-			$total 	= number_format($row->amt,2);
-			$url 	= ($chemist_id)."/".($gstvno);
-			$date_time 	= date("d-M-y",strtotime($row->date));
-			$i++;
-			if($i%2==0) 
-			{ 
-				$css = "search_page_gray"; 
-			} 
-			else
+			$get_record++;
+			$item_id			= $row->id;
+			$item_title 		= $row->gstvno;
+			$item_total 		= number_format($row->amt,2);
+			$item_date_time 	= date("d-M-y",strtotime($row->date));
+			$out_for_delivery 	= $row->out_for_delivery;
+			$delete_status		= $row->delete_status;
+
+			$row1 = $this->db->query("SELECT tbl_acm.name,tbl_acm.altercode,tbl_acm_other.image from tbl_acm,tbl_acm_other where tbl_acm.altercode='$row->altercode' and tbl_acm.code = tbl_acm_other.code")->row();
+			$user_image = constant('main_site')."user_profile/$row1->image";
+			if(empty($row1->image))
 			{
-				$css = "search_page_gray1"; 
-			}		
-			$status = "Generated";
+				$user_image = constant('main_site')."img_v".constant('site_v')."/logo.png";
+			}
+			$item_message   = $item_total;
+			$item_image 	= $user_image;
+
+			$gstvno = $row->gstvno;
+			$download_url = constant('main_site')."user/download_invoice1/".$user_altercode."/".$gstvno;
+
 $items.= <<<EOD
-{"url":"{$url}","css":"{$css}","id":"{$id}","gstvno":"{$gstvno}","total":"{$total}","date_time":"{$date_time}","user_type":"{$user_type}","status":"{$status}"},
+{"item_id":"{$item_id}","item_title":"{$item_title}","item_message":"{$item_message}","item_date_time":"{$item_date_time}","item_image":"{$item_image}","out_for_delivery":"{$out_for_delivery}","delete_status":"{$delete_status}","download_url":"{$download_url}","get_record":"{$get_record}"},
 EOD;
 		}
 if ($items != ''){
@@ -2677,41 +3259,36 @@ if ($items != ''){
 }
 	return $items;
 	}
-	
-	public function my_invoices_view($user_type,$chemist_id,$gstvno)
+
+	public function my_invoice_details_api($user_type="",$user_altercode="",$salesman_id="",$item_id="")
 	{
+		$header_title = "";
+		$download_url = "";
 		$items = "";
-		$this->db->where('altercode',$chemist_id);
-		$this->db->where('gstvno',$gstvno);
+		$delete_items = "";
+		$this->db->where('id',$item_id);
+		$this->db->where('altercode',$user_altercode);
 		$row = $this->db->get("tbl_invoice")->row();
 		if($row->id!="")
 		{
 			$inv_type 	= "insert";
 			$id			= $row->id;
 			$gstvno 	= $row->gstvno;
+			$header_title = $gstvno;
 			$date_time 	= date("d-M-y",strtotime($row->date));
 			$total 		= number_format($row->amt,2);
 			$excelFile 	= "./upload_invoice/".$gstvno.".xls";
-			$excelFile_download = constant('main_site')."user/download_invoice/".$chemist_id."/".$gstvno;
+			$download_url = constant('main_site')."user/download_invoice/".$user_altercode."/".$gstvno;
 			
 			$excelFile_delete 	= "./upload_invoice/delete_".$gstvno.".xls";
 			
 			$name = substr($row->name,0,19);
 			$file_name = "_D.R.DISTRIBUTORS PVT_".$name.".xls";
 			
-			$download_excel_url =  "<a href='".$excelFile_download."'><button type='button' class='btn btn-warning btn-block'>Download Excel</button></a>";
-			$download_excel_url = base64_encode($download_excel_url);
 			$status = "Generated";
 				
-			$item_name_r 	= "G";
-			$batch_r 		= "I";
-			$expiry_r 		= "J";
+			$item_code_r 	= "E";
 			$qty_r 			= "K";
-			$fqty_r			= "L";
-			$mrp_r 			= "U";
-			$cgst_r 		= "AA";
-			$sgst_r 		= "AB";
-			$igst_r 		= "AC";
 			
 			$i = 1;
 			$headername = 2;
@@ -2721,40 +3298,42 @@ if ($items != ''){
 			{
 				$highestRow = $worksheet->getHighestRow();
 				for ($row=$headername; $row<=$highestRow; $row++)
-				{
-					$i++;
-					if($i%2==0) 
-					{ 
-						$css = "search_page_gray"; 
-					} 
-					else
+				{	
+					$item_code 	= $worksheet->getCell($item_code_r.$row)->getValue();
+					$item_quantity = $worksheet->getCell($qty_r.$row)->getValue();
+					
+					$row1 = $this->db->query("select * from tbl_medicine where i_code='$item_code'")->row();
+
+					$item_price 		= sprintf('%0.2f',round($row1->sale_rate,2));
+					$item_quantity_price= sprintf('%0.2f',round($item_quantity * $row1->sale_rate,2));
+					$item_date_time 	= date("d-M-y",strtotime($date_time));
+					$item_modalnumber 	= "Pc / Laptop"; //$row->modalnumber;
+					
+					$item_name 		= htmlentities(ucwords(strtolower($row1->item_name)));
+					$item_packing 	= htmlentities($row1->packing);
+					$item_expiry 	= htmlentities($row1->expiry);
+					$item_company 	= htmlentities(ucwords(strtolower($row1->company_full_name)));
+					$item_scheme 	= $row1->salescm1."+".$row1->salescm2;
+					$item_featured 	= $row1->featured;
+
+					$item_image		= constant('img_url_site').$row1->image1;
+					if(empty($row1->image1))
 					{
-						$css = "search_page_gray1"; 
+						$item_image = constant('main_site')."uploads/default_img.jpg";
 					}
 					
-					$item_name 	= $worksheet->getCell($item_name_r.$row)->getValue();
-					$batch 		= $worksheet->getCell($batch_r.$row)->getValue();
-					$expiry 	= $worksheet->getCell($expiry_r.$row)->getValue();
-					$qty 		= $worksheet->getCell($qty_r.$row)->getValue();
-					$fqty 		= $worksheet->getCell($fqty_r.$row)->getValue();
-					$mrp 		= $worksheet->getCell($mrp_r.$row)->getValue();
-					$mrp1		= $mrp * 12 / 100;
-					$mrp		= round($mrp + $mrp1,2);
-					$item_name = base64_encode($item_name);
 $items.= <<<EOD
-{"css":"{$css}","download_excel_url":"{$download_excel_url}","gstvno":"{$gstvno}","date":"{$date_time}","total_price":"{$total}","status":"{$status}","inv_type":"{$inv_type}","item_name":"{$item_name}","batch":"{$batch}","expiry":"{$expiry}","qty":"{$qty}","fqty":"{$fqty}","mrp":"{$mrp}"},
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_expiry":"{$item_expiry}","item_company":"{$item_company}","item_scheme":"{$item_scheme}","item_featured":"{$item_featured}","item_price":"{$item_price}","item_quantity":"{$item_quantity}","item_quantity_price":"{$item_quantity_price}","item_date_time":"{$item_date_time}","item_modalnumber":"{$item_modalnumber}"},
 EOD;
 				}
 			}
 			
 			if(file_exists($excelFile_delete)=="1")
 			{
-				$item_name_r 	  = "B";
-				$delete_descp_r   = "I";
-				$delete_amt_r 	  = "F";
-				$delete_namt_r 	  = "G";
-				$delete_remarks_r = "H";
-				
+				$item_code_r 	= "A";
+				$qty_r 			= "F";
+				$remarks_r		= "H";
+
 				$i = 1;
 				$headername = 2;
 				$objPHPExcel = PHPExcel_IOFactory::load($excelFile_delete);
@@ -2763,27 +3342,35 @@ EOD;
 					$highestRow = $worksheet->getHighestRow();
 					for ($row=$headername; $row<=$highestRow; $row++)
 					{
-						$i++;
-						if($i%2==0) 
-						{ 
-							$css = "search_page_gray"; 
-						} 
-						else
-						{
-							$css = "search_page_gray1"; 
-						}
-						
-						$item_name 	  	= $worksheet->getCell($item_name_r.$row)->getValue();
-						$delete_descp 	= $worksheet->getCell($delete_descp_r.$row)->getValue();
-						$delete_amt   	= $worksheet->getCell($delete_amt_r.$row)->getValue();
-						$delete_namt  	= $worksheet->getCell($delete_namt_r.$row)->getValue();
-						$delete_remarks = $worksheet->getCell($delete_remarks_r.$row)->getValue();
-						
-						$item_name = base64_encode($item_name);
-						$inv_type = "delete";
+						$item_code 	= $worksheet->getCell($item_code_r.$row)->getValue();
+						$item_quantity = $worksheet->getCell($qty_r.$row)->getValue();
+						$item_remarks = $worksheet->getCell($remarks_r.$row)->getValue();
 					
-$items.= <<<EOD
-{"inv_type":"{$inv_type}","css":"{$css}","item_name":"{$item_name}","delete_descp":"{$delete_descp}","delete_amt":"{$delete_amt}","delete_namt":"{$delete_namt}","delete_remarks":"{$delete_remarks}"},
+						$row1 = $row1 = $this->db->query("select * from tbl_medicine where i_code='$item_code'")->row();
+
+						$item_price 		= sprintf('%0.2f',round($row1->sale_rate,2));
+						$item_quantity_price=  $item_price;
+						$item_date_time 	= date("d-M-y",strtotime($date_time));
+						$item_modalnumber 	= "Pc / Laptop"; //$row->modalnumber;
+						
+						$item_name 		= htmlentities(ucwords(strtolower($row1->item_name)));
+						$item_packing 	= htmlentities($row1->packing);
+						$item_expiry 	= htmlentities($row1->expiry);
+						$item_company 	= htmlentities(ucwords(strtolower($row1->company_full_name)));
+						$item_scheme 	= $row1->salescm1."+".$row1->salescm2;
+						$item_featured 	= $row1->featured;
+
+						$item_image		= constant('img_url_site').$row1->image1;
+						if(empty($row1->image1))
+						{
+							$item_image = constant('main_site')."uploads/default_img.jpg";
+						}
+
+						$item_description1 = $item_remarks;
+						$item_description1  =  $this->new_clean($item_description1);
+					
+$delete_items.= <<<EOD
+{"item_code":"{$item_code}","item_image":"{$item_image}","item_name":"{$item_name}","item_packing":"{$item_packing}","item_expiry":"{$item_expiry}","item_company":"{$item_company}","item_scheme":"{$item_scheme}","item_featured":"{$item_featured}","item_price":"{$item_price}","item_quantity":"{$item_quantity}","item_quantity_price":"{$item_quantity_price}","item_date_time":"{$item_date_time}","item_modalnumber":"{$item_modalnumber}","item_description1":"{$item_description1}"},
 EOD;
 					}
 				}
@@ -2792,7 +3379,24 @@ EOD;
 if ($items != ''){
 	$items = substr($items, 0, -1);
 }
-	return $items;
+
+if ($delete_items != ''){
+	$delete_items = substr($delete_items, 0, -1);
+}
+
+$header_title= <<<EOD
+{"header_title":"{$header_title}"}
+EOD;
+
+$download_url= <<<EOD
+{"download_url":"{$download_url}"}
+EOD;
+
+	$val[0] = $items;
+	$val[1] = $delete_items;
+	$val[2] = $download_url;
+	$val[3] = $header_title;
+	return $val;
 	}
 	
 	public function check_download_invoice($user_type,$chemist_id,$lastid1,$gstvno)
@@ -2812,5 +3416,243 @@ if ($items != ''){
 	$items = substr($items, 0, -1);
 }
 	return $items;
+	}
+	
+	public function medicine_add_to_cart_api($user_type,$user_altercode,$salesman_id,$order_type,$item_code,$item_order_quantity,$mobilenumber,$modalnumber,$device_id,$excel_number="0")
+	{
+		$where = array('chemist_id'=>$user_altercode,'selesman_id'=>$salesman_id,'user_type'=>$user_type,'i_code'=>$item_code,'status'=>'0');
+		$this->db->delete("drd_temp_rec", $where);
+		
+		$time = time();
+		$date = date("Y-m-d",$time);
+		$datetime = date("d-M-y H:i",$time);
+		
+		if($user_type=="sales")
+		{
+			$temp_rec = $user_type."_".$salesman_id."_".$user_altercode;			
+		}
+		else
+		{
+			$temp_rec = $user_type."_".$user_altercode;
+		}
+
+		if($excel_number==0){
+			$row2 = $this->db->query("select excel_number from drd_temp_rec where chemist_id='$user_altercode' and selesman_id='$salesman_id' and user_type='$user_type' and status=0 order by id desc")->row();
+			if(!empty($row2->excel_number)){
+				$excel_number = $row2->excel_number + 1;
+			}
+		}
+			
+		$where1 = array('i_code'=>$item_code);
+		$row1 = $this->Scheme_Model->select_row("tbl_medicine",$where1);
+		if(!empty($row1->item_name))
+		{
+			$image1 = constant('img_url_site')."uploads/default_img.jpg";
+			if(!empty($row1->image1))
+			{
+				$image1 = constant('img_url_site').$row1->image1;
+			}
+			
+			$dt = array(
+				'i_code'=>$item_code,
+				'item_code'=>$row1->item_code,
+				'quantity'=>$item_order_quantity,				
+				'item_name'=>$row1->item_name,
+				'packing'=>$row1->packing,
+				'expiry'=>$row1->expiry,
+				'margin'=>$row1->margin,
+				'featured'=>$row1->featured,
+				'company_full_name'=>$row1->company_full_name,
+				'sale_rate'=>$row1->final_price,
+				'scheme'=>$row1->salescm1."+".$row1->salescm2,
+				'image'=>$image1,
+				'chemist_id'=>$user_altercode,
+				'selesman_id'=>$salesman_id,
+				'user_type'=>$user_type,
+				'date'=>$date,
+				'time'=>$time,
+				'datetime'=>$datetime,
+				'temp_rec'=>$temp_rec,
+				'order_type'=>$order_type,
+				'mobilenumber'=>$mobilenumber,
+				'modalnumber'=>$modalnumber,
+				'device_id'=>$device_id,
+				'excel_number'=>$excel_number,
+				);
+			$this->Scheme_Model->insert_fun("drd_temp_rec",$dt);
+			
+			$status = "1";
+		}else{
+			$status = "0";
+		}
+		return $status;
+	}
+
+	public function delete_medicine_api($user_type="",$user_altercode="",$salesman_id="",$item_code="")
+	{
+		$response = $this->db->query("delete from drd_temp_rec where user_type='$user_type' and chemist_id='$user_altercode' and selesman_id='$salesman_id' and status='0' and i_code='$item_code'");
+		
+		return $response;
+	}
+
+	public function delete_all_medicine_api($user_type="",$user_altercode="",$salesman_id="")
+	{
+		$response = $this->db->query("delete from drd_temp_rec where user_type='$user_type' and chemist_id='$user_altercode' and selesman_id='$salesman_id' and status='0'");
+		
+		return $response;
+	}
+	
+	public function count_temp_rec($user_type="",$user_altercode="",$salesman_id="")
+	{		
+		$count = 0;
+		if($user_type=="sales")
+		{			
+			if(empty($user_altercode))
+			{
+				$row = $this->db->query("select count(distinct temp_rec) as total from drd_temp_rec where selesman_id='$salesman_id' and status='0' order by chemist_id asc")->row();
+				if(!empty($row->total))
+				{
+					$count = $row->total;
+				}
+			} else {
+				$row = $this->db->query("select count(chemist_id) as total from drd_temp_rec where chemist_id='$user_altercode' and selesman_id='$salesman_id' and status='0' order by chemist_id asc")->row();
+				if(!empty($row->total))
+				{
+					$count = $row->total;
+				}
+			}
+		}
+		else
+		{			
+			$row = $this->db->query("select count(chemist_id) as total from drd_temp_rec where chemist_id='$user_altercode' and selesman_id='' and status='0' order by chemist_id asc")->row();
+			if(!empty($row->total))
+			{
+				$count = $row->total;
+			}
+		}
+		return $count;
+	}
+
+	public function medicine_similar_api($item_code="",$get_record="")
+	{
+		$items = "";
+		$row = $this->db->query("select itemjoinid FROM tbl_medicine WHERE i_code='$item_code'")->row();
+		$itemjoinid = $row->itemjoinid;
+
+		if($itemjoinid!=""){
+			$itemjoinid = explode (",", $itemjoinid);
+			foreach($itemjoinid as $item_code_n)
+			{
+				$items.= $this->get_itemjoinid($item_code_n);
+			}
+			if ($items != '') {
+				$items = substr($items, 0, -1);
+			}
+		}
+		return $items;
+	}
+
+	public function add_low_stock_alert($i_code)
+	{	
+		$user_type 		= $this->session->userdata('user_type');
+		$user_altercode = $this->session->userdata('user_altercode');		
+		$chemist_id 	= $this->session->userdata('chemist_id');
+		
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+
+		$date = date('Y-m-d');
+		$time = date("H:i",time());
+		
+		if($user_type=="sales")
+		{
+			$where = array('altercode'=>$user_altercode,);
+			$qr = $this->Scheme_Model->select_row("tbl_acm",$where);
+
+			$title 			= ucwords(strtolower($qr->name));
+			$chemist_name 	= "$title - ($user_altercode)";	
+
+			$where = array('customer_code'=>$salesman_id,);
+			$qr = $this->Scheme_Model->select_row("tbl_users",$where);
+			
+			$name 			= ucwords(strtolower($qr->firstname." ".$qr->lastname));
+			$salesman_name 	= "$name - ($qr->customer_code)";
+		}
+		if($user_type=="chemist")
+		{			
+			$where = array('altercode'=>$user_altercode,);
+			$qr = $this->Scheme_Model->select_row("tbl_acm",$where);
+
+			$title 			= ucwords(strtolower($qr->name));
+			$chemist_name 	= "$title - ($qr->altercode)";
+		}
+		
+		$where = array('i_code'=>$i_code);
+		$row = $this->Scheme_Model->select_row("tbl_medicine",$where);
+		if(!empty($row->item_name))
+		{
+			$item_name = $row->item_name;
+			$item_code = $row->item_code;
+			
+			$where1 = array('i_code'=>$i_code,'date'=>$date,);
+			$row1 = $this->Scheme_Model->select_row("tbl_low_stock_alert",$where1);
+			if(empty($row1->i_code))
+			{
+				$dt = array(
+				'user_type'=>$user_type,
+				'chemist_id'=>$user_altercode,
+				'salesman_id'=>$salesman_id,
+				'i_code'=>$i_code,
+				'item_name'=>$item_name,
+				'item_code'=>$item_code,
+				'date'=>$date,
+				'time'=>$time,
+				);
+				$query = $this->Scheme_Model->insert_fun("tbl_low_stock_alert",$dt);
+			}
+		}
+		
+		$subject  = "DRD Low Stock || $title";
+		$message  = "Hi $title,<br><br> One of the customer tried to order a Medicine which is currently out of stock <br><br>";
+		$message .= "Item Name : ".$item_name."<br>";
+		$message .= "Item Code : ".$item_code."<br>";
+		$message .= "Chemist Name : ".$chemist_name."<br>";
+		if($salesman_name)
+		{
+			$message .= "Salesman Name : ".$salesman_name."<br>";
+		}
+		$message .= "<br>Please arrange a callback for the customer to place this order.";
+		$message .="<br><br>Thanks<br>D R Distributors Private Limited<br><br>";
+		
+		/**********************************************************/
+		
+		if(!empty($query))
+		{
+			$subject = ($subject);
+			$message = ($message);
+			$email_function = "low_stock_alert";
+			$mail_server = "";
+			
+			$row = $this->db->query("select * from tbl_email where email_function='$email_function'")->row();
+			$user_email_id = $row->email;
+
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
+
+			$dt = array(
+			'user_email_id'=>$user_email_id,
+			'subject'=>$subject,
+			'message'=>$message,
+			'email_function'=>$email_function,
+			'mail_server'=>$mail_server,
+			'date'=>$date,
+			'time'=>$time,
+			);
+			$this->Scheme_Model->insert_fun("tbl_email_send",$dt);
+		}
 	}
 }

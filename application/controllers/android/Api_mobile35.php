@@ -608,8 +608,9 @@ if ($items != '') {
 			$where = array('chemist_id'=>$chemist_id,'selesman_id'=>$selesman_id,'user_type'=>$user_type,'i_code'=>$i_code,'status'=>'0');
 			$row = $this->Scheme_Model->select_row("drd_temp_rec",$where);
 
-			$get_medicine_image	= 	$this->Chemist_Model->get_medicine_image($i_code);
-			$image1 = $get_medicine_image[0];
+			$where = array('i_code'=>$i_code);
+			$tbl_medicine = $this->Scheme_Model->select_row("tbl_medicine",$where);
+			$image1 = $tbl_medicine->image1;
 			if($image1=="")
 			{
 				$image1 = "http://drdmail.xyz/uploads/newok.jpg";

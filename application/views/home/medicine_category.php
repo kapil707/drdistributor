@@ -15,7 +15,7 @@
 }
 </style>
 <script>
-$(".headertitle").html("<?= $company_full_name; ?>");
+$(".headertitle").html("Loading....");
 function goBack() {
 	window.location.href = "<?= base_url();?>home";
 }
@@ -24,7 +24,7 @@ function goBack() {
 	<div class="row">
 		<div class="col-sm-12 col-12">
 			<div class="row">
-				<div class="col-sm-12 text-right" style="margin-bottom:5px;">
+				<div class="col-sm-12 text-right" style="margin-bottom:5px;display:none;">
 					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/sortline.png" width="25px;" onclick="show_sorting_div();" class="showbtn" alt>
 					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/sortline.png" width="25px;" onclick="hide_sorting_div();" class="showbtn1" style="display:none;" alt>
 				</div>
@@ -39,78 +39,132 @@ function goBack() {
 			</div>
 			<div class="row load_page"></div>
 			<div class="row">
-				<div class="col-sm-12 load_page_loading" style="margin-top:10px;">
-				
+				<div class="col-sm-12 text-center">
+					<span class="load_page_loading" style="position: fixed;top: 300px;z-index: 100;margin-left:-90px"></span>
+				</div>
+				<div class="col-sm-12" style="margin-top:10px;">
+					<button onclick="load_more()" class="load_more"></button>
 				</div>
 			</div>
 		</div>
 	</div>     
 </div>
-<input type="hidden" class="lastid1">
+<input type="hidden" class="get_record" value="0">
 <script>
-$(document).ready(function(){
-	call_page("not");
+$(window).scroll(function(){
+	var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+	if (scrollBottom<100){
+		//alert(parseInt($(window).scrollTop()))
+		$(".load_more").click()
+	}
 });
-function call_page_by_last_id()
+$(document).ready(function(){
+	get_record=$(".get_record").val();
+	call_page(get_record)
+});
+function load_more()
 {
-	lastid1=$(".lastid1").val();
-	call_page("not")
+	get_record=$(".get_record").val();
+	call_page(get_record)
 }
-function call_page(orderby1)
+var query_work = 0;
+var no_record_found = 0;
+function call_page(get_record)
 {
-	$(".load_page").html("");
-	$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>');
-	$.ajax({
-		type       : "POST",
-		data       :  { itemcat:'<?= $itemcat; ?>',orderby:orderby1} ,
-		url        : "<?php echo base_url(); ?>Chemist_json/medicine_category_api",
-		cache	   : false,
-		error: function(){
-			$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
-		},
-		success    : function(data){
-			if(data.items=="")
-			{
-				$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
-			}
-			else
-			{
+	if(query_work=="0")
+	{
+		query_work = 1;
+		$(".load_more").hide();
+		$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>');
+		$.ajax({
+			type       : "POST",
+			data       :  { item_page_type:'<?= $item_page_type; ?>',item_code:'<?= $item_code; ?>',item_division:'<?= $item_division; ?>',get_record:get_record} ,
+			url        : "<?php echo base_url(); ?>Chemist_json/medicine_category_api",
+			cache	   : false,
+			error: function(){
 				$(".load_page_loading").html("");
-			}
-			$.each(data.items, function(i,item){
-				if (item){
-					i_code				= item.i_code;			
-					item_name 			= item.item_name;
-					company_full_name 	= item.company_full_name;
-					image 				= item.image;
-					packing 			= item.packing;
-					mrp 				= item.mrp;
-					ptr					= item.sale_rate;
-					sale_rate 			= item.sale_rate;
-					batchqty 			= item.batchqty;
-					scheme 				= item.scheme;
-					batch_no 			= item.batch_no;
-					expiry 				= item.expiry;
-					med_date_time 		= item.med_date_time;
-					featured 			= item.featured;
-					margin 				= item.margin;
-					
-					image1 = '<img src="'+image+'" class="img-fluid img-responsive" style="border-radius: 5px;">';
-					if(featured=="1"){
-						image1 = '<img src="'+image+'" class="img-fluid img-responsive" style="border-radius: 5px;"><img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/featuredicon.png" class="category_page_featurediconcss">';
-					}
-					
-					if(batchqty==0)
+				$(".load_page").html('<h1><img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/something_went_wrong.png" width="100%"></h1>');
+			},
+			success    : function(data){
+				if(data.items=="")
+				{
+					if(no_record_found=="0")
 					{
-						image1 = '<img src="'+image+'" class="img-fluid img-responsive" style="border-radius: 5px;"><img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/outofstockicon.png" class="category_page_outofstockiconcss">';
+						$(".load_page_loading").html("");
+						$(".load_page").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
 					}
-					
-					$(".load_page").append('<div class="col-sm-3 col-6 p-0 m-0 text-center"><div style="margin-left:7px;margin-left:7px;margin-bottom:7px;padding: 10px;border-radius: 10px;background:#ffffff;" onClick="get_single_medicine_info('+i_code+')" style="cursor: pointer;" title="'+item_name+'">'+image1+'<div class="text-left text-capitalize category_page_title">'+item_name+' <span class="category_page_packing">('+packing+' Packing)</span></div><div class="category_page_margin_icon text-left"><img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/ribbonicon1.png" style="" alt> </div><div class="category_page_margin">'+margin+'% Margin</div><div class="text-left text-capitalize category_page_company">By '+company_full_name+'</div><div class="text-left category_page_mrp">MRP : <i class="fa fa-inr" aria-hidden="true"></i> '+mrp+'/-</div><div class="text-left category_page_ptr">PTR : <i class="fa fa-inr" aria-hidden="true"></i> '+ptr+'/-</div><div class="text-left category_page_final_price">~Price : <i class="fa fa-inr" aria-hidden="true"></i> '+mrp+'/-</div></div></div>');
+					else
+					{
+						$(".load_page_loading").html("");
+						//$(".load_page").html("");
+					}
 				}
-			});
-		},
-		timeout: 10000
-	});
+				else
+				{
+					$(".load_page_loading").html("");
+				}
+				$.each(data.items, function(i,item){
+					if (item){
+						item_code			= item.item_code;
+						item_image			= item.item_image;
+						item_name 			= item.item_name;
+						item_packing 		= item.item_packing;
+						item_expiry 		= item.item_expiry;
+						item_company 		= item.item_company;
+						item_quantity 		= item.item_quantity;
+						item_stock 			= item.item_stock;
+						item_ptr 			= item.item_ptr;
+						item_mrp 			= item.item_mrp;
+						item_price 			= item.item_price;
+						item_scheme 		= item.item_scheme;
+						item_margin 		= item.item_margin;
+						item_featured 		= item.item_featured;
+						get_record			= item.get_record;
+
+						item_scheme_div = "";
+						if(item_scheme!="0+0")
+						{
+							item_scheme_div =  ' | <span class="medicine_cart_item_scheme">Scheme : '+item_scheme+'</span>';
+						}
+
+						item_other_image_div = '';
+						if(item_featured=="1" && item_quantity!="0"){
+							item_other_image_div = '<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/featured_img.png" class="medicine_cart_item_featured_img">';
+						}
+
+						item_quantity_div = '<span class="medicine_cart_item_out_of_stock">Out of stock</span>';
+						if(item_quantity=="0"){
+							item_other_image_div = '<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/out_of_stock_img.png" class="medicine_cart_item_out_of_stock_img">';
+						} 
+						else 
+						{
+							item_quantity_div = '<span class="medicine_cart_item_stock">Stock : '+item_quantity+'</span>' + item_scheme_div;
+							if(item_stock!="")
+							{
+								item_quantity_div = '<span class="medicine_cart_item_stock">'+item_stock+'</span>' + item_scheme_div;
+							}
+						}
+
+						error_img ="onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'"
+
+						item_image_div = item_other_image_div+'<img src="'+item_image+'" class="medicine_cart_item_image" '+error_img+'>';
+						
+						rete_div =  '<div class="medicine_cart_item_ptr">PTR : <i class="fa fa-inr" aria-hidden="true"></i> '+item_ptr+'/- </div><div class="medicine_cart_item_mrp">MRP : <i class="fa fa-inr" aria-hidden="true"></i> '+item_mrp+'/- </div><div class="medicine_cart_item_price"> *Approximate ~ : <i class="fa fa-inr" aria-hidden="true"></i> '+item_price+'/- </div>';
+						
+						$(".load_page").append('<div class="col-sm-3 col-6 p-0 m-0 text-center"><div class="featured_brand_div" onClick="get_single_medicine_info('+item_code+')" style="cursor: pointer;" title="'+item_name+'">'+item_image_div+'<div class="medicine_cart_item_name">'+item_name+' <span class="medicine_cart_item_packing">('+item_packing+' Packing)</span></div><div class="medicine_cart_item_company">By '+item_company+'</div>'+rete_div+'</div></div>');
+
+						$(".headertitle").html(item.item_header_title);
+
+						query_work = 0;
+						no_record_found = 1;
+						$(".get_record").val(item.get_record);
+						$(".load_more").show();
+					}
+				});
+			},
+			timeout: 10000
+		});
+	}
 }
 </script>
 <script>

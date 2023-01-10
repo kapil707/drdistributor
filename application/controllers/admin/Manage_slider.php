@@ -11,32 +11,39 @@ class Manage_slider extends CI_Controller {
 	{
 		$page_controllers = $this->page_controllers;
 		redirect("admin/$page_controllers/view");
-	}	
+	}
+	
 	public function add()
 	{
 		error_reporting(0);
 		/******************session***********************/
 		$user_id = $this->session->userdata("user_id");
 		$user_type = $this->session->userdata("user_type");
-		/******************session***********************/		
+		/******************session***********************/		
+
 		$Page_title = $this->Page_title;
 		$Page_name 	= $this->Page_name;
 		$Page_view 	= $this->Page_view;
 		$Page_menu 	= $this->Page_menu;
 		$Page_tbl 	= $this->Page_tbl;
-		$page_controllers 	= $this->page_controllers;	
-		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);
+		$page_controllers 	= $this->page_controllers;	
+
+		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);
+
 		$data['title1'] = $Page_title." || Add";
 		$data['title2'] = "Add";
 		$data['Page_name'] = $Page_name;
 		$data['Page_menu'] = $Page_menu;
 		$this->breadcrumbs->push("Admin","admin/");
 		$this->breadcrumbs->push("$Page_title","admin/$page_controllers/");
-		$this->breadcrumbs->push("Add","admin/$page_controllers/add");	
-		$tbl = $Page_tbl;	
+		$this->breadcrumbs->push("Add","admin/$page_controllers/add");	
+
+		$tbl = $Page_tbl;	
+
 		$data['url_path'] 	= base_url()."uploads/$page_controllers/photo/resize/";
 		$upload_path 		= "./uploads/$page_controllers/photo/main/";
-		$upload_resize 		= "./uploads/$page_controllers/photo/resize/";	
+		$upload_resize 		= "./uploads/$page_controllers/photo/resize/";	
+
 		$system_ip = $this->input->ip_address();
 		$user_type = $status = "";
 		extract($_POST);
@@ -46,7 +53,8 @@ class Manage_slider extends CI_Controller {
 			$message_db = "";
 			
 			$time = time();
-			$date = date("Y-m-d",$time);			
+			$date = date("Y-m-d",$time);			
+
 			if (!empty($_FILES["image"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -79,7 +87,8 @@ class Manage_slider extends CI_Controller {
 				$itemid = "";
 				$compid = "";
 				$division = "";
-			}			
+			}
+			
 			$result = "";
 			$dt = array(
 			'short_order'=>$short_order,
@@ -122,36 +131,45 @@ class Manage_slider extends CI_Controller {
 					redirect(base_url()."admin/$page_controllers/view");
 				}
 			}
-		}		
+		}		
+
 		$this->load->view("admin/header_footer/header",$data);
 		$this->load->view("admin/$Page_view/add",$data);
 		$this->load->view("admin/header_footer/footer",$data);
-	}
+	}
+
 	public function view()
 	{
 		error_reporting(0);
 		/******************session***********************/
 		$user_id = $this->session->userdata("user_id");
 		$user_type = $this->session->userdata("user_type");
-		/******************session***********************/		
+		/******************session***********************/		
+
 		$Page_title = $this->Page_title;
 		$Page_name 	= $this->Page_name;
 		$Page_view 	= $this->Page_view;
 		$Page_menu 	= $this->Page_menu;
 		$Page_tbl 	= $this->Page_tbl;
-		$page_controllers 	= $this->page_controllers;		
-		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);	
+		$page_controllers 	= $this->page_controllers;		
+
+		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);	
+
 		$data['title1'] = $Page_title." || View";
 		$data['title2'] = "View";
 		$data['Page_name'] = $Page_name;
-		$data['Page_menu'] = $Page_menu;	
+		$data['Page_menu'] = $Page_menu;	
+
 		$this->breadcrumbs->push("Admin","admin/");
 		$this->breadcrumbs->push("$Page_title","admin/$page_controllers/");
-		$this->breadcrumbs->push("View","admin/$page_controllers/view");		
-		$tbl = $Page_tbl;	
+		$this->breadcrumbs->push("View","admin/$page_controllers/view");		
+
+		$tbl = $Page_tbl;	
+
 		$data['url_path'] 	= base_url()."uploads/$page_controllers/photo/resize/";
 		$upload_path 		= "./uploads/$page_controllers/photo/main/";
-		$upload_resize 		= "./uploads/$page_controllers/photo/resize/";	
+		$upload_resize 		= "./uploads/$page_controllers/photo/resize/";	
+
 		
 		$query = $this->db->query("select * from $tbl order by short_order asc");
 		$data["result"] = $query->result();
@@ -166,34 +184,43 @@ class Manage_slider extends CI_Controller {
 		/******************session***********************/
 		$user_id = $this->session->userdata("user_id");
 		$user_type = $this->session->userdata("user_type");
-		/******************session***********************/	
+		/******************session***********************/	
+
 		$Page_title = $this->Page_title;
 		$Page_name 	= $this->Page_name;
 		$Page_view 	= $this->Page_view;
 		$Page_menu 	= $this->Page_menu;
 		$Page_tbl 	= $this->Page_tbl;
-		$page_controllers 	= $this->page_controllers;		
-		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);
+		$page_controllers 	= $this->page_controllers;		
+
+		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);
+
 		$data['title1'] = $Page_title." || Edit";
 		$data['title2'] = "Edit";
 		$data['Page_name'] = $Page_name;
-		$data['Page_menu'] = $Page_menu;
+		$data['Page_menu'] = $Page_menu;
+
 		$this->breadcrumbs->push("Edit","admin/");
 		$this->breadcrumbs->push("$Page_title","admin/$page_controllers/");
-		$this->breadcrumbs->push("Edit","admin/$page_controllers/edit");		
-		$tbl = $Page_tbl;	
+		$this->breadcrumbs->push("Edit","admin/$page_controllers/edit");		
+
+		$tbl = $Page_tbl;	
+
 		$data['url_path'] 	= base_url()."uploads/$page_controllers/photo/resize/";
 		$upload_path 		= "./uploads/$page_controllers/photo/main/";
-		$upload_resize 		= "./uploads/$page_controllers/photo/resize/";
+		$upload_resize 		= "./uploads/$page_controllers/photo/resize/";
+
 		$system_ip = $this->input->ip_address();
 		extract($_POST);
 		if(isset($Submit))
 		{
 			$itemid = $i_code;
 			$message_db = "";
-						$time = time();
+			
+			$time = time();
 			$date = date("Y-m-d",$time);
-			$where = array('id'=>$id);			
+			$where = array('id'=>$id);
+			
 			if (!empty($_FILES["image"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -205,7 +232,8 @@ class Manage_slider extends CI_Controller {
 				$this->Image_Model->newHeight = 250;
 				$this->Image_Model->resize();
 			}
-			else			{
+			else
+			{
 				$image = $old_image;
 			}
 			
@@ -231,14 +259,22 @@ class Manage_slider extends CI_Controller {
 			$result = "";
 			$dt = array(
 			'short_order'=>$short_order,
-			'user_id'=>$user_id,			'image'=>$image,			'status'=>$status,			'date'=>$date,			'time'=>$time,			'update_date'=>$date,			'update_time'=>$time,			'system_ip'=>$system_ip,
+			'user_id'=>$user_id,
+			'image'=>$image,
+			'status'=>$status,
+			'date'=>$date,
+			'time'=>$time,
+			'update_date'=>$date,
+			'update_time'=>$time,
+			'system_ip'=>$system_ip,
 			'funtype'=>$funtype,
 			'itemid'=>$itemid,
 			'compid'=>$compid,
 			'division'=>$division,
 			);
 			$result = $this->Scheme_Model->edit_fun($tbl,$dt,$where);
-			$change_text = $title." - ($change_text)";	
+			$change_text = $title." - ($change_text)";	
+
 			if($result)
 			{
 				$message_db = "$change_text - Edit Successfully.";
@@ -253,7 +289,8 @@ class Manage_slider extends CI_Controller {
 			}
 			if($message_db!="")
 			{
-				$message = $Page_title." - ".$message;				$message_db = $Page_title." - ".$message_db;
+				$message = $Page_title." - ".$message;
+				$message_db = $Page_title." - ".$message_db;
 				$this->session->set_flashdata("message_footer","yes");
 				$this->session->set_flashdata("full_message",$message);
 				$this->Admin_Model->Add_Activity_log($message_db);
@@ -263,28 +300,34 @@ class Manage_slider extends CI_Controller {
 					//redirect(base_url()."admin/$page_controllers/view");
 				}
 			}
-		}		
+		}		
+
 		$query = $this->db->query("select * from $tbl where id='$id' order by id desc");
-		$data["result"] = $query->result();
+		$data["result"] = $query->result();
+
 		$this->load->view("admin/header_footer/header",$data);
 		$this->load->view("admin/$Page_view/edit",$data);
 		$this->load->view("admin/header_footer/footer",$data);
-	}
+	}
+
 	public function delete_rec()
 	{
 		$id = $_POST["id"];
 		$Page_title = $this->Page_title;
-		$Page_tbl = $this->Page_tbl;	
+		$Page_tbl = $this->Page_tbl;	
+
 		$query = $this->db->query("select * from $Page_tbl where id='$id'");
 		$row1 = $query->row();
-		$name = ucfirst($row1->name);	
+		$name = ucfirst($row1->name);	
+
 		$result = $this->db->query("delete from $Page_tbl where id='$id'");
 		if($result)
 		{
 			$message = "$name Delete Successfully.";
 		}
 		else
-		{			$message = "$name Not Delete.";
+		{
+			$message = "$name Not Delete.";
 		}
 		$message = $Page_title." - ".$message;
 		$this->Admin_Model->Add_Activity_log($message);

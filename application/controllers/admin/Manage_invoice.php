@@ -19,33 +19,42 @@ class Manage_invoice extends CI_Controller {
 		/******************session***********************/
 		$user_id = $this->session->userdata("user_id");
 		$user_type = $this->session->userdata("user_type");
-		/******************session***********************/
+		/******************session***********************/
+
 		$_SESSION["latitude"] = 
-		$_SESSION["longitude"] = "";	
+		$_SESSION["longitude"] = "";	
+
 		$Page_title = $this->Page_title;
 		$Page_name 	= $this->Page_name;
 		$Page_view 	= $this->Page_view;
 		$Page_menu 	= $this->Page_menu;
 		$Page_tbl 	= $this->Page_tbl;
-		$page_controllers 	= $this->page_controllers;	
-		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);	
+		$page_controllers 	= $this->page_controllers;	
+
+		$this->Admin_Model->permissions_check_or_set($Page_title,$Page_name,$user_type);	
+
 		$data['title1'] = $Page_title." || View";
 		$data['title2'] = "View";
 		$data['Page_name'] = $Page_name;
-		$data['Page_menu'] = $Page_menu;	
+		$data['Page_menu'] = $Page_menu;	
+
 		$this->breadcrumbs->push("Admin","admin/");
 		$this->breadcrumbs->push("$Page_title","admin/$page_controllers/");
-		$this->breadcrumbs->push("View","admin/$page_controllers/view");		
-		$tbl = $Page_tbl;	
+		$this->breadcrumbs->push("View","admin/$page_controllers/view");		
+
+		$tbl = $Page_tbl;	
+
 		$data['url_path'] = base_url()."uploads/$page_controllers/photo/";
-		$upload_path = "./uploads/$page_controllers/photo/";
+		$upload_path = "./uploads/$page_controllers/photo/";
+
 		$vdt = date("Y-m-d");
 		if($_POST["submit"])
 		{
 			$vdt = $_POST["vdt"];
 			$vdt 	= date("Y-m-d",strtotime($vdt));
 		}
-		$data["result"] = $this->Admin_Model->Manage_invoice_fun($vdt);	
+		$data["result"] = $this->Admin_Model->Manage_invoice_fun($vdt);	
+
 		$this->load->view("admin/header_footer/header",$data);
 		$this->load->view("admin/$Page_view/view",$data);
 		$this->load->view("admin/header_footer/footer",$data);
@@ -124,7 +133,7 @@ class Manage_invoice extends CI_Controller {
 			$filename 	= $row->filename;
 			$status 	= $row->status;
 			$chemist_id = $row->chemist_id;
-			$selesman_id = $row->selesman_id;
+			$salesman_id = $row->salesman_id;
 			$temp_rec 	= $row->temp_rec;
 			$gstvno 	= $row->gstvno;
 			$odt 		= $row->odt;
@@ -144,7 +153,7 @@ class Manage_invoice extends CI_Controller {
 			'filename'=>$filename,
 			'status'=>$status,
 			'chemist_id'=>$chemist_id,
-			'selesman_id'=>$selesman_id,
+			'salesman_id'=>$salesman_id,
 			'temp_rec'=>$temp_rec,
 			'gstvno'=>$gstvno,
 			'odt'=>$odt,

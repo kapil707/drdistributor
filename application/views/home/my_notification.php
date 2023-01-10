@@ -15,7 +15,7 @@
 }
 </style>
 <script>
-$(".headertitle").html("Notification");
+$(".headertitle").html("<?= $main_page_title ?>");
 function goBack() {
 	window.location.href = "<?= base_url();?>home";
 }
@@ -27,69 +27,91 @@ function goBack() {
 				<div class="col-sm-12 col-12 load_page">
 					
 				</div>
-				<div class="col-sm-12 load_page_loading" style="margin-top:10px;">
-				
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="load_page_loading" style="position: fixed;top: 300px;z-index: 100;margin-left:-90px"></span>
 				</div>
 				<div class="col-sm-12" style="margin-top:10px;">
-					<button onclick="call_page_by_last_id()" class="load_more btn btn-success btn-block site_main_btn31">Load More</button>
+					<button onclick="load_more()" class="load_more"></button>
 				</div>
 			</div>
 		</div>
 	</div>     
 </div>
-<input type="hidden" class="lastid1">
+<input type="hidden" class="get_record" value="0">
 <script>
-$(document).ready(function(){
-	call_page("kapil");
+$(window).scroll(function(){
+	var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+	if (scrollBottom<100){
+		//alert(parseInt($(window).scrollTop()))
+		$(".load_more").click()
+	}
 });
-function call_page_by_last_id()
+$(document).ready(function(){
+	get_record=$(".get_record").val();
+	call_page(get_record)
+});
+function load_more()
 {
-	lastid1=$(".lastid1").val();
-	call_page(lastid1)
+	get_record=$(".get_record").val();
+	call_page(get_record)
 }
-function call_page(lastid1)
+var query_work = 0;
+var no_record_found = 0;
+function call_page(get_record)
 {
-	new_i = 0;
-	user_type 		= "<?php echo $_SESSION['user_type']; ?>";
-	user_altercode 	= "<?php echo $_SESSION['user_altercode']; ?>";
-	$(".load_more").hide();
-	$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>');
-	$.ajax({
-		type       : "POST",
-		data       :  { lastid1:lastid1,user_type:user_type,user_altercode:user_altercode} ,
-		url        : "<?php echo base_url(); ?>Chemist_json/my_notification_api",
-		cache	   : false,
-		error: function(){
-			$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
-		},
-		success    : function(data){
-			if(data.items=="")
-			{
-				$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
-			}
-			else
-			{
+	if(query_work=="0")
+	{
+		query_work = 1;
+		$(".load_more").hide();
+		$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>');
+		$.ajax({
+			type       : "POST",
+			data       :  { get_record:get_record} ,
+			url        : "<?php echo base_url(); ?>Chemist_json/my_notification_api",
+			cache	   : false,
+			error: function(){
 				$(".load_page_loading").html("");
-			}
-			$.each(data.items, function(i,item){	
-				if (item){								
-					title 	= atob(item.title);
-					message = atob(item.message);
-					message = message.substring(0,100);
-					image  	= (item.image);
-
-					image_ = '<img src="'+image+'" style="width: 100%;cursor: pointer;" class="rounded account_page_header_image">';
-					
-					$(".load_page").append('<li class="list_item_radius"><a href="<?= base_url(); ?>home/my_notification_view/'+item.url+'"><div class="row"><div class="col-sm-1 col-3">'+image_+'</div><div class="col-sm-11 col-9 text-left"><div class="text-capitalize cart_title">'+title+'</div><div class="cart_date_time">'+item.date_time+'</div><div class="text_cut_or_dot text-left notifiction_message">'+message+'</div></div></div></a></div>');
-					$(".lastid1").val(item.lastid1);
-					if(item.css!="")
+				$(".load_page").html('<h1><img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/something_went_wrong.png" width="100%"></h1>');
+			},
+			success    : function(data){
+				if(data.items=="")
+				{
+					if(no_record_found=="0")
 					{
-						$(".load_more").show();
+						$(".load_page_loading").html("");
+						$(".load_page").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
+					}
+					else
+					{
+						$(".load_page_loading").html("");
+						$(".load_page").html("");
 					}
 				}
-			});
-		},
-		timeout: 10000
-	});
+				else
+				{
+					$(".load_page_loading").html("");
+				}
+				$.each(data.items, function(i,item){	
+					if (item){								
+						item_id 			= item.item_id;
+						item_title 			= item.item_title;
+						item_message 		= item.item_message;
+						item_date_time 		= item.item_date_time;
+						item_image 			= item.item_image;
+						
+						$(".load_page").append('<div class="main_theme_li_bg"><a href="<?php echo base_url() ?>home/my_notification_details/'+item_id+'"><div class="medicine_my_page_div1"><img src="'+item_image+'" alt="" title="" onerror=this.src="<?= base_url(); ?>/uploads/default_img.jpg" class="medicine_cart_item_image"></div><div class="medicine_my_page_div2 text-left"><div class="medicine_cart_item_name">'+item_title+'</div><div class="medicine_cart_item_price">'+item_message+'</div><div class="medicine_cart_item_datetime">'+item_date_time+'</div></div></a></div>');
+
+						query_work = 0;
+						no_record_found = 1;
+						$(".get_record").val(item.get_record);
+						$(".load_more").show();
+					}
+				});
+			},
+			timeout: 10000
+		});
+	}
 }
 </script>

@@ -23,69 +23,20 @@
                         </span>
                     </div>
                 </div>
-				
-				<div class="col-sm-6">
-                    <div class="col-sm-4 text-right">
-                        <label class="control-label" for="form-field-1">
-                            Image
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="file" class="form-control" id="form-field-1" placeholder="Image" name="image" />
-                    </div>
-                    <div class="help-inline col-sm-12 has-error">
-                        <span class="help-block reset middle">  
-                            <?= form_error('image'); ?>
-                        </span>
-                    </div>
-              	</div>
-			</div>
-            <div class="form-group">
-                <div class="col-sm-6">
-                    <div class="col-sm-4 text-right">
-                        <label class="control-label" for="form-field-1">
-                            Image2
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="file" class="form-control" id="form-field-1" placeholder="Image2" name="image2" />
-                    </div>
-                    <div class="help-inline col-sm-12 has-error">
-                        <span class="help-block reset middle">  
-                            <?= form_error('image2'); ?>
-                        </span>
-                    </div>
-              	</div>
-                <div class="col-sm-6">
-                    <div class="col-sm-4 text-right">
-                        <label class="control-label" for="form-field-1">
-                            Image3
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="file" class="form-control" id="form-field-1" placeholder="Image3" name="image3" />
-                    </div>
-                    <div class="help-inline col-sm-12 has-error">
-                        <span class="help-block reset middle">  
-                            <?= form_error('imag3'); ?>
-                        </span>
-                    </div>
-              	</div>
             </div>
-
             <div class="form-group">
                 <div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
-                            Image4
+                        Title
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="file" class="form-control" id="form-field-1" placeholder="Image4" name="image4" />
+                        <textarea type="text" class="form-control" id="form-field-1" placeholder="Title" name="title" value=""></textarea>
                     </div>
                     <div class="help-inline col-sm-12 has-error">
                         <span class="help-block reset middle">  
-                            <?= form_error('image4'); ?>
+                            <?= form_error('title'); ?>
                         </span>
                     </div>
               	</div>
@@ -101,6 +52,71 @@
                     <div class="help-inline col-sm-12 has-error">
                         <span class="help-block reset middle">  
                             <?= form_error('description'); ?>
+                        </span>
+                    </div>
+              	</div>
+            </div>
+
+            <div class="form-group">
+				<div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Image
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="file" class="form-control" id="form-field-1" placeholder="Image" name="image" />
+                    </div>
+                    <div class="help-inline col-sm-12 has-error">
+                        <span class="help-block reset middle">  
+                            <?= form_error('image'); ?>
+                        </span>
+                    </div>
+              	</div>
+                <div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Image2
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="file" class="form-control" id="form-field-1" placeholder="Image2" name="image2" />
+                    </div>
+                    <div class="help-inline col-sm-12 has-error">
+                        <span class="help-block reset middle">  
+                            <?= form_error('image2'); ?>
+                        </span>
+                    </div>
+              	</div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Image3
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="file" class="form-control" id="form-field-1" placeholder="Image3" name="image3" />
+                    </div>
+                    <div class="help-inline col-sm-12 has-error">
+                        <span class="help-block reset middle">  
+                            <?= form_error('imag3'); ?>
+                        </span>
+                    </div>
+              	</div>
+                <div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Image4
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="file" class="form-control" id="form-field-1" placeholder="Image4" name="image4" />
+                    </div>
+                    <div class="help-inline col-sm-12 has-error">
+                        <span class="help-block reset middle">  
+                            <?= form_error('image4'); ?>
                         </span>
                     </div>
               	</div>

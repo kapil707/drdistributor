@@ -191,7 +191,9 @@ class Manage_notification extends CI_Controller {
 		
 		$data['user_id'] = $user_id;
 
-		$query = $this->db->query("select * from $tbl where firebase_status=0 order by id desc LIMIT $per_page,100");
+		/*$query = $this->db->query("select * from $tbl where firebase_status=0 order by id desc LIMIT $per_page,100");*/
+
+		$query = $this->db->query("select * from $tbl where firebase_status=0 order by id desc");
   		$data["result"] = $query->result();
 
 		$this->load->view("admin/header_footer/header",$data);
@@ -201,8 +203,8 @@ class Manage_notification extends CI_Controller {
 	
 	public function send_android_notification($title,$message,$chemist_id,$user_type,$funtype,$itemid,$compid,$division,$image)
 	{
-		$time = time();
-		$date = date("Y-m-d",$time);
+		$date = date('Y-m-d');
+		$time = date("H:i",time());
 		
 		/*$result = $this->db->query("select * from tbl_android_device_id where chemist_id='$chemist_id'")->result();
 		foreach($result as $row)
@@ -232,8 +234,8 @@ class Manage_notification extends CI_Controller {
 		'user_type'=>$user_type,
 		'title'=>$title,
 		'message'=>$message,
-		'time'=>$time,
 		'date'=>$date,
+		'time'=>$time,
 		'device_id'=>$device_id,
 		'funtype'=>$funtype,
 		'itemid'=>$itemid,

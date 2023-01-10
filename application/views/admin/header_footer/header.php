@@ -1,90 +1,85 @@
 <?php $this->Admin_Model->check_login1(); ?>
 <?php include "head.php" ?>
-	<!-- Google Fonts
-		============================================ -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
-    <!-- Bootstrap CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/bootstrap.min.css">
-    <!-- Bootstrap CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/font-awesome.min.css">
-    <!-- owl.carousel CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/owl.carousel.css">
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/owl.theme.css">
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/owl.transitions.css">
-    <!-- meanmenu CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/meanmenu/meanmenu.min.css">
-    <!-- animate CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/animate.css">
-    <!-- normalize CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/normalize.css">
-    <!-- mCustomScrollbar CSS
-		============================================ -->
-    <link rel="stylesheet" href="css/scrollbar/jquery.mCustomScrollbar.min.css">
-    <!-- jvectormap CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/jvectormap/jquery-jvectormap-2.0.3.css">
-    <!-- notika icon CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/notika-custom-icon.css">
-    <!-- wave CSS
-		============================================ -->		
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/wave/waves.min.css">
-	<!-- Data Table JS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/jquery.dataTables.min.css">
-    <!-- main CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/main.css">
-    <!-- style CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/style.css">
-    <!-- responsive CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?= base_url()?>/newcss/css/responsive.css">
-    <!-- modernizr JS
-		============================================ -->
-    <script src="<?= base_url()?>/newcss/js/vendor/modernizr-2.8.3.min.js"></script>
+	<!-- bootstrap & fontawesome -->
+	<link href="<?= base_url()?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!-- Toastr style -->
+    <link href="<?= base_url()?>/assets/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/select2/select2.min.css" rel="stylesheet">
+    <!-- Gritter -->
+    <link href="<?= base_url()?>/assets/js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/dataTables/datatables.min.css" rel="stylesheet">
+	<link href="<?= base_url()?>/assets/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/animate.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="<?= base_url()?>/assets/css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	</head>
 	<body>
-	 <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-	<!-- Start Header Top Area -->
-    <div class="header-top-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <div class="logo-area">
-                        <a href="<?= base_url()?>admin/dashboard"><img src="<?= base_url()?>/uploads/manage_website/photo/<?= $this->Scheme_Model->get_website_data("logo") ;?>" alt="" width="40px" /></a>
-						<?= $this->Scheme_Model->get_website_data("title") ;?>
+	<body>
+    	<div id="wrapper">
+			<?php include 'menu.php'; ?>
+			<div id="page-wrapper" class="gray-bg dashbard-1">
+                <div class="row border-bottom">
+                    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                        <div class="col-lg-6">
+                        	<h3 class="pull-right" style="margin-top:20px;">
+                                Last Login Time : <?php
+                                /*$last_login_time = $this->session->userdata('last_login_time');
+                                if($last_login_time!=""){
+                                $display_time_H = date("H",$last_login_time);
+                                $display_time_i = date("i",$last_login_time);
+                                echo $time= date("d-M-Y",$last_login_time)." at ".$this->Scheme_Model->time_conveter($display_time_H,$display_time_i);
+							                  }*/
+                                ?>
+                            </h3>
+                        </div>
+                        </div>
+                        <ul class="nav navbar-top-links navbar-right">
+                        	
+                            <li style="font-size:20px;">
+                                <span class="m-r-sm text-muted welcome-message">
+								Welcome to Admin+ </span>
+                            </li>
+                            
+                            <li>
+                                <a href="<?= base_url()?>admin/logout">
+                                    <i class="fa fa-sign-out fa-2x" style="color:#F00"></i>
+                                    <span style="font-size:20px;">Log out</span>
+                                </a>
+                            </li>
+                        </ul>
+            
+                    </nav>
+                </div>
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-lg-12">
+                    	<div class="col-lg-12">
+                        	<h2><?= $title1 ?></h2>
+                      	</div>
+                        <div class="col-lg-12">
+                        	<div class="col-lg-4">
+                                <ol class="breadcrumb">
+                                    <?php echo $this->breadcrumbs->show(); ?>
+                                </ol>
+                         	</div>
+                            <div class="col-lg-8">
+                            	<marquee style="color:#08daaf">
+								
+								</marquee>
+                            </div>
+                        </div>
                     </div>
                 </div>
-				<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-						
-						<input type="text" class="select_medicine SearchMedicine_search_box form-control" placeholder="<?= $msg_show?>" tabindex="1">
-				</div>
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 text-right m-2">
-                  <div class="logo-area">
-                  <a href="<?= base_url()?>admin/logout" style="color:black">Logout</a>
-                  </div>
-                </div>
-            </div>
-        </div>
-    </div>
-	<!-- End Header Top Area -->
-	<?php include 'menu.php'; ?>
-
-
-	<div class="colr-area">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="color-wrap">
-						<div class="color-hd">
+                <div class="wrapper wrapper-content animated fadeInRight">
+                	<div class="row">
+                    	<div class="col-lg-12">
+                    		<div class="ibox float-e-margins">
+                    			<div class="ibox-content">

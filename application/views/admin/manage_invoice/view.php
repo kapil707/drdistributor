@@ -1,10 +1,12 @@
 <div class="row">
-    <div class="col-xs-12" style="margin-bottom:5px;">		<?php /* ?>
+    <div class="col-xs-12" style="margin-bottom:5px;">
+		<?php /* ?>
     	<a href="add">
             <button type="submit" class="btn btn-info">
                 Add
             </button>
-        </a>		<?php */ ?>
+        </a>
+		<?php */ ?>
 		<form method="post">
 			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 				<div class="form-group nk-datapk-ctm form-elet-mg" id="data_1">
@@ -22,7 +24,7 @@
    	</div>
     <div class="col-xs-12">
          <div class="table-responsive">
-			<table id="data-table-basic" class="table table-striped">
+		 	<table class="table table-striped table-bordered table-hover dataTables-example">
                 <thead>
                     <tr>
                     	<th>
@@ -76,7 +78,8 @@
 							<div class="btn-group">
 								<a href="http://drdistributor.com/invoice/<?= $row2->altercode;?>/<?= $row->gstvno;?>" class="btn-white btn btn-xs" target="_blank">View</a>
 							</div>
-                        </td>					</tr>
+                        </td>
+					</tr>
                     <?php
 						$i++;
                     }
@@ -107,7 +110,8 @@
                 </tfoot>
             </table>
         </div>
-    </div></div>
+    </div>
+</div>
 <script>
 function create_copy_order(id)
 {

@@ -15,7 +15,7 @@
 }
 </style>
 <script>
-$(".headertitle").html("My invoices");
+$(".headertitle").html("<?= $main_page_title ?>");
 function goBack() {
 	window.location.href = "<?= base_url();?>home";
 }
@@ -23,63 +23,117 @@ function goBack() {
 <div class="container maincontainercss">
 	<div class="row">
 		<div class="col-sm-12 col-12">
-			<span class="load_page"></span>
-			<div class="row">			
-				<div class="col-sm-12 load_page_loading" style="margin-top:10px;">
-				
+			<div class="row">
+				<div class="col-sm-12 col-12 load_page">
+					
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="load_page_loading" style="position: fixed;top: 300px;z-index: 100;margin-left:-90px"></span>
 				</div>
 				<div class="col-sm-12" style="margin-top:10px;">
-					<button onclick="call_page_by_last_id()" class="load_more btn btn-success btn-block site_main_btn31">Load More</button>
+					<button onclick="load_more()" class="load_more"></button>
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>     
 </div>
-<input type="hidden" class="lastid1">
+<input type="hidden" class="get_record" value="0">
 <script>
-$(document).ready(function(){
-	call_page("kapil");
+$(window).scroll(function(){
+	var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+	if (scrollBottom<100){
+		//alert(parseInt($(window).scrollTop()))
+		$(".load_more").click()
+	}
 });
-function call_page_by_last_id()
+$(document).ready(function(){
+	get_record=$(".get_record").val();
+	call_page(get_record)
+});
+function load_more()
 {
-	lastid1=$(".lastid1").val();
-	call_page(lastid1)
+	get_record=$(".get_record").val();
+	call_page(get_record)
 }
-function call_page(lastid1)
+var query_work = 0;
+var no_record_found = 0;
+function call_page(get_record)
 {
-	user_type 		= "<?php echo $_SESSION['user_type']; ?>";
-	user_altercode 	= "<?php echo $_SESSION['user_altercode']; ?>";
-	$(".load_more").hide();
-	$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>');
-	$.ajax({
-		type       : "POST",
-		data       :  { lastid1:lastid1,user_type:user_type,user_altercode:user_altercode} ,
-		url        : "<?php echo base_url(); ?>Chemist_json/my_invoices_api",
-		cache	   : false,
-		error: function(){
-			$(".load_page_loading").html('<h1><img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/something_went_wrong.png" width="100%"></h1>');
-		},
-		success    : function(data){
-			if(data.items=="")
-			{
-				$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
-			}
-			else
-			{
+	if(query_work=="0")
+	{
+		query_work = 1;	
+		$(".load_more").hide();
+		$(".load_page_loading").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>');
+		$.ajax({
+			type       : "POST",
+			data       :  { get_record:get_record} ,
+			url        : "<?php echo base_url(); ?>Chemist_json/my_invoice_api",
+			cache	   : false,
+			error: function(){
 				$(".load_page_loading").html("");
-			}
-			$.each(data.items, function(i,item){	
-				if (item){
-					$(".load_page").append('<li class="list_item_radius"><a href="<?= base_url(); ?>home/my_invoice_view/'+item.url+'"><div class="row"><div class="col-sm-6 col-6 search_page_title">'+item.gstvno+'</div><div class="col-sm-6 col-6 text-right all_page_date_time">'+item.date_time+'</div><div class="col-sm-6 col-6 all_page_total">Total: '+item.total+'</div><div class="col-sm-6 col-6 text-right search_page_stock">'+item.status+'</div></div></a></li>');
-					$(".lastid1").val(item.id);
-					if(item.css!="")
+				$(".load_page").html('<h1><img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/something_went_wrong.png" width="100%"></h1>');
+			},
+			success    : function(data){
+				if(data.items=="")
+				{
+					if(no_record_found=="0")
 					{
-						$(".load_more").show();
+						$(".load_page_loading").html("");
+						$(".load_page").html('<h1><center><img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/no_record_found.png" width="100%"></center></h1>');
+					}
+					else
+					{
+						$(".load_page_loading").html("");
+						$(".load_page").html("");
 					}
 				}
-			});	
-		},
-		timeout: 10000
-	});
+				else
+				{
+					$(".load_page_loading").html("");
+				}
+				$.each(data.items, function(i,item){	
+					if (item){
+						if(item.order_id=="")
+						{
+						}
+						item_id	 		= item.item_id;
+						item_title 		= item.item_title;
+						item_total 		= item.item_message;
+						item_date_time 	= item.item_date_time;
+						out_for_delivery= item.out_for_delivery;
+						delete_status	= item.delete_status;
+						download_url	= item.download_url;
+
+						download_url	= "onclick=download_invoice('"+download_url+"')";
+
+						if(out_for_delivery!="")
+						{
+							out_for_delivery = ' | Out For Delivery Date Time : ' + out_for_delivery;
+						}
+
+						delete_status_div = "";
+						if(delete_status==1)
+						{
+							delete_status_div = '<div class="medicine_cart_item_datetime">Some items have been deleted / modified in this order</div>';
+						}
+						
+						$(".load_page").append('<div class="main_theme_li_bg"><div class="medicine_my_page_div1"><a href="<?php echo base_url() ?>home/my_invoice_details/'+item_id+'"><img src="'+item.user_image+'" alt="" title="" onerror=this.src="<?= base_url(); ?>/uploads/default_img.jpg" class="medicine_cart_item_image"></a></div><div class="medicine_my_page_div2 text-left"><div class=""><a href="<?php echo base_url() ?>home/my_invoice_details/'+item_id+'"><span class="medicine_cart_item_name">'+item_title+'</span></a><span style="float: right;color: red;" '+download_url+'>Download Invoice</span></div><a href="<?php echo base_url() ?>home/my_invoice_details/'+item_id+'"><div class="medicine_cart_item_price">Total : <i class="fa fa-inr" aria-hidden="true"></i> '+item_total+'/-</div><div class="medicine_cart_item_datetime">Invoice Date : '+item_date_time+''+out_for_delivery+'</div>'+delete_status_div+'</div></a></div>');
+						
+						query_work = 0;
+						no_record_found = 1;
+						$(".get_record").val(item.get_record);
+						$(".load_more").show();
+					}
+				});	
+			},
+			timeout: 10000
+		});
+	}
+}
+function download_invoice(url){
+	window.open(url, '_blank');
+	window.close();
 }
 </script>

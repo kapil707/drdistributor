@@ -2,13 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+	
+	<meta name="theme-color" content="#f7625b">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->Scheme_Model->get_website_data("title") ;?> || <?= $main_page_title;?></title>
 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="<?= base_url(); ?>assets/website/css/font-awesome.min.css"> 
+	<link href="<?= base_url(); ?>assets/website/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="<?= base_url(); ?>assets/website/css/style<?= constant('site_v') ?>.css" rel="stylesheet" type="text/css"/>
+	
+	
+
     <link rel="stylesheet" href="<?= base_url(); ?>assets/newgreen/css/min.css"/>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/newgreen/css/zwicon/zwicon.min.css"/>
-    
 
     <!-- font awesome cdn link  -->
     <link rel="stylesheet" href="<?= base_url(); ?>assets/newgreen/css/all.css">
@@ -55,8 +67,9 @@ if(!empty($_SESSION['user_type'])){
         <form action="" class="search-form">
             <label for="search-box" class="fas fa-search"></label>
             <input type="search" name="" placeholder="search here..." id="search-box" class="SearchMedicine_search_box">
-        </form>
-        <span class="search_medicine_result"></span>
+        
+			<span class="search_medicine_result"></span>
+		</form>
 
         <div class="icons">
             <div id="search-btn" class="fas fa-search"></div>

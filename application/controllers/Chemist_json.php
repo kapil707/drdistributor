@@ -1,8 +1,26 @@
 <?php
 header('Content-Type: application/json');
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Chemist_json extends CI_Controller {	
-	
+class Chemist_json extends CI_Controller {		
+	public function theme_set()
+	{
+		$items = "";
+		$theme_set_css 	= $_POST["theme_set_css"];
+		$theme_type = $theme_set_css;
+
+		setcookie("theme_type", $theme_type, time() + (86400 * 30), "/");
+
+		$status = "ok";
+$items.=<<<EOD
+{"status":"{$status}"},
+EOD;
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
 	public function create_new_api()
 	{		
 		//error_reporting(0);
@@ -15,64 +33,6 @@ class Chemist_json extends CI_Controller {
 		}
 ?>
 {"items":[<?= $items;?>]}<?php
-	}
-	public function login_2(){
-		//error_reporting(0);
-		
-		$user_name1 = "okok";
-		$password1 = "sadfsaf";
-		$data = '{"user_name1":"'.$user_name1.'","user_password":"'.$password1.'"}';
-					
-		$parmiter = '{"items":['.$data.']}';
-		
-		$curl = curl_init();
-		curl_setopt_array($curl, array(
-		CURLOPT_URL =>"https://drdistributor.in/main/get_data",
-		CURLOPT_RETURNTRANSFER=>true,
-		CURLOPT_ENCODING =>"",
-		CURLOPT_MAXREDIRS =>10,
-		CURLOPT_TIMEOUT => 30,
-		CURLOPT_HTTP_VERSION =>CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => "POST",
-		CURLOPT_POSTFIELDS =>$parmiter,));
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-		curl_close($curl);
-		print_r($response);
-		$someArray = json_decode($response,true);
-		print_r($someArray);
-	}
-	public function login_3(){
-		//error_reporting(0);
-		header("Content-type: application/json; charset=utf-8");
-		$json_url = "http://49.205.182.192:7272/hello.php";
-		$ch = curl_init($json_url);
-		$options = array(
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_HTTPHEADER => array('Content-type: application/json'),
-		);
-		curl_setopt_array($ch,$options);
-		$result = curl_exec($ch);
-		print_r($result);
-	}
-	public function login_1(){
-		header("Content-type: application/json; charset=utf-8");
-		$user_name1 = "pathak.hitesh@gmail.com";
-		$password1	= "123456";
-		
-		$data = '{"user_name1":"'.$user_name1.'","user_password":"'.$password1.'"}';
-					
-		$parmiter = '{"items":['.$data.']}';
-		echo $json_url = constant('api_url')."login";
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $json_url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
-		$output = curl_exec($ch);
-
-		curl_close($ch);
-
-		echo $output;
-		
 	}
 	
 	// done or check 21-02-16
@@ -99,6 +59,25 @@ class Chemist_json extends CI_Controller {
 		if($someArray[$user_return]=="1")
 		{
 			$ret = $this->Chemist_Model->insert_value_on_session($someArray[$user_session],$someArray[$user_fname],$someArray[$user_code],$someArray[$user_altercode],$someArray[$user_type],$someArray[$user_password],$someArray[$user_division],$someArray[$user_compcode],$someArray[$user_image]);
+
+			$user_type 		= $someArray[$user_type];
+			$user_altercode = $someArray[$user_altercode];
+			$user_password	= $someArray[$user_password];	
+			
+			setcookie("chemist_id", "", time() + (86400 * 30), "/");
+
+			$chemist_id 	= $_COOKIE["chemist_id"];
+
+			$salesman_id = "";
+			if($user_type=="sales")
+			{
+				$salesman_id 	= $user_altercode;
+				$user_altercode = $chemist_id;
+			}
+			
+			$user_cart_total = $this->Chemist_Model->count_temp_rec($user_type,$user_altercode,$salesman_id);
+
+			setcookie("user_cart_total", $user_cart_total, time() + (86400 * 30), "/");
 		}
 		else{
 			$ret=1;
@@ -109,12 +88,575 @@ class Chemist_json extends CI_Controller {
 {"items":[<?= $items;?>]}<?php
 		}
 	}
+
+	public function chemist_search_api()
+	{
+		//error_reporting(0);
+		$items = "";
+		$user_type 		= $_COOKIE['user_type'];
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$keyword 		= $_REQUEST["keyword"];
+		if($keyword!="")
+		{
+			$items = $this->Chemist_Model->chemist_search_api($user_type,$user_altercode,$keyword);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
 	
+	public function medicine_search_api()
+	{
+		$items = "";
+		$keyword	= $_REQUEST['keyword'];
+		if(!empty($keyword))
+		{
+			$items = $this->Chemist_Model->medicine_search_api($keyword);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function search_view_all_api()
+	{
+		$items = "";
+		$keyword		= $_REQUEST['keyword'];
+		$get_record		= $_POST['get_record'];
+		if($keyword!="" && $get_record!="")
+		{			
+			$items = $this->Chemist_Model->medicine_search_api($keyword,"all",$get_record);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function medicine_details_api()
+	{
+		$item_code		= $_REQUEST["item_code"];
+		
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+
+		if($user_type!="" && $user_altercode!=""){
+			$items = $this->Chemist_Model->medicine_details_api($user_type,$user_altercode,$salesman_id,$item_code);
+		}
+		
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function medicine_add_to_cart_api()
+	{
+		$item_code				= $_REQUEST["item_code"];
+		$item_order_quantity	= $_REQUEST["item_order_quantity"];
+
+		
+		$order_type 	= "pc_mobile";
+		$mobilenumber 	= "";
+		$modalnumber 	= "PC / Laptop";
+		$device_id 		= "";
+		
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+
+		if($user_type!="" && $user_altercode!=""){
+			$excel_number = "";		
+			$status = $this->Chemist_Model->medicine_add_to_cart_api($user_type,$user_altercode,$salesman_id,$order_type,$item_code,$item_order_quantity,$mobilenumber,$modalnumber,$device_id,$excel_number);
+		}
+
+$items= <<<EOD
+{"status":"{$status}"},
+EOD;
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+	public function delete_all_medicine_api(){
+			
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		if($user_type!="" && $user_altercode!=""){
+			$status = $this->Chemist_Model->delete_all_medicine_api($user_type,$user_altercode,$salesman_id);
+		}
+
+$items= <<<EOD
+{"status":"{$status}"},
+EOD;
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function delete_medicine_api(){
+
+		$item_code 		= $_POST['item_code'];
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		if($user_type!="" && $user_altercode!=""){
+			$status = $this->Chemist_Model->delete_medicine_api($user_type,$user_altercode,$salesman_id,$item_code);
+		}
+
+$items= <<<EOD
+{"status":"{$status}"},
+EOD;
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+	
+	public function salesman_my_cart_api(){
+			
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode	= $_COOKIE["user_altercode"];
+	
+		$items = "";
+		if($user_type!="" && $user_altercode!="")
+		{
+			$items = $this->Order_Model->salesman_my_cart_api($user_type,$user_altercode);
+		}
+
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function my_cart_api(){
+			
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales"){
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+
+		$items = "";
+		$other_items = "";
+		if($user_altercode!="")
+		{
+			$val = $this->Order_Model->my_cart_api($user_type,$user_altercode,$user_password,$salesman_id,"all");
+			$items = $val[0];
+			$other_items = $val[1];
+			$user_cart_total = $val[2];
+
+			setcookie("user_cart_total", $user_cart_total, time() + (86400 * 30), "/");
+		}
+
+?>
+{"items":[<?= $items;?>],"other_items":[<?= $other_items;?>]}<?php
+	}
+	
+	public function my_cart_api2(){
+			
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+
+		$items = "";
+		$other_items = "";
+		if($user_altercode!="")
+		{
+			$val = $this->Order_Model->my_cart_api($user_type,$user_altercode,$user_password,$salesman_id,"pc_mobile");
+			$items = $val[0];
+			$other_items = $val[1];
+			$user_cart_total = $val[2];
+
+			setcookie("user_cart_total", $user_cart_total, time() + (86400 * 30), "/");
+		}
+
+?>
+{"items":[<?= $items;?>],"other_items":[<?= $other_items;?>]}<?php
+	}
+	
+
+
+	
+	public function check_login_function(){
+		//error_reporting(0);
+		$user_type 			= $_COOKIE["user_type"];
+		$user_altercode		= $_COOKIE["user_altercode"];
+		
+		if($user_type=="chemist" && !empty($user_altercode))
+		{
+			$row = $this->db->query("select id from drd_login_time where user_altercode='$user_altercode' and user_type='$user_type'")->row();
+			if(!empty($row->id))
+			{
+				$download_invoice_url = "";
+				$row1 = $this->db->query("select gstvno from tbl_invoice where altercode='$user_altercode' and download_status='0'")->row();
+				if(!empty($row1->gstvno))
+				{
+					$gstvno = $row1->gstvno;
+					$this->db->query("update tbl_invoice set download_status='1' where gstvno='$gstvno' and download_status='0'");
+					$download_invoice_url = base_url() . "user/download_invoice1/" . $user_altercode . "/" . $gstvno;
+				}
+?>
+{"items":[{"count":"","status":"0","notiid":"","notititle":"","notibody":"","notitime":"","download_invoice_url":"<?= $download_invoice_url ?>"}]}
+<?php
+			}
+		}
+	}
+	
+	public function my_order_api(){
+		$get_record	 	= $_REQUEST["get_record"];
+
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		if($user_type!="" && $user_altercode!="" && $get_record!="")
+		{
+			$items = $this->Chemist_Model->my_order_api($user_type,$user_altercode,$salesman_id,$get_record);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+	
+	// done or check 21-02-16
+	public function my_order_details_api(){
+
+		$item_id		= $_POST['item_id'];
+
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		if($user_type!="" && $user_altercode!="" && $item_id!="")
+		{
+			$items = $this->Chemist_Model->my_order_details_api($user_type,$user_altercode,$salesman_id,$item_id);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function my_invoice_api(){
+		$get_record	 	= $_REQUEST["get_record"];
+
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		if($user_type!="" && $user_altercode!="" && $get_record!="")
+		{
+
+			$items = $this->Chemist_Model->my_invoice_api($user_type,$user_altercode,$salesman_id,$get_record);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function my_invoice_details_api(){
+		$item_id	 	= $_REQUEST["item_id"];
+
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		$items 			= "";
+		$delete_items	= "";
+		$download_url 	= "";
+		if($user_type!="" && $user_altercode!="" && $item_id!="")
+		{
+			$val = $this->Chemist_Model->my_invoice_details_api($user_type,$user_altercode,$salesman_id,$item_id);
+
+			$items			= $val[0];
+			$delete_items 	= $val[1];
+			$download_url 	= $val[2];
+			$header_title 	= $val[3];
+		}
+?>
+{"items":[<?= $items;?>],"delete_items":[<?= $delete_items;?>],"download_url":[<?= $download_url;?>],"header_title":[<?= $header_title;?>]}<?php
+	}
+	
+	public function my_invoice_details_api2(){
+		$item_id	 	= $_REQUEST["item_id"];
+		$user_altercode = $_REQUEST["user_altercode"];
+
+		$salesman_id 	= "";
+		$user_type 		= "chemist";
+		
+		$items 			= "";
+		$delete_items	= "";
+		$download_url 	= "";
+		if($user_type!="" && $user_altercode!="" && $item_id!="")
+		{
+			$val = $this->Chemist_Model->my_invoice_details_api($user_type,$user_altercode,$salesman_id,$item_id);
+
+			$items			= $val[0];
+			$delete_items 	= $val[1];
+			$download_url 	= $val[2];
+			$header_title 	= $val[3];
+		}
+?>
+{"items":[<?= $items;?>],"delete_items":[<?= $delete_items;?>],"download_url":[<?= $download_url;?>],"header_title":[<?= $header_title;?>]}<?php
+	}
+	
+	// done or check 21-02-16
+	public function my_notification_api(){
+		$get_record	 	= $_REQUEST["get_record"];
+
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		if($user_type!="" && $user_altercode!="" && $get_record!="")
+		{
+			$items = $this->Chemist_Model->my_notification_api($user_type,$user_altercode,$salesman_id,$get_record);
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+	
+	public function my_notification_details_api(){
+		$item_id		= $_REQUEST['item_id'];
+
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		if($user_type!="" && $user_altercode!="" && $item_id!="")
+		{			
+			$items = $this->Chemist_Model->my_notification_details_api($user_type,$user_altercode,$salesman_id,$item_id);
+		}		
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+	
+	public function featured_brand_api(){
+
+		$compcode	= $_POST['compcode'];
+		$division	= $_POST['division'];
+		$get_record	= $_POST['get_record'];
+		
+		if($compcode!="")
+		{
+			$items = $this->Chemist_Model->featured_brand_api($compcode,$division,$get_record);
+?>
+{"items":[<?= $items;?>]}<?php
+		}
+	}
+	
+	public function medicine_category_api(){
+		$item_page_type	= $_POST["item_page_type"];
+		$item_code		= $_POST['item_code'];
+		$item_division	= $_POST['item_division'];
+		$get_record		= $_POST['get_record'];
+		
+		if($item_page_type!="")
+		{
+			if($item_page_type=="medicine_category")
+			{
+				$items = $this->Chemist_Model->medicine_category_api($item_code,$get_record);
+			}
+			if($item_page_type=="featured_brand")
+			{
+				$items = $this->Chemist_Model->featured_brand_api($item_code,$item_division,$get_record);
+			}
+
+			if($item_page_type=="medicine_similar")
+			{
+				$items = $this->Chemist_Model->medicine_similar_api($item_code,$get_record);
+			}
+
+			/******************************************/
+			if($item_page_type=="medicine_category1")
+			{
+				$items = $this->Chemist_Model->new_medicine_this_month_json_new();
+			}
+
+			if($item_page_type=="medicine_category2")
+			{
+				$items = $this->Chemist_Model->hot_selling_today_json_new();
+			}
+
+			if($item_page_type=="medicine_category3")
+			{
+				$items = $this->Chemist_Model->must_buy_medicines_json_new();
+			}
+
+			if($item_page_type=="medicine_category4")
+			{
+				$items = $this->Chemist_Model->frequently_use_medicines_json_new();
+			}
+
+			if($item_page_type=="medicine_category5")
+			{
+				$items = $this->Chemist_Model->stock_now_available();
+			}
+
+			if($item_page_type=="medicine_category6")
+			{
+				$user_type 		= $_COOKIE["user_type"];
+				$user_altercode = $_COOKIE["user_altercode"];
+				$user_password	= $_COOKIE["user_password"];
+
+				$chemist_id 	= $_COOKIE["chemist_id"];
+
+				$salesman_id = "";
+				if($user_type=="sales")
+				{
+					$salesman_id 	= $user_altercode;
+					$user_altercode = $chemist_id;
+				}
+
+				$items = $this->Chemist_Model->user_top_search_items($user_type,$user_altercode,$salesman_id);
+			}
+		}
+?>
+{"items":[<?= $items;?>]}<?php
+	}
+
+	public function medicines_last_order_api(){
+
+		$items = "";
+		
+		$user_type 		= $_COOKIE["user_type"];
+		$user_altercode = $_COOKIE["user_altercode"];
+		$user_password	= $_COOKIE["user_password"];
+
+		$chemist_id 	= $_COOKIE["chemist_id"];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+		
+		/*$result = $this->db->query("select DISTINCT image,item_name,id,i_code,quantity, COUNT(*) as ct FROM tbl_order where chemist_id='$user_altercode' and user_type='chemist' GROUP BY item_name HAVING COUNT(*) > 0 order by ct asc limit 10")->result();*/
+		$result = $this->db->query("select DISTINCT image,item_name,id,i_code,quantity, COUNT(*) as ct FROM tbl_order where chemist_id='$user_altercode' and user_type='chemist' GROUP BY image,item_name,id,i_code,quantity HAVING COUNT(*) > 0 order by ct asc limit 10")->result();
+		foreach($result as $row)
+		{
+			$item_code 		= ($row->i_code);
+			$item_name 		= ucwords(strtolower($row->item_name));
+			$quantity 		= ($row->quantity);
+			$item_image 	= ($row->image);
+			
+$items.= <<<EOD
+{"item_code":"{$item_code}","item_name":"{$item_name}","quantity":"{$quantity}","item_image":"{$item_image}"},
+EOD;
+        }
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+?>
+{"items":[<?= $items;?>]}<?php
+    }
 
 	public function user_account_api(){
 		//error_reporting(0);
-		$user_type 		= $_POST['user_type'];
-		$user_altercode	= $_POST['user_altercode'];
+		$user_type 		= $_REQUEST['user_type'];
+		$user_altercode	= $_REQUEST['user_altercode'];
 		
 		if($user_type!="" && $user_altercode!="")
 		{
@@ -189,14 +731,18 @@ class Chemist_json extends CI_Controller {
 				{
 					$status1 = $this->db->query("update tbl_acm_other set image='$img_name' where code='$user_code'");
 					$status = "Updated Successfully";
-					$_SESSION['user_image'] = constant('img_url_site')."user_profile/$img_name";
+					$user_image = constant('img_url_site')."user_profile/$img_name";
+				
+					setcookie("user_image", $user_image, time() + (86400 * 30), "/");
 				}
 				
 				if($user_type=="sales")
 				{
 					$status1 = $this->db->query("update tbl_users_other set image='$img_name' where customer_code='$user_code'");
 					$status = "Updated Successfully";
-					$_SESSION['user_image'] = constant('img_url_site')."user_profile/$img_name";
+					$user_image = constant('img_url_site')."user_profile/$img_name";
+
+					setcookie("user_image", $user_image, time() + (86400 * 30), "/");
 				}
 			}
 		}
@@ -239,297 +785,6 @@ if ($items != '') {
 		}
 ?>
 {"items":[<?= $items;?>]}<?php
-	}
-	
-	public function check_login_function(){
-		//error_reporting(0);
-		$user_type 			= $_SESSION['user_type'];
-		$user_altercode		= $_SESSION['user_altercode'];
-		
-		/*if($user_altercode!="")
-		{
-			$row = $this->db->query("select id from drd_login_time where user_altercode='$user_altercode' and user_type='$user_type'")->row();
-			if($row->id=="")
-			{
-?>
-{"items":[{"count":"","status":"0","notiid":"","notititle":"","notibody":"","notitime":""}]}
-<?php
-			}
-		}*/
-	}
-	
-	// done or check 21-02-16
-	public function main_function()
-	{
-		//error_reporting(0);
-		/*******************website_menu_json*******************/
-		$top_flash = $this->Chemist_Model->top_flash();
-		$top_flash = "[$top_flash]";
-		
-		/*******************website_menu_json*******************/
-		$top_flash2 = $this->Chemist_Model->top_flash2();
-		$top_flash2 = "[$top_flash2]";
-		
-		
-		/*******************website_menu_json*******************/
-		$items0 = $this->Chemist_Model->website_menu();
-		$items0 = "[$items0]";
-		
-		/*******************featured_brand_json******************/
-		$title1 = "Our Top Brands";
-		$items1 = $this->Chemist_Model->featured_brand_json();
-		$items1 = "[$items1]";
-		
-		/**********************hot_selling_today_json************/
-		$title2 = "Hot Selling Today";
-		$items2 = $this->Chemist_Model->hot_selling_today_json();
-		$items2 = "[$items2]";
-		
-		/**********************must_buy_medicines_json************/
-		$title3 = "Must Buy Medicines";
-		$items3 = $this->Chemist_Model->must_buy_medicines_json();
-		$items3 = "[$items3]";
-
-		/**********************short_medicines_available_now_json******/
-		$title4 = "Short Medicines Available Now";
-		$items4 = "";//$this->Chemist_Model->must_buy_medicines_json();
-		$items4 = "[$items4]";
-
-
-		/**********************new 5 number box************/
-		$title5 = "New Box";
-		$items5 = "";//$this->Chemist_Model->must_buy_medicines_json();
-		$items5 = "[$items5]";
-		/***************************************************/
-$items .= <<<EOD
-{"title1":"{$title1}","title2":"{$title2}","title3":"{$title3}","title4":"{$title4}","title5":"{$title5}","items0":$items0,"items1":$items1,"items2":$items2,"items3":$items3,"items4":$items4,"items5":$items5,"top_flash":$top_flash,"top_flash2":$top_flash2},
-EOD;
-if ($items != '') {
-	$items = substr($items, 0, -1);
-}
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-
-	
-	// done or check 21-02-16
-	public function my_orders_api(){
-		//error_reporting(0);
-		$user_type 		= $_POST['user_type'];
-		$user_altercode	= $_POST['user_altercode'];
-		$lastid1	 	= $_POST["lastid1"];
-		
-		if($user_type!="" && $user_altercode!="")
-		{
-			$items = $this->Chemist_Model->my_orders($user_type,$user_altercode,$lastid1);
-		}
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-	
-	// done or check 21-02-16
-	public function my_orders_view_api(){
-		//error_reporting(0);
-		$user_type 		= $_POST['user_type'];
-		$user_altercode	= $_POST['user_altercode'];
-		$order_id		= $_POST['order_id'];
-		
-		if($user_type!="" && $user_altercode!="" && $order_id!="")
-		{
-			$items = $this->Chemist_Model->my_orders_view($user_type,$user_altercode,$order_id);
-		}
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-	
-	// done or check 21-02-16
-	public function my_notification_api(){
-		
-		//error_reporting(0);
-		$user_type 		= $_POST['user_type'];
-		$user_altercode	= $_POST['user_altercode'];
-		$lastid1	 	= $_POST["lastid1"];
-		
-		if($user_type!="" && $user_altercode!="")
-		{
-			$items = $this->Chemist_Model->my_notification($user_type,$user_altercode,$lastid1);
-		}
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-	
-	public function my_notification_view_api(){
-		//error_reporting(0);
-		/*$user_type 		= $_POST['user_type'];
-		$user_altercode		= $_POST['user_altercode'];*/
-		$notification_id	= $_POST['notification_id'];
-		
-		if($notification_id!="")
-		{
-			$items = $this->Chemist_Model->my_notification_view($notification_id);
-		}		
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-	
-	public function my_invoices_api(){
-		
-		//error_reporting(0);
-		$user_type 		= $_POST['user_type'];
-		$user_altercode	= $_POST['user_altercode'];
-		$lastid1	 	= $_POST["lastid1"];
-		
-		if($user_type!="" && $user_altercode!="")
-		{
-			$items = $this->Chemist_Model->my_invoices($user_type,$user_altercode,$lastid1);
-		}
-?>
-{"items":[<?= $items;?>]}<?php		
-	}
-	
-	public function my_invoices_view_api(){
-		//error_reporting(0);
-		
-		$user_type 		= $_POST['user_type'];
-		$user_altercode	= $_POST['user_altercode'];
-		$lastid1	 	= $_POST["lastid1"];
-		$gstvno			= $_POST['gstvno'];
-		
-		if($user_type!="" && $user_altercode!="" && $gstvno!="")
-		{
-			$items = $this->Chemist_Model->my_invoices_view($user_type,$user_altercode,$gstvno);
-		}
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-	
-	public function hot_deals_api(){
-		//error_reporting(0);
-		$user_type 		= $_SESSION['user_type'];
-		$user_altercode	= $_SESSION['user_altercode'];
-		
-		if($user_type!="" && $user_altercode!="")
-		{
-			$items = $this->Chemist_Model->hot_deals($user_type,$user_altercode,$gstvno);
-		}
-?>
-{"items":[<?= $items;?>]}<?php
-	}
-		
-	public function draft_order_list_sales_api()
-	{
-		//error_reporting(0);	
-		$items = "";	
-		$user_altercode = $_SESSION['user_altercode'];
-		$user_type 		= $_SESSION["user_type"];
-		
-		//$temp_rec = $this->get_temp_rec($chemist_id);
-		if($user_type=="sales")
-		{
-			$selesman_id 	= $user_altercode;
-			$query = $this->db->query("select distinct chemist_id from drd_temp_rec where selesman_id='$selesman_id' and user_type='$user_type' and status='0' order by chemist_id asc")->result();  
-		}
-		
-		$total_price = $total_gst = $full_total = $total_qty = $total_fqty = 0;
-		foreach($query as $row)
-		{	
-			$chemist_id = $row->chemist_id;
-			$where = array('selesman_id'=>$selesman_id,'user_type'=>$user_type,'chemist_id'=>$chemist_id,'status'=>'0');
-			$result = $this->Scheme_Model->select_all_result("drd_temp_rec",$where,'chemist_id','asc');
-			$total = 0;
-			$i = 0;
-			foreach($result as $row1)
-			{	
-				$i++;
-				$total = $total +($row1->quantity * $row1->sale_rate);
-			}
-			
-			$total = number_format($total,2);
-			
-			$where = array('altercode'=>$chemist_id);
-			$row1 = $this->Scheme_Model->select_row("tbl_acm",$where);
-			$user_name  	= $row1->name;			
-			$chemist_id 	= $row->chemist_id;
-			$url 			= ($row->chemist_id);
-			
-			$where= array('code'=>$row1->code);
-			$row1 = $this->Scheme_Model->select_row("tbl_acm_other",$where);
-
-			$user_image = base_url()."img_v".constant('site_v')."/logo.png";
-			if(!empty($row1->image))
-			{
-				$user_image = base_url()."user_profile/".$row1->image;
-			}
-			$order_items = $i;
-			
-$items.= <<<EOD
-{"url":"{$url}","user_name":"{$user_name}","user_image":"{$user_image}","chemist_id":"{$chemist_id}","total":"{$total}","order_items":"{$order_items}"},
-EOD;
-		}
-if ($items != '') {
-	$items = substr($items, 0, -1);
-}        
-?>
-{"items":[<?= $items;?>]}
-		<?php
-	}
-	
-	
-	public function featured_brand_api(){
-		//error_reporting(0);
-		$user_type 		= $_SESSION['user_type'];
-		$user_altercode	= $_SESSION['user_altercode'];
-		$compcode= $_POST['compcode'];
-		$division= $_POST['division'];
-		$orderby= $_POST['orderby'];
-		
-		if(constant('server_type')==0)
-		{
-			$items = $this->Chemist_Model->featured_brand($compcode,$division,$orderby);
-?>
-{"items":[<?= $items;?>]}<?php
-		}
-		else
-		{		
-			$data.= '{"user_type":"'.$user_type.'","user_altercode":"'.$user_altercode.'","compcode":"'.$compcode.'","division":"'.$division.'","orderby":"'.$orderby.'"}';
-			
-			
-			/*if ($data != '') {
-				$data = substr($data, 0, -1);
-			}*/
-			$parmiter = '{"items":['.$data.']}';
-			
-			$curl = curl_init();
-			curl_setopt_array($curl, array(
-			CURLOPT_URL =>constant('api_url')."api_website30/featured_brand_medicine_api",
-			CURLOPT_RETURNTRANSFER=>true,
-			CURLOPT_ENCODING =>"",
-			CURLOPT_MAXREDIRS =>10,
-			CURLOPT_TIMEOUT => 30,
-			CURLOPT_HTTP_VERSION =>CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => "POST",
-			CURLOPT_POSTFIELDS =>$parmiter,));
-			$response = curl_exec($curl);
-			$err = curl_error($curl);
-			curl_close($curl);
-			print_r($response);
-			$someArray = json_decode($response,true);
-			//print_r($someArray);
-			header('Content-Type: application/json');
-		}
-	}
-	
-	public function medicine_category_api(){
-		//error_reporting(0);
-		$itemcat		= $_POST['itemcat'];
-		$orderby		= $_POST['orderby'];
-		
-		if($itemcat!="")
-		{
-			$items = $this->Chemist_Model->medicine_category($itemcat,$orderby);
-?>
-{"items":[<?= $items;?>]}<?php
-		}
 	}
 }
 ?>

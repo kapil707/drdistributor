@@ -48,12 +48,13 @@ class Manage_whatsapp_message extends CI_Controller {
 		if(isset($Submit))
 		{
 			$message_db = "";
-			$time = time();
-			$date = date("Y-m-d",$time);
+			
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
 			
 			$message = nl2br($message);
-			//$message = str_replace("<br />","\\n",$message);
-			$message = str_replace("\r\n","\\n",$message);			
+			$message = str_replace("'","&#39;",$message);
+			$message = str_replace("\r\n","<br>",$message);
 
 			if($android_user==1)
 			{
@@ -77,7 +78,7 @@ class Manage_whatsapp_message extends CI_Controller {
 					$chemist_id1 	= $row1->altercode;
 					$mobile		 	= $row1->mobile;
 					$name		 	= $row1->name;
-					$message1 		= base64_encode("Hello $name ($chemist_id1),\\n\\n$message");
+					$message1 		= ("Hello $name ($chemist_id1),\\n\\n$message");
 					
 					if($chemist_id1!="")
 					{
@@ -87,8 +88,8 @@ class Manage_whatsapp_message extends CI_Controller {
 							'mobile'=>"+91".$mobile,
 							'message'=>$message1,
 							'media'=>$media,
-							'time'=>$time,
 							'date'=>$date,
+							'time'=>$time,
 							'chemist_id'=>$chemist_id1,
 							);
 							$result = $this->Scheme_Model->insert_fun("tbl_whatsapp_message",$dt);
@@ -118,7 +119,7 @@ class Manage_whatsapp_message extends CI_Controller {
 					$chemist_id1 	= $row1->altercode;
 					$mobile		 	= $row1->mobile;
 					$name		 	= $row1->name;
-					$message1 		= base64_encode("Hello $name ($chemist_id1),\\n\\n$message");
+					$message1 		= ("Hello $name ($chemist_id1),\\n\\n$message");
 					
 					if($chemist_id1!="")
 					{
@@ -128,8 +129,8 @@ class Manage_whatsapp_message extends CI_Controller {
 							'mobile'=>"+91".$mobile,
 							'message'=>$message1,
 							'media'=>$media,
-							'time'=>$time,
 							'date'=>$date,
+							'time'=>$time,
 							'chemist_id'=>$chemist_id1,
 							);
 							$result = $this->Scheme_Model->insert_fun("tbl_whatsapp_message",$dt);
@@ -245,7 +246,9 @@ class Manage_whatsapp_message extends CI_Controller {
 		
 		$data['user_id'] = $user_id;
 
-		$query = $this->db->query("select * from $tbl order by id desc LIMIT $per_page,100");
+		/*$query = $this->db->query("select * from $tbl order by id desc LIMIT $per_page,100");*/
+
+		$query = $this->db->query("select * from $tbl order by id desc");
   		$data["result"] = $query->result();
 
 		$this->load->view("admin/header_footer/header",$data);

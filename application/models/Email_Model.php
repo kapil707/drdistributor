@@ -31,10 +31,13 @@ class Email_Model extends CI_Model
 		}
 		if($user_email_id!="")
 		{
-			$subject = base64_encode($subject);
-			$message = base64_encode($message);
+			$subject = ($subject);
+			$message = ($message);
 			$email_function = "password";
 			$mail_server = "";
+
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
 
 			$dt = array(
 			'user_email_id'=>$user_email_id,
@@ -42,6 +45,8 @@ class Email_Model extends CI_Model
 			'message'=>$message,
 			'email_function'=>$email_function,
 			'mail_server'=>$mail_server,
+			'date'=>$date,
+			'time'=>$time,
 			);
 			$this->Scheme_Model->insert_fun("tbl_email_send",$dt);
 		}
@@ -70,10 +75,13 @@ class Email_Model extends CI_Model
 			$file_name_1 = "Deleted-Items-Report.xls";
 			$file_name1  = $this->Excel_Model->import_orders_delete_items($date,$time);
 			
-			$subject = base64_encode($subject);
-			$message = base64_encode($message);
+			$subject = ($subject);
+			$message = ($message);
 			$email_function = "import_orders_delete_items";
 			$mail_server = "gmail";
+
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
 			
 			$dt = array(
 			'user_email_id'=>$user_email_id,
@@ -83,6 +91,8 @@ class Email_Model extends CI_Model
 			'file_name1'=>$file_name1,
 			'file_name_1'=>$file_name_1,
 			'mail_server'=>$mail_server,
+			'date'=>$date,
+			'time'=>$time,
 			);
 			$this->Scheme_Model->insert_fun("tbl_email_send",$dt);				
 		}
@@ -248,13 +258,16 @@ class Email_Model extends CI_Model
 	public function low_stock_alert_email($subject,$message)
 	{
 		//error_reporting(0);
-		$subject = base64_encode($subject);
-		$message = base64_encode($message);
+		$subject = ($subject);
+		$message = ($message);
 		$email_function = "low_stock_alert";
 		$mail_server = "gmail";
 		
 		$row = $this->db->query("select * from tbl_email where email_function='$email_function'")->row();
 		$user_email_id = $row->email;
+
+		$date = date('Y-m-d');
+		$time = date("H:i",time());
 
 		$dt = array(
 		'user_email_id'=>$user_email_id,
@@ -262,6 +275,8 @@ class Email_Model extends CI_Model
 		'message'=>$message,
 		'email_function'=>$email_function,
 		'mail_server'=>$mail_server,
+		'date'=>$date,
+		'time'=>$time,
 		);
 		$this->Scheme_Model->insert_fun("tbl_email_send",$dt);
 	}

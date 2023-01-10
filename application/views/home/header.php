@@ -1,3 +1,9 @@
+<?php 
+$theme_type = "lite";
+if (!isset($_COOKIE["user_cart_total"])) {
+	setcookie("user_cart_total", "0", time() + (86400 * 30), "/");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,7 +14,7 @@
 		<?= $this->Scheme_Model->get_website_data("title") ;?> || <?= $main_page_title;?>
     </title>
     <meta charset utf="8">
-	<meta name="theme-color" content="#f7625b">
+	<meta name="theme-color" content="#27ae60">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -16,30 +22,149 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/website/css/font-awesome.min.css"> 
 	<link href="<?= base_url(); ?>assets/website/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+	<?php if($theme_type=="lite") { ?>
+	<style>/*light theme*/
+	:root{
+		--main_theme_color:#27ae60;
+		--main_theme_footer_color:#ffffff;
+		--main_theme_bg_color:#d3cfcf42;
+
+		--main_theme_white_bg_color:#ffffff;
+		--main_theme_left_menu_bg_color:#27ae60;
+		--main_theme_scrollbar_color:#27ae60;
+		
+
+		--main_theme_li_color:rgb(240, 240, 240);
+		--main_theme_li_bg_color:#969a9829;
+		--main_theme_li_bg_hover_color:#27ae6029;
+
+		--main_theme_li2_color:rgb(240, 240, 240);
+		--main_theme_li2_bg_color:#ffffff;
+		--main_theme_li2_bg_hover_color:#27ae6029;
+
+		--main_theme_textbox_bg_color:#ffffff;
+		--main_theme_textbox_color:#6A6767;
+
+		--main_theme_textbox2_bg_color:#ffffff;
+		--main_theme_textbox2_color:#6A6767;
+
+		--main_theme_text_white_color:#ffffff;
+		--main_theme_text_black_color:#000000;
+
+		--main_theme_border_color:#ebebeb;
+		--main_theme_border_hover_color:#27ae6085;
+		
+		--main_theme_modal_bg_color:#ffffff;
+
+		--mainbutton-color:#27ae60; /* #27ae60; */
+		--mainbuttonhover-color:#1b6339; /* #27ae60; */
+
+		
+		--item_order_quantity_bg:#e8e8e8;
+	}
+	</style>
+	<?php } ?>
+
+	<?php if($theme_type=="dark") { ?>
+	<style>/*dark theme */
+	:root{
+		--main_theme_color:#191616;
+		--main_theme_footer_color:#191616;
+		--main_theme_bg_color:#474040;
+
+		--main_theme_white_bg_color:#606060;
+		--main_theme_left_menu_bg_color:#606060;
+		
+
+		--main_theme_li_color:#474040;
+		--main_theme_li_bg_color:#000000;
+		--main_theme_li_bg_hover_color:#232020;
+
+		--main_theme_li2_color:rgb(240, 240, 240);
+		--main_theme_li2_bg_color:#000000;
+		--main_theme_li2_bg_hover_color:#27ae6029;
+
+		--main_theme_textbox_bg_color:#474040;
+		--main_theme_textbox_color:#ebebeb;
+
+		--main_theme_textbox2_bg_color:#191616;
+		--main_theme_textbox2_color:#ebebeb;
+
+		--main_theme_text_white_color:#000000;
+		--main_theme_text_black_color:#ffffff;
+		
+		--main_theme_border_color:#6A6767;
+		--main_theme_border_hover_color:#6A6767;
+		--main_theme_modal_bg_color:#000000; /* 474040 */
+
+		--mainbutton-color:#607d8b; /* #27ae60; */
+		--mainbuttonhover-color:#364952; /* #27ae60; */
+
+		--item_order_quantity_bg:#474040;
+	} /************/
+	</style>
+	<?php } ?>
+
 	<link href="<?= base_url(); ?>assets/website/css/style<?= constant('site_v') ?>.css" rel="stylesheet" type="text/css"/>
 	<script>
 		/*function goBack() {
 			window.history.back();
 		}*/
 	</script>
-	<link href="<?= base_url(); ?>assets/website/css/scrolling/css/amazon_scroller.css" rel="stylesheet" type="text/css"></link>
-	<script type="text/javascript" src="<?= base_url(); ?>assets/website/css/scrolling/js/amazon_scroller.js"></script>
-
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap" rel="stylesheet">
 
 	<link rel="icon" href="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png" type="image/logo" sizes="16x16">
 	
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	
-	<link href="<?= base_url(); ?>assets/website/magicscroll/magicscroll.css" rel="stylesheet" type="text/css"></link>
-	<script type="text/javascript" src="<?= base_url(); ?>assets/website/magicscroll/magicscroll.js"></script>
+	<script src="<?= base_url(); ?>assets/js/jssor.slider-28.0.0.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	window.jssor_1_slider_init = function() {
 
-<style>
-body{
-	background-image: url("<?php echo base_url(); ?>img_v<?= constant('site_v') ?>/background.jpg");
-}
-</style>
+		var jssor_1_options = {
+			$AutoPlay: 1,
+			$SlideWidth: 700,
+			$ArrowNavigatorOptions: {
+			$Class: $JssorArrowNavigator$
+			},
+			$BulletNavigatorOptions: {
+			$Class: $JssorBulletNavigator$
+			}
+		};
+
+		var jssor_1_slider = new $JssorSlider$("jssor_1", jssor_1_options);
+
+		/*#region responsive code begin*/
+
+		var MAX_WIDTH = screen.width;
+
+		function ScaleSlider() {
+			var containerElement = jssor_1_slider.$Elmt.parentNode;
+			var containerWidth = containerElement.clientWidth;
+
+			if (containerWidth) {
+
+				var expectedWidth = Math.min(MAX_WIDTH || containerWidth, containerWidth);
+
+				jssor_1_slider.$ScaleWidth(expectedWidth);
+			}
+			else {
+				window.setTimeout(ScaleSlider, 30);
+			}
+		}
+
+		ScaleSlider();
+
+		$Jssor$.$AddEvent(window, "load", ScaleSlider);
+		$Jssor$.$AddEvent(window, "resize", ScaleSlider);
+		$Jssor$.$AddEvent(window, "orientationchange", ScaleSlider);
+		/*#endregion responsive code end*/
+	};
+	</script>
+
+	<link rel="stylesheet" href="<?= base_url(); ?>assets/website/css/min.css"/>
+	<script src="<?= base_url(); ?>assets/website/js/min.js"></script>
+
 </head>
 <body>
 <?php
@@ -47,36 +172,43 @@ if(empty($chemist_id_for_cart_total))
 {
 	$chemist_id_for_cart_total = "";
 }
-
-$someArray = $this->Chemist_Model->website_menu();
-$par = '['.$someArray.']';
-$someArray = json_decode($par, true);
+if ($_SESSION["website_menu"] == "") {
+	$_SESSION["website_menu"] = $this->Chemist_Model->website_menu_json_new();
+}
+$website_menu 	= $_SESSION["website_menu"];
+$website_menu = '['.$website_menu.']';
+$website_menu 	= json_decode($website_menu, true);
 ?>
 	<img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png" style="display:none" alt="Dr. Distributor" title="Dr. Distributor">
-	<div class="new_style_menu">
-		<div class="header_title_logo_or_name">
+	<div class="left_menu_bar">
+		<div class="left_menu_bar_part1">
 			<div class="row">
 				<div class="col-sm-3 col-3">
-					<img src="<?= $session_user_image ?>" alt="<?= $session_user_fname ?>" title="<?= $session_user_fname ?>" class="rounded account_page_header_image">
+					<img src="<?= $session_user_image ?>" alt="<?= $session_user_fname ?>" title="<?= $session_user_fname ?>" class="left_menu_bar_account_image" onerror=this.src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png">
 				</div>
 				<div class="col-sm-7 col-7">
-					<p style="word-wrap: break-word;font-size: 13px;">
-						<span class="account_page_chemist_name">
-							<?= $session_user_fname ?>
-						</span>
-						<span class="account_page_chemist_code">
-							<br> Code : <?= $session_user_altercode ?>
-						</span>
-					</p>
+					<div class="left_menu_bar_accoun_chemist_name">
+						<?= $session_user_fname ?>
+					</div>
+					<div class="left_menu_bar_accoun_chemist_code">
+						Code : <?= $session_user_altercode ?>
+					</div>
+					<div class="" style="display:none">
+						<lable>Select theme</lable><br>
+						<select class="input_type_text2 theme_set_css" onchange="theme_set()">
+							<option value="lite" <?php if($theme_type=="lite") { echo "selected"; } ?>>Lite</option>
+							<option value="dark" <?php if($theme_type=="dark") { echo "selected"; } ?>>Dark</option>
+						</select>
+					</div>
 				</div>
 				<div class="col-sm-2 col-2 text-left">
 					<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/cancelbtn.png" width="40" onclick="new_style_menu_hide()" title="Cancel menu" alt="Cancel menu">
 				</div>
 			</div>
 		</div>
-		<div class="profile-menu text-center">
+		<div class="left_menu_bar_part2 text-center">
 			<div class="social-icon">
-				<div class="text-left" style="margin-left:10px;">Account</div>
+			<div class="text-left" style="margin-left:10px;margin-top:10px; border-top: 1px solid #f3f3f3;">Account</div>
 				<ul>
 					<li>
 						<a href="<?= base_url('home/account')?>" title="Account">
@@ -109,15 +241,15 @@ $someArray = json_decode($par, true);
 						</a>
 					</li>
 					<?php
-					if(!empty($_SESSION['user_type'])){
-					if($_SESSION['user_type']=="sales")
+					if(!empty($_COOKIE['user_type'])){
+					if($_COOKIE['user_type']=="sales")
 					{
-						$user_type = $_SESSION['user_type'];
+						$user_type = $_COOKIE['user_type'];
 						?>
 					<div class="text-left" style="margin-left:10px;margin-top:10px; border-top: 1px solid #f3f3f3;">Server Report</div>
 
 					<li>
-						<a href="http://192.168.0.100:7272/drd_local_server/pendingorder_report" title="Pending Order" target="_black">
+						<a href="http://49.205.182.192:7272/drd_local_server/pendingorder_report" title="Pending Order" target="_black">
 							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/privacy_policy.png" width="20" alt="All Invoice" title="Pending Order">
 							Pending Order
 						</a>
@@ -170,158 +302,180 @@ $someArray = json_decode($par, true);
 							Privacy policy
 						</a>
 					</li>
-					<li title="Share app">
-						<a href="https://play.google.com/store/apps/details?id=com.drdistributor.dr&hl=en" target="_black" title="Share app">
-							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/share.png" width="20" alt="Share app" title="Share app">
-							Share app
+					<li title="Share App">
+						<a href="https://play.google.com/store/apps/details?id=com.drdistributor.dr&hl=en" target="_black" title="Share App">
+							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/share.png" width="20" alt="Share App" title="Share App">
+							Share App
 						</a>
 					</li>
+					<li title="Download App">
+						<a href="https://play.google.com/store/apps/details?id=com.drdistributor.dr&hl=en" target="_black" title="Download App">
+							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/playstrore.png" width="20" alt="Download App" title="Download App">
+							Download App
+						</a>
+					</li>
+					<?php if(!empty($_COOKIE['user_session'])){ ?>
 					<li title="Logout">
 						<a href="<?= base_url('logout')?>" title="Logout">
 							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/logout.png" width="20"  alt="Logout" title="Logout">
 							Logout
 						</a>
 					</li>
+					<?php } else { ?>
+					<li title="Login">
+						<a href="<?= base_url('login')?>" title="Login">
+							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/my_account.png" width="20"  alt="Login" title="Login">
+							Login
+						</a>
+					</li>
+					<?php } ?>
 				</ul>
 			</div>
 		</div>				
 	</div>
 			
 			
-	<div class="menu-notify new_orange_header">
+	<div class="top_menu_bar main_round_theme">
 		<div class="container">
 			<div class="row">
-				<div class="col-sm-3 col-7">
+				<div class="col-sm-3 col-12">
 					<span style="float:left; margin-right:10px;">
 						<a href="javascript:goBack()" class="menubtn2" title="Go Back">
 							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/back_button.png" width="30px;" style="margin-top: 5px;" alt="Go Back" title="Go back">
 						</a>
 						<a href="javascript:new_style_menu_show()" class="menubtn1" style="color:white;" title="Drd Menu">
-							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/logo2.png" width="40px;" style="margin-top: 5px;" alt="Dr. Distributor" title="Dr. Distributor">
+							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/logo2.png" width="40px;" alt="Dr. Distributor" title="Dr. Distributor">
 						</a>
 					</span>
-					<span style="float:left; margin: auto;">
-						<div class="pro-link headertitle1" style="color:white;font-size: 13px; margin-top: 3px;display:none;">
+
+					<span style="float:left; margin: auto;width:60%;">
+						<div class="pro-link headertitle">
 						Delivering to
 						</div>
-						<div class="pro-link headertitle">
+						<div class="pro-link headertitle1">
 							<?= $session_user_fname ?>
 						</div>
 					</span>
+
+					<span class="mobile_show">
+						<a href="<?= base_url(); ?>home/my_cart" class="top_menu_small_btn top_menu_cart_div" title="Cart" style="float:right">
+							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/cart.png" width="28px;" alt="Cart" title="Cart">
+							<span class="header_cart_span" style="">
+								<?= $_COOKIE["user_cart_total"]; ?>
+							</span>
+						</a>
+
+						<a href="#" onclick="delete_all_medicine()" class="top_menu_small_btn delete_btn_icon" title="Delete All" style="float:right">
+							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/delete_icon_w.png" width="28px;" alt="Delete All" title="Delete All">
+						</a>
+					</span>
 				</div>
-				<?php
-				$pg_dt_row = "col-sm-12 col-12";
-				if(!empty($_SESSION['user_type'])){
-					if($_SESSION['user_type']=="sales")
-					{
-						$msg_show = "Search chemist / medicines";
-						$pg_dt_row = "col-sm-9 col-9";
-					}
-					else{
-						$msg_show = "Search medicines / company";
-					}
-				}else{
-					$msg_show = "Search medicines / company";
-				}
-				?>
-				<div class="col-sm-9 col-5">
-					<a href="<?= base_url(); ?>home/search_medicine" title="<?= $msg_show?>">
-						<div class="homepagesearchdiv">
-							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/homepgsearch.png" width="25px;" class="searchiconcss" alt="<?= $msg_show?>" title="<?= $msg_show?>">
-							<?= $msg_show?>
-						</div>
+
+				
+				<div class="col-sm-6">
+
+					<a href="<?= base_url(); ?>home/search_medicine" title="Search medicine / company" class="home_page_search_div">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/homepgsearch.png" width="25px;" class="search_icon1" alt="Search medicine / company" title="Search medicine / company">Search medicine / company 
 					</a>
 					
-					<div class="SearchMedicine_search_box_div">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/homepgsearch.png" width="25px;" class="searchiconcss1" alt="<?= $msg_show?>" title="<?= $msg_show?>">
-						
-						<input type="text" class="select_medicine SearchMedicine_search_box form-control" placeholder="<?= $msg_show?>" tabindex="1">
-						
-						<input type="text" class="select_chemist form-control SearchMedicine_search_box" placeholder="Search chemist"  tabindex="1" />
-						
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/cancelbtn1.png" width="25px;" class="clear_search_box" onclick="clear_search_box()" alt="Clear" title="Clear">
+					<div class="home_page_search_div_box">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/homepgsearch.png" width="25px;" class="search_icon" alt="Search medicine / company" title="Search medicine / company">
+						<input type="text" class="select_medicine search_textbox input_type_text" placeholder="Search medicine / company" tabindex="1">
+						<input type="text" class="select_chemist search_textbox input_type_text" placeholder="Search chemist"  tabindex="1" />
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/cancelbtn1.png" width="25px;" class="clear_search_icon" onclick="clear_search_icon()" alt="Clear" title="Clear">
 					</div>
-					
-					<a href="<?= base_url('logout')?>" class="logout_div mobile_off" style="float:right" title="Logout">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/logout.png" width="28px;" alt="Logout" title="Logout">
+					<div class="search_medicine_result"></div>
+				</div>
+
+				<div class="col-sm-3 mobile_off text-right" style="margin-top:5px;">	
+					<a href="<?= base_url() ?>home" class="top_menu_small_btn main_home_top_btn" title="Home">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/homelcon.png" width="28px;" alt="Home" title="Home">
 					</a>
 
-					<a href="<?= base_url() ?>home/account" class="offers_div mobile_off" style="float:right">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/my_account.png" width="28px;" alt="Account" title="Account">
+					<a href="<?= base_url(); ?>home/my_cart" class="top_menu_small_btn top_menu_cart_div" title="Cart">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/cart.png" width="28px;" alt="Cart" title="Cart">
+						<span class="header_cart_span" style="">
+							<?= $_COOKIE["user_cart_total"]; ?>
+						</span>
 					</a>
-					
-					<a href="<?= base_url() ?>home/my_notification" class="notification_div mobile_off" style="float:right" title="Notification">
+
+					<a href="<?= base_url() ?>home/my_notification" class="top_menu_small_btn mobile_off" title="Notification">
 						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/notification_w.png" width="28px" class="cssnotification" alt="Notification" title="Notification">
 						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/notification_w1.png" width="28px" style="display:none;" class="cssnotification1" alt="Notification" title="Notification">
 					</a>
-					
-					<a href="<?= base_url(); ?>home/draft_order_list" class="cart_div" style="float:right" title="Cart">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/cart.png" width="30px;" alt="Cart" title="Cart">
-						<span class="header_cart_span" style="">0</span>
+
+					<a href="<?= base_url() ?>home/account" class="top_menu_small_btn mobile_off">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/my_account.png" width="28px;" alt="Account" title="Account">
 					</a>
-					
-					<a href="<?= base_url() ?>home" class="homebtn_div" style="float:right" title="Home">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/homelcon.png" width="28px;" alt="Home" title="Home">
+					<?php if($_COOKIE['user_session']!=""){ ?>
+					<a href="<?= base_url('logout')?>" class="top_menu_small_btn mobile_off" title="Logout">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/logout.png" width="28px;" alt="Logout" title="Logout">
 					</a>
-					
-					
-					<a href="#" onclick="delete_all_medicine()" style="float:right;display:none" class="deletebtn_div" title="Delete All">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/delete_icon_w.png" width="28px;" alt="Delete All" title="Delete All">
-					</a>
-					
-					<a href="<?= base_url() ?>home/search_medicine" class="searchbtn_div" style="float:right;display:none" title="Search">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/search_white.png" width="28px;" alt="Search" title="Search">
-					</a>
+					<?php } ?>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12 col-12">
-					<div class="website_menuscrolling1 website_menu">
-						<div class="MagicScroll">
-							<?php
-							foreach($someArray as $row)
-							{
-							?>
-							<div style="width:160px;margin-top: 20px;">
-								<a href="<?= base_url();?>home/medicine_category/<?= $row["code"] ?>/<?= $row["name"] ?>" class="fixed_menu_ul_li_a">
-									<span class="text_cut_or_dot text-capitalize" style="width:140px;">
-										<?= base64_decode($row["name"]) ?>
-									</span>
-								</a>
+
+				<div class="col-sm-12 col-12 search_pg_menu_off">
+					<div class="top-menu123" id="top-menu123">
+						<div class="swiper top-menu123-slider featured-slider">
+							<div class="swiper-wrapper">
+								<?php
+								foreach($website_menu as $row)
+								{
+								?>
+								<div class="swiper-slide box">
+									<div class="mcs-items-container2">
+										<div class="top-menu123_div">
+											<div class="content">
+												<a href="<?= base_url();?>home/medicine_category/medicine_category/<?= $row["item_code"] ?>">
+													<span>
+													<?= ($row["item_company"]) ?>
+													</span>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<?php } ?>
 							</div>
-							<?php } ?>
 						</div>
 					</div>
-					<link href="<?= base_url(); ?>assets/website/magicscroll/magicscroll.css" rel="stylesheet" type="text/css"></link>
-					<script type="text/javascript" src="<?= base_url(); ?>assets/website/magicscroll/magicscroll.js"></script>
-					</div>
-					<div class="current_order_search_page" style="width: 100%;margin-top: 66px;text-align: right;display:none;">
-						<div class="search_pg_current_order">Current Order <span class="mycartwalidiv1"></span><span class="header_part_search_page_chemist_name" style="display:none"></span></div>
-						<div class="search_pg_result_found" style="display:none">Loading....</div>
-					</div>
+					<div class="swiper-button-next top-menu123-next"></div>
+					<div class="swiper-button-prev top-menu123-prev"></div>
 				</div>
 
-				<div class="<?= $pg_dt_row ?> current_order_cart_page text-right" style="margin-top:10px;display:none;">
-					<h6 class="">Order : <span class="mycartwalidiv2">0</span> Items</h6>
-					<div class="">Order Price : <span class="mycartwalidiv_price">0</span></div>
-					<div class="account_page_chemist_code">Code : <?= $session_user_altercode ?></div>
+				<div class="col-sm-12 current_order_search_page" style="width: 100%;margin-top: 45px;text-align: right;display:none;">
+					<sapn class="header_result_found"></sapn>
 				</div>
 
-				<div class="col-sm-9 col-9 account_page_header text-right" style="margin-top:10px;display:none;">
-					<div class="account_page_chemist_name"><?= $session_user_fname ?></div>
-					<div class="account_page_chemist_code">Code : <?= $session_user_altercode ?></div>
-				</div>
 				<div class="col-sm-3 col-3 current_order_cart_page account_page_header" style="margin-top:10px;display:none;">
-					<img src="<?= $session_user_image ?>" alt="<?= $session_user_fname ?>" title="<?= $session_user_fname ?>" class="rounded account_page_header_image">
+					<img src="<?= $session_user_image ?>" alt="<?= $session_user_fname ?>" title="<?= $session_user_fname ?>" class="rounded account_page_header_image" onerror=this.src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png">
 				</div>
 			</div>
 		</div>
 	</div>
-<input type="hidden" class="_cart_item_name">
-<input type="hidden" class="_cart_final_price">
-<input type="hidden" class="_cart_scheme">
-<input type="hidden" class="_cart_image">
+
 <script>
+function theme_set()
+{
+	theme_set_css = $(".theme_set_css").val()
+	$.ajax({
+		type       : "POST",
+		data       :  { theme_set_css:theme_set_css} ,
+		url        : "<?php echo base_url(); ?>Chemist_json/theme_set",
+		cache	   : true,
+		success : function(data){
+			if(data!="")
+			{
+				$.each(data.items, function(i,item){	
+					if (item){
+						location.reload();
+					}
+				});	
+			}
+		},
+	});
+}
+
 function callandroidfun(funtype,id,compname,image,division) {	
 	if(funtype=="1"){
 		//android.fun_Get_single_medicine_info(id);
@@ -329,40 +483,18 @@ function callandroidfun(funtype,id,compname,image,division) {
 	}
 	if(funtype=="2")
 	{
-		window.location.href = '<?= base_url(); ?>home/featured_brand/'+id+'/'+division+'/'+compname;
+		window.location.href = '<?= base_url(); ?>home/featured_brand/'+id+'/'+division;
 	}
 }
 function gosearchpage()
 {
 	window.location.href = "<?= base_url();?>home/search_medicine";
 }
-function count_temp_rec()
-{
-	chemist_id = "<?= $chemist_id_for_cart_total?>";
-	$.ajax({
-		type       : "POST",
-		data       : {chemist_id:chemist_id} ,
-		url        : "<?php echo base_url(); ?>Chemist_order/count_temp_rec",
-		cache	   : true,
-		success    : function(data){
-			$(".mycartwalidiv1").html("("+data+")");
-			$(".mycartwalidiv2").html(data);
-			dt = parseInt(data);
-			if(dt>=99)
-			{
-				data = "99+";
-			}
-			$(".header_cart_span").html(data);
-		},
-		timeout: 10000
-	});
-	setTimeout('count_temp_rec();',120000);
-}
 function check_login_function()
 {
 	id ='';
 	$.ajax({
-	type       : "POST",
+		type       : "POST",
 		data       :  { id:id} ,
 		url        : "<?php echo base_url(); ?>Chemist_json/check_login_function",
 		cache	   : true,
@@ -371,12 +503,18 @@ function check_login_function()
 			{
 				$.each(data.items, function(i,item){	
 					if (item){
+						
+						if(item.download_invoice_url!="")
+						{
+							download_invoice(item.download_invoice_url)
+						}
+
 						/*if(item.status=="0")
 						{
 							window.location.href = "<?= base_url();?>user/logout2";
 						}*/
 
-						notiid		= (item.notiid);
+						/*notiid		= (item.notiid);
 						broadcastid = (item.broadcastid);
 						if(notiid!=""){
 							notititle 	= atob(item.notititle);
@@ -404,7 +542,7 @@ function check_login_function()
 								$(".cssnotification").hide();
 								$(".cssnotification1").show();
 							}
-						}
+						}*/
 					}
 				});	
 			}
@@ -414,120 +552,46 @@ function check_login_function()
 	setTimeout('check_login_function();',60000);
 }
 $(document).ready(function(){
-	//setTimeout('check_login_function();',2000);
 	setTimeout('count_temp_rec();',500);
+
+	$('.medicine_details_item_order_quantity_textbox').keypress(function (e) {
+		 if (e.which == 13) {
+			medicine_add_to_cart_api();
+		 } 
+	});
 });
 
-function get_single_medicine_info(i_code)
+function get_single_medicine_info(item_code)
 {
 	var session_user_altercode = "<?= $session_user_altercode ?>";
 	if(session_user_altercode=="xxxxxx")
 	{
 		window.location.href = "<?=base_url(); ?>home";
-	} else {
-		$('.MedicineDetailsData').html('<h1><center><img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/loading.gif" width="100px"></center></h1><h1><center>Loading....</center></h1>')
-		$(".MedicineSmilerProduct").html('');
-		$('.myModal_loading').click();
-		chemist_id = "<?=$chemist_id?>";
-		$('.SearchMedicine_search_box').val("");
-		$(".search_medicine_result").html("");
-		$.ajax({
-			url: "<?php echo base_url(); ?>Chemist_medicine/get_single_medicine_info",
-			type:"POST",
-			/*dataType: 'html',*/
-			data: {i_code:i_code,chemist_id:chemist_id},
-			error: function(){
-				
-			},
-			success: function(data){
-				$.each(data.items, function(i,item){	
-					if (item)
-					{
-						i_code 				= item.i_code;
-						item_code 			= item.item_code;
-						item_name 			= item.item_name;
-						company_full_name 	= item.company_full_name;
-						image1 				= item.image1;
-						image2 				= item.image2;
-						image3 				= item.image3;
-						image4 				= item.image4;
-						description1 		= item.description1;
-						description2 		= item.description2;
-						batchqty 			= item.batchqty;
-						sale_rate 			= item.sale_rate;
-						mrp 				= item.mrp;
-						final_price 		= item.final_price;
-						batch_no 			= item.batch_no;
-						packing 			= item.packing;
-						expiry 				= item.expiry;
-						scheme 				= item.scheme;
-						margin 				= item.margin;
-						featured 			= item.featured;
-						gstper 				= item.gstper;
-						discount 			= item.discount;
-						itemjoinid 			= item.itemjoinid;
-						items1				= item.items1;
-						date_time			= item.date_time;
-						misc_settings		= item.misc_settings;
-						
-						item_name			= btoa(item_name);
-						company_full_name 	= btoa(company_full_name);
-						image_m1 	 		= btoa(image1);
-						image_m2 	 		= btoa(image2);
-						image_m3 	 		= btoa(image3);
-						image_m4 	 		= btoa(image4);
-						description1_m 	 	= btoa(description1);
-						description2_m 	 	= btoa(description2);
-						packing 			= btoa(packing);
-						expiry  			= btoa(expiry);
-						batch_no			= btoa(batch_no);
-						scheme  			= btoa(scheme);
-						date_time  			= btoa(date_time);
-						
-						items1				= JSON.stringify(items1);
-						items1 	 			= btoa(items1);
-						
-						your_order_qty = "";
-						
-						$(".MedicineDetailscssmod").html("Medicine details");
-						$('.SearchMedicine_search_box').val("");
-						$(".search_medicine_result").html("");
-						$(".MedicineSmilerProduct").html("");
-						$(".MedicineDetailsData").html("");
-						
-						MedicineDetails = MedicineDetails_modal(i_code,item_name,company_full_name,image_m1,image_m2,image_m3,image_m4,description1_m,description2_m,batchqty,sale_rate,mrp,final_price,batch_no,packing,expiry,scheme,margin,featured,gstper,discount,itemjoinid,date_time,your_order_qty,misc_settings);
-						$('.MedicineDetailsData').html(MedicineDetails);
-						
-						setTimeout('model_quantity_focus('+i_code+');',100);
-		
-						if(itemjoinid!="")
-						{
-							MedicineSmilerProduct_data = MedicineSmilerProduct_fun(items1,'1');
-							$(".MedicineSmilerProduct").html(MedicineSmilerProduct_data);
-						}
-					}
-				});	
-			},
-			timeout: 10000
-		});
+	} else 
+	{
+		$('.myModal_medicine_details').click();
+		$(".medicine_details_api_loading").show();
+		$(".medicine_details_api_data").hide();
+		$(".medicine_details_item_description1").hide();
+		$(".medicine_details_item_description2").hide();
+
+		$(".medicine_details_item_order_quantity_textbox").val("");
+		medicine_details_api(item_code);
 	}
 }
 
-function model_quantity_focus(i_code)
+function medicine_details_api(item_code)
 {
-	$('.new_quantity'+i_code).focus();
-	$('.new_quantity'+i_code).keypress(function (e) {
-		 if (e.which == 13) {
-			 add_medicine_to_cart(i_code);
-		 } 
-	});
-	
-	chemist_id = "<?=$chemist_id?>";
+	$('.medicine_details_item_add_to_cart_btn').html("Add to cart");
+	$('.medicine_details_item_add_to_cart_btn_loading').hide();
+
+	item_date_time = item_batch_no = item_gst = item_description2 = "";
+
 	$.ajax({
-		url: "<?php echo base_url(); ?>Chemist_order/get_order_quantity_of_medicine",
+		url: "<?php echo base_url(); ?>Chemist_json/medicine_details_api",
 		type:"POST",
 		/*dataType: 'html',*/
-		data: {i_code:i_code,chemist_id:chemist_id},
+		data: {item_code:item_code},
 		error: function(){
 			
 		},
@@ -535,251 +599,228 @@ function model_quantity_focus(i_code)
 			$.each(data.items, function(i,item){	
 				if (item)
 				{
-					$('.new_quantity'+i_code).val(item.quantity);
-					if(item.quantity!="")
+					item_date_time	= item.item_date_time;
+					$(".medicine_details_item_date_time").html("as on " + item_date_time)
+
+					item_batch_no	= item.item_batch_no;
+					$(".medicine_details_item_batch_no").html("Batch no : "+item_batch_no)
+
+					item_gst	= item.item_gst;
+					$(".medicine_details_item_gst").html("GST : "+item_gst +"%")
+
+					item_image	= item.item_image;
+					$(".medicine_details_image").attr("src",item_image)
+					item_image	= item.item_image;
+					$(".modal_item_image_change1").attr("src",item_image)
+					item_image2	= item.item_image2;
+					$(".modal_item_image_change2").attr("src",item_image2)
+					item_image3	= item.item_image3;
+					$(".modal_item_image_change3").attr("src",item_image3)
+					item_image4	= item.item_image4;
+					$(".modal_item_image_change4").attr("src",item_image4)					
+
+					$(".medicine_details_item_description2").show()
+					item_description2	= item.item_description2;
+					$(".medicine_details_item_description2").html(item_description2)
+					if(item_description2=="")
 					{
-						$('.add_to_cart_btn'+i_code).html("Update cart");
+						$(".medicine_details_item_description2").hide()
 					}
-				} 
-			});
+
+					item_order_quantity	= item.item_order_quantity;
+					$(".medicine_details_item_order_quantity_textbox").val(item_order_quantity)
+					if(item_order_quantity!=""){
+						$('.medicine_details_item_add_to_cart_btn').html("Update cart");
+					}
+
+					item_name		= item.item_name;
+					item_packing	= item.item_packing;
+					item_expiry		= item.item_expiry;
+					item_company	= item.item_company;
+					item_quantity	= item.item_quantity;
+					item_stock		= item.item_stock;
+					item_ptr		= item.item_ptr;
+					item_mrp		= item.item_mrp;
+					item_price		= item.item_price;
+					item_scheme		= item.item_scheme;
+					item_margin		= item.item_margin;
+					item_featured	= item.item_featured;
+					item_description1= item.item_description1;
+					
+					
+					insert_top_search(item_code,item_name,item_packing) // firebase code
+					medicine_details_api_data(item_code)	
+					
+					item_image	= item.item_image;
+					$(".medicine_details_image").attr("src",item_image)
+					item_image	= item.item_image;
+					$(".modal_item_image_change1").attr("src",item_image)
+					item_image2	= item.item_image2;
+					$(".modal_item_image_change2").attr("src",item_image2)
+					item_image3	= item.item_image3;
+					$(".modal_item_image_change3").attr("src",item_image3)
+					item_image4	= item.item_image4;
+					$(".modal_item_image_change4").attr("src",item_image4)
+				}
+			});	
 		},
 		timeout: 10000
- 
 	});
 }
 
-function MedicineDetails_modal(i_code,item_name,company_full_name,image1,image2,image3,image4,description1,description2,batchqty,sale_rate,mrp,final_price,batch_no,packing,expiry,scheme,margin,featured,gstper,discount,itemjoinid,date_time,your_order_qty,misc_settings)
-{	
-	sale_rate 	= parseFloat(sale_rate).toFixed(2);
-	mrp 		= parseFloat(mrp).toFixed(2);
-	final_price = parseFloat(final_price).toFixed(2);
-	$('._cart_item_name').val(item_name);
-	$('._cart_final_price').val(final_price);
-	$('._cart_scheme').val(scheme);
-	$('._cart_image').val(atob(image1));
-	
-	item_name			= atob(item_name);
-	company_full_name 	= atob(company_full_name);
-	image1	 			= atob(image1);
-	image2	 			= atob(image2);
-	image3	 			= atob(image3);
-	image4	 			= atob(image4);
-	packing 			= atob(packing);
-	expiry  			= atob(expiry);
-	batch_no  			= atob(batch_no);
-	scheme  			= atob(scheme);
-	date_time  			= atob(date_time);
-	description1  		= atob(description1);
-	description2  		= atob(description2);
-	
-	//itemjoinid = btoa(itemjoinid)
-	if(scheme=="0+0")
-	{
-		scheme =  'No scheme';
-		scheme_line = '';
-	}
-	else
-	{
-		scheme =  'Scheme : '+scheme;
-		scheme_line = '<span class="schemenew1">Scheme is not added in Landing price</span>';
-	}
-	
-	scheme_or_margin =  '<div class="row"><div class="col-sm-6 col-6"><img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/scheme.png" class="modal_scheme_icon"><span class="modal_scheme">'+scheme+'</span></div><div class="col-sm-6 col-6 text-right"><span class="modal_margin">'+margin+'% Margin</span><img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/ribbonicon.png" class="modal_margin_icon"></div><div class="col-sm-12 col-12 text-center">'+scheme_line+'</div></div>';
-	
-	image_more = '<img src="'+image1+'" width="20%" style="float: left;margin-top:10px;cursor: pointer;margin-right: 6.6%;" class="border rounded open_img1" onclick="open_img(1)" title="'+item_name+'"><img src="'+image2+'" width="20%" style="float: left;margin-top:10px;cursor: pointer;margin-right: 6.6%;" class="border rounded open_img2" onclick="open_img(2)" title="'+item_name+'"><img src="'+image3+'" width="20%" style="float: left;margin-top:10px;cursor: pointer;margin-right: 6.6%;" class="border rounded open_img3" onclick="open_img(3)" title="'+item_name+'"><img src="'+image4+'" width="20%" style="float: left;margin-top:10px;cursor: pointer;" class="border rounded open_img4" onclick="open_img(4)" title="'+item_name+'">';
-	
-	image_ = '<img src="'+image1+'" width="100%" style="float: right;margin-top:10px;" class="border rounded open_img" title="'+item_name+'">';
-	if(featured==1){
-		image_ = '<img src="'+image1+'" width="100%" style="float: right;margin-top:10px;" class="border rounded open_img" title="'+item_name+'"><img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/featuredicon.png" class="modal_featurediconcss">';
-	}
-	disabled = "";
-	if(parseInt(batchqty)==0)
-	{
-		image_ = '<img src="'+image1+'" width="100%" style="float: right;margin-top:10px;" class="border rounded open_img" title="'+item_name+'"><img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/outofstockicon.png" class="modal_outofstockiconcss">';
-		batchqty1 = '<div class="modal_out_of_stock" style="margin-top: 0px;">Out of stock</div>';
-		addtocartbtn ='<button type="submit" class="btn btn-primary btn-block site_main_btn_out_of_stock" onclick="" title="Add to cart">Add to cart</button>';
-		disabled = "disabled";
-		
-		add_low_stock_alert(i_code);
-	}
-	else
-	{
-		batchqty1 = '<div class="text_cut_or_dot modal_stock" style="margin-top: 0px;">Stock : '+batchqty+'</div>';
-		
-		if(misc_settings=="#NRX")
-		{
-			if(parseInt(batchqty)>10)
-			{
-				batchqty1 = '<div class="text_cut_or_dot modal_stock" style="margin-top: 0px;">Available</div>';
-			}
-		}
-		
-		addtocartbtn ='<button type="submit" class="btn btn-primary btn-block site_main_btn31 add_to_cart_btn'+i_code+'" onclick="add_medicine_to_cart('+i_code+')" title="Add to cart" style="margin-top:10px;">Add to cart</button>';
-	}
-	
-	description1_ = "";
-	if(description1)
-	{
-		description1_ = '<div class="text-left modal_description1" style="margin-top: 0px;">'+description1+'</div>';
-	}
-	
-	description2_ = "";
-	if(description2)
-	{
-		description2_ = '<div class="text-left modal_description2 col-sm-12 col-12" style="    max-height: 90px;overflow-x: auto;">'+description2+'</div>';
-	}
-	
-	var MedicineDetails = '<div class="modal_date_time" style="margin-top: -35px;">As on '+date_time+'</div><div class="row"><div class="col-sm-5 col-12">'+image_+''+image_more+'</div><div class="col-sm-7 col-12"><div class="text-left" style="margin-top: 5px;"><span class="modal_title">'+item_name+'</span> <span class="modal_packing">('+packing+' Packing)</span></div><div><span class="modal_expiry">Expiry : '+expiry+'</span></div>'+description1_+'<div class="text-left modal_company" style="margin-top: 0px;">By '+company_full_name+'</div><div class="text-left modal_batch_no">Batch no : '+batch_no+'</div>'+batchqty1+'<hr>'+scheme_or_margin+'<hr><span class="text_cut_or_dot text-left model_ptr" style="width:50%;float:left;">PTR : <i class="fa fa-inr" aria-hidden="true"></i> '+sale_rate+'/-</span><span class="text-right model_mrp" style="width:50%;float:left;">MRP : <i class="fa fa-inr" aria-hidden="true"></i> '+mrp+'/-</span><span class="text_cut_or_dot text-left model_gst" style="width:50%;float:left;">GST : '+gstper+'%</span><span class="model_landing_price text-right" style="width:50%;float:left;">~ <span class="mobile_off">Landing</span> price : <i class="fa fa-inr" aria-hidden="true"></i> '+final_price+'/-</span><div class="row"><div class="col-sm-5 col-5 mar_top10px search_page_order_quantity" style="margin-top:5px;">Order quantity</div><div class="col-sm-7 col-7 text-right mar_top10px"><input type="number" class="new_quantity new_quantity'+i_code+'" placeholder="Eg 1,2" name="quantity" required style="width:100px;float:right;" value="'+your_order_qty+'" title="Enter quantity" min="1" max="1000"><input type="hidden" class="max_quantity'+i_code+'" value="'+batchqty+'"><input type="hidden" value="'+i_code+'" name="i_code" class="new_item_id'+i_code+'"></div><div class="col-sm-12 col-12 text_cut_or_dot text-left add_medicine_to_cart" style="width:100%;float:left">'+addtocartbtn+'</div></div></div><div class="col-sm-12"><hr></div>'+description2_+'</div>';
-	return MedicineDetails;
-}
-
-function add_low_stock_alert(i_code)
+function medicine_details_api_data(item_code)
 {
-	$.ajax({
-		type       : "POST",
-		data       : {i_code:i_code},
-		url        : "<?php echo base_url(); ?>Chemist_order/add_low_stock_alert",
-		cache	   : true,
-		success    : function(data){
-		},
-		timeout: 10000
+	$(".medicine_details_api_loading").hide();
+	$(".medicine_details_api_data").show();
+
+	/***********************important ************************/
+	$('.medicine_details_item_code').val(item_code);
+	/********************************************************/
+
+	$(".medicine_details_item_add_to_cart_btn").hide()
+	$(".medicine_details_item_add_to_cart_btn_disable").hide()
+	$('.medicine_details_item_add_to_cart_btn_loading').hide()
+
+	$(".medicine_details_featured_img").hide()
+	$(".medicine_details_out_of_stock_img").hide()	
+
+	$(".medicine_details_image").attr("src",item_image)
+	$(".medicine_details_image_small").attr("src",item_image)
+
+	$(".medicine_details_item_name").html(item_name)
+	$(".medicine_details_item_packing").html("Packing : "+item_packing)
+	$(".medicine_details_item_batch_no").html("Batch no : "+item_batch_no)
+
+	$(".medicine_details_item_margin").html(item_margin+'% Margin')
+	$(".medicine_details_item_expiry").html("Expiry : "+item_expiry)
+	$(".medicine_details_item_company").html("By "+item_company)
+	$(".medicine_details_item_stock").html("Stock : " +item_quantity)
+	$(".medicine_details_item_scheme").html("Scheme : " +item_scheme)
+
+	$(".medicine_details_item_description1").html(item_description1)
+	$(".medicine_details_item_description1").show()
+	if(item_description1=="")
+	{
+		$(".medicine_details_item_description1").hide()
+	}
+
+	$(".medicine_details_item_ptr").html('PTR : <i class="fa fa-inr" aria-hidden="true"></i> ' +item_ptr + "/-")
+	$(".medicine_details_item_mrp").html('MRP : <i class="fa fa-inr" aria-hidden="true"></i> ' +item_mrp + "/-")
+	$(".medicine_details_item_gst").html("GST : "+item_gst +"%")
+	$(".medicine_details_item_price").html('*Approximate Value ~ : <i class="fa fa-inr" aria-hidden="true"></i> ' +item_price + "/-")
+
+	$(".medicine_details_item_scheme_line").show()
+	$(".medicine_details_item_scheme").show()
+	if(item_scheme=="0+0")
+	{
+		$(".medicine_details_out_of_stock_img").hide()
+		$(".medicine_details_item_scheme_line").hide()
+		$(".medicine_details_item_scheme").hide()
+	}
+
+	if(item_featured=="1" && item_quantity!="0"){
+		$(".medicine_details_featured_img").show()
+	}
+
+	if(parseInt(item_quantity)==0){
 		
-	});
+		$(".medicine_details_item_add_to_cart_btn_disable").show()
+		$(".medicine_details_item_stock").html("<font color=red>Out of stock</font>")
+
+		$(".medicine_details_out_of_stock_img").show()
+		$(".medicine_details_item_scheme").hide()
+		$(".medicine_details_item_scheme_line").hide()
+	}else{
+		$(".medicine_details_item_add_to_cart_btn").show()
+	}
+
+	if(item_stock!="")
+	{
+		$(".medicine_details_item_stock").html(item_stock)
+	}
+
+	$(".medicine_details_item_quantity").val(item_quantity)
+
+	$(".medicine_details_item_order_quantity_textbox").focus()
 }
 
-function open_img(_id)
+function modal_item_image_change(_id)
 {
-	openimg = $(".open_img"+_id).attr("src");
-	$(".open_img").attr("src",openimg);
+	modal_item_image_change_url = $(".modal_item_image_change"+_id).attr("src");
+	$(".modal_item_image_change").attr("src",modal_item_image_change_url);
 }
 
-function MedicineSmilerProduct_fun(items1,titleshow)
+function medicine_add_to_cart_api()
 {
-	items1 = atob(items1);	
-	items1 = JSON.parse(items1);
-	MedicineSmilerProduct_data = '<h6 class="Similar_Products_title" style="margin-top:10px;">Similar Products</h6><div class="searchpagescrolling4 Similar_Products_div"><div class="row"><div class="col-sm-12">';
-	$.each(items1, function(i,item){
-		if (item)
-		{
-			//MedicineSmilerProduct_data+= items1[0].i_code;
-			
-			MedicineSmilerProduct_data+='<div class="Similar_Products_div--box" onClick="SmilerProduct_modal_open('+items1[0].i_code+')" style="text-decoration: none;">';
-			
-			MedicineSmilerProduct_data+='<img src="'+items1[0].image1+'" class="img-fluid img-responsive" style="border-radius: 5px;">';
-			
-			if(items1[0].featured==1 && items1[0].batchqty!=0)
-			{
-				MedicineSmilerProduct_data+='<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/featuredicon.png" class="category_page_featurediconcss">';
-			}
-			
-			if(items1[0].batchqty==0)
-			{
-				MedicineSmilerProduct_data+='<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/outofstockicon.png" class="category_page_outofstockiconcss">';
-			}
-									
-			MedicineSmilerProduct_data+='<div class="text-left text-capitalize home_page_title" style="margin-top:1px;">'+items1[0].item_name+' <span class="cart_packing">('+items1[0].packing+' Packing)</span></div><div class="category_page_margin_icon text-left"><img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/ribbonicon1.png" style="" alt> </div><div class="category_page_margin">'+items1[0].margin+'% Margin</div><div class="text_cut_or_dot text-capitalize category_page_company">'+items1[0].company_name+'</div><div class="category_page_mrp" style="width:100%;float:left;">MRP : <i class="fa fa-inr" aria-hidden="true"></i> '+items1[0].mrp+'/-</div><div class="category_page_ptr" style="width:100%;float:left;">PTR : <i class="fa fa-inr" aria-hidden="true"></i> '+items1[0].sale_rate+'/-</div><div class="category_page_final_price" style="width:100%;float:left;">~Price : <i class="fa fa-inr" aria-hidden="true"></i> '+items1[0].final_price+'/-</div>';
-			MedicineSmilerProduct_data+='</div>';
-		}
-	});
-	MedicineSmilerProduct_data+= '</div></div></div>';
-	return MedicineSmilerProduct_data;
-}
-
-function SmilerProduct_modal_open(i_code)
-{
-	$('.myModal_loading').click();
-	setTimeout('get_single_medicine_info("'+i_code+'");',200);
-}
-
-function add_medicine_to_cart(i_code)
-{	
 	<?php 
 	if(!empty($page_cart)) {
-	if($page_cart=="1") { ?>
-	setTimeout(function() {
-        $(".edit_item_focues"+i_code).focus();
-    }, 2000);
-	<?php } }?>	
+		if($page_cart=="1") { ?>
+			setTimeout(function() {
+				$(".edit_item_focues"+i_code).focus();
+			}, 2000);
+		<?php 
+		} 
+	}?>	
 
-	chemist_id 		= "<?=$chemist_id?>";
-	quantity		= $(".new_quantity"+i_code).val();
-	max_quantity	= $(".max_quantity"+i_code).val();
-	i_code			= $(".new_item_id"+i_code).val();
+	item_quantity		= $(".medicine_details_item_quantity").val();
+	item_order_quantity	= $(".medicine_details_item_order_quantity_textbox").val();
+	item_code			= $(".medicine_details_item_code").val();
 	
-	item_name 	= $('._cart_item_name').val();
-	final_price = $('._cart_final_price').val();
-	scheme 		= $('._cart_scheme').val();
-	image 		= $('._cart_image').val();
-	
-	if(quantity=="")
+	if(item_order_quantity=="")
 	{
 		swal("Enter quantity");
-		$(".new_quantity"+i_code).val("");
-		$(".new_quantity"+i_code).focus();
+		$(".medicine_details_item_order_quantity_textbox").val("");
+		$(".medicine_details_item_order_quantity_textbox").focus();
 	}
 	else
 	{
-		quantity 		= parseInt(quantity);
-		max_quantity	= parseInt(max_quantity);
-		if(quantity!=0)
+		item_order_quantity = parseInt(item_order_quantity);
+		item_quantity		= parseInt(item_quantity);
+		if(item_order_quantity!=0)
 		{
-			if(quantity<=max_quantity)
+			if(item_order_quantity<=item_quantity)
 			{
-				var import_order_page = "";
+				$(".medicine_details_item_add_to_cart_btn").hide()
+				$(".medicine_details_item_add_to_cart_btn_disable").hide()
+
+				$('.medicine_details_item_add_to_cart_btn_loading').show()
 				
-				<?php if(!empty($import_order_page)){ ?>
-				import_order_page = "<?php echo $import_order_page;?>";
-				<?php } ?>
-				
-				if(import_order_page=="yes")
-				{
-					/**************2021-05-17 only for import order page*************/
-					item_name 	= $(".new_import_page_item_name").val();
-					mrp 		= $(".new_import_page_item_mrp").val();
-					add_new_row_import_order_page(item_name,mrp,quantity);
-					$(".modaloff").click();
-					clear_search_box();
-					/***************************************************************/
-				}
-				else
-				{
-					$(".add_medicine_to_cart").html("<center>Loading....</center>");
-					$.ajax({
-						type       : "POST",
-						data       : {i_code:i_code,item_name:item_name,final_price:final_price,scheme:scheme,image:image,quantity:quantity,chemist_id:chemist_id},
-						url        : "<?php echo base_url(); ?>Chemist_order/add_medicine_to_cart",
-						cache	   : true,
-						error: function(){
-							swal("error add to cart")
-						},
-						success    : function(data){
-							$.each(data.items, function(i,item){	
-								if (item)
+				$.ajax({
+					type       : "POST",
+					data       : {item_code:item_code,	 item_order_quantity:item_order_quantity},
+					url        : "<?php echo base_url(); ?>Chemist_json/medicine_add_to_cart_api",
+					cache	   : true,
+					error: function(){
+						swal("error add to cart")
+					},
+					success    : function(data){
+						$.each(data.items, function(i,item){	
+							if (item)
+							{
+								if(item.status=="1")
 								{
-									if(item.response=="1")
-									{
-										$(".modaloff").click();
-										$(".SearchMedicine_search_box").focus();
-										page_load();
-									}
+									$(".modaloff").click();
+									$(".SearchMedicine_search_box").focus();
+									page_load();
+
+									$('.medicine_details_item_add_to_cart_btn_loading').hide()
+
+									$('.search_textbox').val("");
+									$(".search_medicine_result").html("");
 								}
-							});
-						},
-						timeout: 10000
-					});
-				}
+							}
+						});
+					},
+					timeout: 10000
+				});
 			}
 			else
 			{
-				swal("Etner quantity only " + max_quantity);
-				$(".new_quantity"+i_code).val("");
-				$(".new_quantity"+i_code).focus();
+				swal("Enter a valid quantity");
 			}
 		}
 		else{
-			swal("Etner quantity one or more than one");
-			$(".new_quantity"+i_code).val("");
-			$(".new_quantity"+i_code).focus();
+			swal("Enter quantity one or more than one");
 		}
 	}
 }
@@ -787,6 +828,141 @@ function add_medicine_to_cart(i_code)
 </script>
 <div class="select_medicine_in_modal_script_css"></div>
 <div class="only_for_noti"></div>
+
+<input type="hidden" class="medicine_details_item_code">
+<div type="hidden" class="medicine_details_all_data"></div>
+<a href="#" data-toggle="modal" data-target="#myModal_medicine_details" style="text-decoration: none;" class="myModal_medicine_details"></a>
+<div class="modal modaloff" id="myModal_medicine_details">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Medicine details</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span></button>
+			</div>
+			<div class="modal-body">
+			<div class="medicine_details_item_date_time" style="">Loading....</div>
+			<div class="medicine_details_api_loading text-center" style="display:none">
+				<h1>
+					<img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/loading.gif" width="100px" alt="">
+				</h1>
+				<h1>Loading....</h1>
+			</div>
+			<div class="row medicine_details_api_data" style="display:none">
+				<div class="col-sm-5 col-12">
+
+					<img src="<?= base_url(); ?>/uploads/default_img.jpg" width="100%" style="float: right;margin-top:10px;" class="medicine_details_image modal_item_image_change" alt="" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+					
+					<img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/featured_img.png" width="100" style="position: absolute;margin-top:10px;display:none;" alt="" class="medicine_details_featured_img" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+
+					<img src="<?= base_url(); ?>/img_v<?= constant('site_v') ?>/out_of_stock_img.png" width="100" style="position: absolute;margin-top:10px;display:none;" alt="" class="medicine_details_out_of_stock_img" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+					
+					<img src="<?= base_url(); ?>/uploads/default_img.jpg" width="20%" style="float: left;margin-top:10px;cursor: pointer;margin-right: 6.6%;" class="medicine_details_image_small modal_item_image_change1" onclick="modal_item_image_change(1)" alt="" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+
+					<img src="<?= base_url(); ?>/uploads/default_img.jpg" width="20%" style="float: left;margin-top:10px;cursor: pointer;margin-right: 6.6%;" class="medicine_details_image_small modal_item_image_change2" onclick="modal_item_image_change(2)" alt="" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+
+					<img src="<?= base_url(); ?>/uploads/default_img.jpg" width="20%" style="float: left;margin-top:10px;cursor: pointer;margin-right: 6.6%;" class="medicine_details_image_small modal_item_image_change3" onclick="modal_item_image_change(3)" alt="" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+
+					<img src="<?= base_url(); ?>/uploads/default_img.jpg" width="20%" style="float: left;margin-top:10px;cursor: pointer;" class="medicine_details_image_small modal_item_image_change4" onclick="modal_item_image_change(4)" alt="" onerror=this.src='<?= base_url(); ?>/uploads/default_img.jpg'>
+				</div>
+				<div class="col-sm-7 col-12">
+					<div class="row">
+						<div class="col-sm-12 col-12" style="margin-top: 5px;">
+							<span class="medicine_details_item_name"></span>
+						</div>
+						<div class="col-sm-6 col-6 text-left">
+							<span class="medicine_details_item_packing text-left"></span>
+						</div>
+						<div class="col-sm-6 col-6 text-right">
+							<span class="medicine_details_item_batch_no"></span>
+						</div>
+						<div class="col-sm-6 col-6 text-left">
+							<span class="medicine_details_item_margin"></span>
+						</div>
+						<div class="col-sm-6 col-6 text-right">
+							<span class="medicine_details_item_expiry"></span>
+						</div>
+						<div class="col-sm-12 col-12">
+							<span class="medicine_details_item_company"></span>
+						</div>
+						<div class="col-sm-6 col-6 text-left">
+							<span class="medicine_details_item_stock"></span>
+						</div>
+
+						<div class="col-sm-6 col-6 text-right">
+							<span class="medicine_details_item_scheme"></span>
+						</div>
+						
+						<div class="col-sm-12 col-12 medicine_details_hr medicine_details_item_scheme_line text-center">
+							Scheme is not added in Landing price
+						</div>
+
+						<div class="col-sm-12 col-12 medicine_details_hr medicine_details_item_description1">
+						</div>
+
+						<div class="col-sm-12 col-12 medicine_details_hr">
+						</div>
+
+						<div class="col-sm-6 col-6 text-left">
+							<span class="medicine_details_item_ptr">
+							</span>
+						</div>
+						<div class="col-sm-6 col-6 text-right">	
+							<span class="medicine_details_item_mrp"></span>
+						</div>
+						<div class="col-sm-4 col-5 text-left">	
+							<span class="medicine_details_item_gst"></span>
+						</div>
+						<div class="col-sm-8 col-7 text-right">
+							<span class="medicine_details_item_price" title="*Approximate value ~"></span>
+						</div>
+						<div class="col-sm-12 col-12 text-left">
+						*Approximate billing value per unit, subject change . As per final invoice.
+						</div>
+
+						<div class="col-sm-12 col-12 medicine_details_hr">
+						</div>
+
+						<div class="col-sm-12 col-12">
+							<span class="medicine_details_item_order_quantity" style="width:50%;float:left;margin-top:5px;">Order quantity
+							</span>
+							
+							<span class="text-right" style="width:50%;float:left;margin-top:5px;">
+
+								<input type="number" class="medicine_details_item_order_quantity_textbox" placeholder="Eg 1,2" name="quantity" required="" style="width:100px;float:right;" value="" title="Enter quantity" min="1" max="1000">
+
+								<input type="hidden" class="medicine_details_item_quantity">
+							</span>
+						</div>
+
+						<div class="col-sm-12 col-12 medicine_details_hr">
+						</div>
+
+						<div class="col-sm-12 col-12">
+							<button type="submit" class="btn btn-primary mainbutton medicine_details_item_add_to_cart_btn"  onclick="medicine_add_to_cart_api()" title="Add to cart">Add to cart</button>
+
+							<button type="submit" class="btn btn-primary mainbutton_disable medicine_details_item_add_to_cart_btn_disable" onclick="" title="Add to cart">Add to cart</button>
+
+							<div class="medicine_details_item_add_to_cart_btn_loading text-center" style="display:none">
+								<button type="submit" class="btn btn-primary mainbutton_disable" onclick="" title="Loading....">Loading....</button>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-12 medicine_details_hr">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-12 col-12 medicine_details_hr medicine_details_item_description2">
+			</div>
+
+			<div class="col-sm-12 col-12 medicine_details_hr">
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <a href="#" data-toggle="modal" data-target="#myModal_loading" style="text-decoration: none;" class="myModal_loading"></a>
 <div class="modal modaloff" id="myModal_loading">
 	<div class="modal-dialog modal-lg">
@@ -819,3 +995,174 @@ function add_medicine_to_cart(i_code)
 		</div>
 	</div>
 </div>
+<script src="<?= base_url(); ?>assets/website/js/scripts.js"></script>
+<script>
+function new_style_menu_show()
+{
+	$(".left_menu_bar").show(500);
+}
+function new_style_menu_hide()
+{
+	$(".left_menu_bar").hide(500);
+}
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+<script>
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/*var  firebaseConfig = {
+apiKey: "AIzaSyBovCE4GE71WoWlK5KcWXZl7WZjGVUiQiM",
+authDomain: "drd-web-firebase-db.firebaseapp.com",
+databaseURL: "https://drd-web-firebase-db-default-rtdb.firebaseio.com",
+projectId: "drd-web-firebase-db",
+storageBucket: "drd-web-firebase-db.appspot.com",
+messagingSenderId: "810227054981",
+appId: "1:810227054981:web:b4a453038af2a21c71acec",
+measurementId: "G-MN55NJJGBX"
+};*/
+
+var  firebaseConfig = {
+apiKey: "AIzaSyBPkM-zLmMQbHGE_Ye1qOsBl6IhROvu6RU",
+authDomain: "drd-noti-fire-base.appspot.com",
+databaseURL: "https://drd-noti-fire-base.firebaseio.com",
+projectId: "drd-noti-fire-base",
+storageBucket: "drd-web-firebase-db.appspot.com",
+messagingSenderId: "504935735685",
+appId: "1:504935735685:android:a2d0ae89504ba935f5e4ec"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+// Set database variable
+var database = firebase.database()
+function insert_users_live()
+{
+	var todayDateTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+	var m 	= new Date(todayDateTime)
+	year 	= m.getFullYear()
+	month 	= change_dt_format(m.getMonth()+1);
+	day 	= change_dt_format(m.getDate());
+	hours 	= change_dt_format(m.getHours());
+	minutes = change_dt_format(m.getMinutes());
+	var dateString = year +"-"+ (month) +"-"+ day;
+	var timeString = hours + ":" + minutes;
+
+	database.ref('chemist_online/<?php echo $this->session->userdata('user_altercode'); ?>').set({
+		user_altercode : '<?php echo $this->session->userdata('user_altercode'); ?>',
+		user_date : dateString,
+		user_time : timeString,
+		value : "web"
+	})
+
+	/*var chemist_onlineRef = firebase.database().ref("chemist_online/");
+	chemist_onlineRef.ref ({
+		'<?php echo $this->session->userdata('user_altercode'); ?>' : {
+			user_time : '<?php echo date("H:i"); ?>',
+			user_date : '<?php echo date("d-m-Y"); ?>'
+		}
+	});*/
+
+	/*let today = new Date();
+	let m = today.toLocaleString("en-US", "Asia/Delhi");
+	//var dateString = m.getUTCFullYear() +"/"+ (m.getUTCMonth()+1) +"/"+ m.getUTCDate() + " " + m.getUTCHours() + ":" + m.getUTCMinutes() + ":" + m.getUTCSeconds();
+
+	var dateString = m.getUTCFullYear() +"-"+ (m.getUTCMonth()+1) +"-"+ m.getUTCDate();
+	var timeString = m.getUTCHours() + ":" + m.getUTCMinutes();
+
+	database.ref('chemist_online/<?php echo $this->session->userdata('user_altercode'); ?>').set({
+		user_altercode : '<?php echo $this->session->userdata('user_altercode'); ?>',
+		user_time : timeString,
+		user_date : dateString
+	})*/
+	setTimeout(function() { insert_users_live() }, 30000);
+}
+<?php if($this->session->userdata('user_type')!="") { ?>
+insert_users_live();
+insert_open_page();
+<?php } ?>
+function change_dt_format(dt)
+{
+	if(dt==1)
+	{
+		dt = "01"
+	}
+	if(dt==2)
+	{
+		dt = "02"
+	}
+	if(dt==3)
+	{
+		dt = "03"
+	}
+	if(dt==4)
+	{
+		dt = "04"
+	}
+	if(dt==5)
+	{
+		dt = "05"
+	}
+	if(dt==6)
+	{
+		dt = "06"
+	}
+	if(dt==7)
+	{
+		dt = "07"
+	}
+	if(dt==8)
+	{
+		dt = "08"
+	}
+	if(dt==9)
+	{
+		dt = "09"
+	}
+	return dt;
+}
+function insert_open_page()
+{
+	var todayDateTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+	var m 	= new Date(todayDateTime)
+	year 	= m.getFullYear()
+	month 	= change_dt_format(m.getMonth()+1);
+	day 	= change_dt_format(m.getDate());
+	hours 	= change_dt_format(m.getHours());
+	minutes = change_dt_format(m.getMinutes());
+	var dateString = year +"-"+ (month) +"-"+ day;
+	var timeString = hours + ":" + minutes;
+
+	database.ref('chemist_open_page/'+dateString+'/<?php echo $this->session->userdata('user_altercode'); ?>').push({
+		user_altercode : '<?php echo $this->session->userdata('user_altercode'); ?>',
+		page_url : '<?php echo $_SERVER['HTTP_REFERER']; ?>',
+		user_date : dateString,
+		user_time : timeString,
+		value : "web"
+	})
+}
+
+function insert_top_search(item_code,item_name,item_packing)
+{
+	var todayDateTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+	var m 	= new Date(todayDateTime)
+	year 	= m.getFullYear()
+	month 	= change_dt_format(m.getMonth()+1);
+	day 	= change_dt_format(m.getDate());
+	hours 	= change_dt_format(m.getHours());
+	minutes = change_dt_format(m.getMinutes());
+	var dateString = year +"-"+ (month) +"-"+ day;
+	var timeString = hours + ":" + minutes;
+
+	database.ref('chemist_top_search/'+dateString+'/<?php echo $this->session->userdata('user_altercode'); ?>').push({
+		user_altercode : '<?php echo $this->session->userdata('user_altercode'); ?>',
+		item_code : item_code,
+		item_name : item_name,
+		item_packing : item_packing,
+		user_date : dateString,
+		user_time : timeString,
+		value : "web"
+	})
+}
+
+</script>

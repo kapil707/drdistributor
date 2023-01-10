@@ -85,6 +85,15 @@ class User extends CI_Controller {
 			}
 		}
 		closedir($handle);*/
+
+		setcookie("user_cart_total", "0", time() + (86400 * 30), "/");
+
+		setcookie("user_type", "", time() + (86400 * 30), "/");
+		setcookie("user_altercode", "", time() + (86400 * 30), "/");
+		setcookie("user_password", "", time() + (86400 * 30), "/");
+		setcookie("chemist_id", "", time() + (86400 * 30), "/");
+		setcookie("user_session", "", time() + (86400 * 30), "/");
+
 		redirect(constant('main_site'));
 	}
 
@@ -99,23 +108,17 @@ class User extends CI_Controller {
 		$data["session_user_image"] = base_url()."img_v".constant('site_v')."/logo2.png";
 		$data["session_user_fname"]     = "Guest";
 		$data["session_user_altercode"] = "xxxxxx";
-		$data["chemist_id"] = "";
 		
-		if(!empty($this->session->userdata('user_altercode')))
-		{
-			$data["session_user_image"] 	= $this->session->userdata('user_image');
-			$data["session_user_fname"]     = $this->session->userdata('user_fname');
-			$data["session_user_altercode"] = $this->session->userdata('user_altercode');
-			$data["chemist_id"] = $this->session->userdata('user_altercode');
-		}
-		
-		$data["chemist_id"] = $chemist_id;
-		$data["invoice_id"] = $invoice_id;
-		$data["gstvno"] 	= $invoice_id;
+		$where = array('gstvno'=>$invoice_id,'altercode'=>$chemist_id);
+		$this->db->where($where);
+		$query = $this->db->get("tbl_invoice");
+		$row   = $query->row();
+		$data["item_id"] 		= $row->id;
+		$data["user_altercode"] = $chemist_id;
 		
 		$data["main_page_title"] = $invoice_id;	
 		$this->load->view('home/header', $data);		
-		$this->load->view('home/my_invoice_view', $data);		
+		$this->load->view('main_page/my_invoice_details', $data);		
 	}
 
 	public function download_invoice($chemist_id='',$invoice_id='')
@@ -130,6 +133,30 @@ class User extends CI_Controller {
 			<script>
 				window.location.href = "<?= base_url(); ?>upload_invoice/<?= $invoice_id ?>.xls";
 				setTimeout(function() {window.history.back();}, 500);
+			</script>
+			<?php
+		}
+		else{
+			?>
+			<script>
+				window.history.back();
+			</script>
+			<?php
+		}	
+	}
+
+	public function download_invoice1($chemist_id='',$invoice_id='')
+	{
+		$where = array('gstvno'=>$invoice_id,'altercode'=>$chemist_id);
+		$this->db->where($where);
+		$query = $this->db->get("tbl_invoice");
+		$row   = $query->row();
+		if($row->id!="")
+		{
+			?>
+			<script>
+				window.location.href = "<?= base_url(); ?>upload_invoice/<?= $invoice_id ?>.xls";
+				setTimeout(function() {window.close();}, 500);
 			</script>
 			<?php
 		}

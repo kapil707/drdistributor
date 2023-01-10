@@ -1,3 +1,15 @@
+<script src="<?= base_url(); ?>assets/website/js/scripts.js"></script>
+<?php
+$website_menu 	= $_SESSION["website_menu"];
+$website_menu = '['.$website_menu.']';
+$website_menu 	= json_decode($website_menu, true);
+
+$title0 = "Our top brands";
+$featured_brand_json = $_SESSION["result0"];
+$featured_brand_json	= '['.$featured_brand_json.']';
+$featured_brand_json 	= json_decode($featured_brand_json, true);
+?>
+
 <div class="website_footer1 mobile_off">
 	<div class="container">
 		<div class="row">
@@ -20,29 +32,90 @@
 <div class="website_footer mobile_off">
 	<div class="container">
 		<div class="row">
-			<?php /*
 			<div class="col-sm-12">
 				<div class="div_width_25par">
 					<ul>
-						<li class="footer_li_title">COMPANY</li>
-						<li class="footer_li_text">Careers</li>
-						<li class="footer_li_text">Blog</li>
-						<li class="footer_li_text">Partner with DRD</li>
+						<li class="footer_li_title text-capitalize"><?php echo $title0; ?></li>
+						<?php
+						$i = 0;
+						foreach($featured_brand_json as $row)
+						{
+							$i++;
+							if ($i <= 7) {
+								if (empty($row["division"])) {
+									$row["division"] = "not";
+								}
+								?>
+							<li class="footer_li_text">
+								<a href="<?= base_url(); ?>home/medicine_category/featured_brand/<?= $row["item_code"] ?>">
+									<span class="">
+										<?= $row["item_company"]; ?>
+									</span>
+								</a>
+							</li>
+							<?php
+							}
+						}
+						?>
 					<ul>
 				</div>
 				<div class="div_width_25par">
 					<ul>
-						<li class="footer_li_title">POLICY INFO</li>
-						<li class="footer_li_text">Editorial Policy</li>
-						<li class="footer_li_text">Privacy Policy</li>
-						<li class="footer_li_text">Terms and condition</li>
+						<li class="footer_li_title text-capitalize">Medicine Category</li>
+						<?php
+						$i = 0;
+						foreach($website_menu as $row)
+						{
+							?>
+							<li class="footer_li_text">
+								<a href="<?= base_url();?>home/medicine_category/medicine_category/<?= $row["item_code"] ?>">
+									<span>
+									<?= ($row["item_company"]) ?>
+									</span>
+								</a>
+							</li>
+							<?php
+						}
+						?>
 					<ul>
 				</div>
 				<div class="div_width_25par">
 					<ul>
-						<li class="footer_li_title">NEED HELP?</li>
-						<li class="footer_li_text">Browse All Medicines</li>
-						<li class="footer_li_text">FAQs</li>
+						<li class="footer_li_title">Need Help?</li>
+						<li class="footer_li_text">
+							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/phone.png" width="20" alt="Contacts" title="Contact us"> Contact us
+						</li>
+						<li class="footer_li_text">
+							<a href="tel:+919899133989" title="Contact us">
+								+919899133989
+							</a>
+						</li>
+						<li class="footer_li_text">
+							<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/email.png" width="20" alt="Email" title="Email"> Email us
+						</li>
+						<li class="footer_li_text">
+							<a href="mailto:vipul@drdindia.com" title="Email">
+								vipul@drdindia.com
+							</a>
+						</li>
+						<li class="footer_li_text">
+							<a href="<?= base_url('user/privacy_policy')?>" title="Privacy policy">
+								<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/privacy_policy.png" width="20"  alt="Privacy policy" title="Privacy policy">
+								Privacy policy
+							</a>
+						</li>
+						<li class="footer_li_text">
+							<a href="https://play.google.com/store/apps/details?id=com.drdistributor.dr&hl=en" target="_black" title="Share App">
+								<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/share.png" width="20" alt="Share App" title="Share App">
+								Share App
+							</a>
+						</li>
+						<li class="footer_li_text">
+							<a href="https://play.google.com/store/apps/details?id=com.drdistributor.dr&hl=en" target="_black" title="Download App">
+								<img class="img-circle" src="<?= base_url() ?>img_v<?= constant('site_v') ?>/playstrore.png" width="20" alt="Download App" title="Download App">
+								Download App
+							</a>
+						</li>
 					<ul>
 				</div>
 				<div class="div_width_25par">
@@ -54,7 +127,7 @@
 						<li class="footer_li_left"><img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/twitter.svg"></li>
 					<ul>
 				</div>
-			</div>*/ ?>
+			</div>
 			<div class="col-sm-1"></div>
 			<div class="col-sm-10 text-center footer_copy">
 			<div class="text-center" style="margin-top:15px;">
@@ -109,13 +182,3 @@
 		</a>
 	</div>
 </div>
-<script>
-function new_style_menu_show()
-{
-	$(".new_style_menu").show();
-}
-function new_style_menu_hide()
-{
-	$(".new_style_menu").hide();
-}
-</script>

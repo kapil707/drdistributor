@@ -8,7 +8,7 @@
       <?= $this->Scheme_Model->get_website_data("title") ;?> || <?= $main_page_title;?>
     </title>
     <!-- Stylesheets -->
-	<meta name="theme-color" content="#f7625b">
+	<meta name="theme-color" content="#27ae60">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link href="https://fonts.googleapis.com/css?family=Cabin:700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -17,6 +17,38 @@
 	<script src="<?= base_url(); ?>assets/website/js/jquery-2.1.4.min.js"></script>
 	<script src="<?= base_url(); ?>assets/website/js/bootstrap.min.js"></script>
 	<script src="<?= base_url(); ?>assets/website/js/bigSlide.js"></script> 
+
+	<style>/*light theme*/
+	:root{
+		--main_theme_color:#27ae60;
+		--main_theme_footer_color:#ffffff;
+		--main_theme_bg_color:#d3cfcf42;
+
+		--main_theme_white_bg_color:#ffffff;
+		--main_theme_scrollbar_color:#27ae60;
+		
+
+		--main_theme_li_color:rgb(240, 240, 240);
+		--main_theme_li_bg_color:#969a9829;
+		--main_theme_li_bg_hover_color:#27ae6029;
+
+		--main_theme_li2_color:rgb(240, 240, 240);
+		--main_theme_li2_bg_color:#ffffff;
+		--main_theme_li2_bg_hover_color:#27ae6029;
+
+		--main_theme_textbox_bg_color:#ffffff;
+		--main_theme_textbox_color:#6A6767;
+		--main_theme_text_white_color:#ffffff;
+		--main_theme_text_black_color:#000000;
+		--main_theme_border_color:#ebebeb;
+		--main_theme_border_hover_color:#27ae6085;
+		--main_theme_modal_bg_color:#ffffff;
+
+		--mainbutton-color:#27ae60; /* #27ae60; */
+		--mainbuttonhover-color:#1b6339; /* #27ae60; */
+	}
+	</style>
+
 	<link href="<?= base_url(); ?>assets/website/css/style<?= constant('site_v') ?>.css" rel="stylesheet" type="text/css"/>
 	<link rel="icon" href="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png" type="image/logo" sizes="16x16">
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -24,7 +56,7 @@
 
   <body style="margin-top: 0px !important">
 	<div class="container-fluid" style="">
-		<div class="row new_orange_header">
+		<div class="row main_round_theme">
 			<div class="col-md-3">
 			</div>
 			<div class="col-md-6">						
@@ -42,40 +74,38 @@
 			<div class="col-md-6">
 				<div class="form-row">
 					<div class="form-group col">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/my_account1.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-						<input type="text" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter username" required="" name="user_name1" id="user_name1" title="Enter username">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/my_account1.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 10px;" alt>
+						<input type="text" value="" class="form-control form-control-lg input_type_text" placeholder="Enter username" required="" name="user_name1" id="user_name1" title="Enter username">
 					</div>
 				</div>
 				<div style="border-top: 1px solid white;"></div>
 				<div class="form-row" style="margin-top:15px;">
 					<div class="form-group col">
-						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-						<input type="password" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter password" required="" name="password1" id="password1" style="float: left;" title="Enter password">
+						<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 10px;" alt>
+						<input type="password" value="" class="form-control form-control-lg input_type_text" placeholder="Enter password" required="" name="password1" id="password1" style="float: left;" title="Enter password">
 						<div style="float: right; margin-top: 10px;margin-left: -50px; width:45px;">
 							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/b_eyes1.png" width="25px" onclick="showpassword()" id="eyes1" alt>
 							<img src="<?= base_url() ?>img_v<?= constant('site_v') ?>/b_eyes.png" width="25px" onclick="hidepassword()" id="eyes" style="display:none" alt>
 						</div>
 					</div>
 				</div>
-				<h5 class="text-center gray_text_31 submit_div" style="margin-top:10px;">&nbsp;</h5>
+				<h5 class="text-center main_theme_gray_text submit_div" style="margin-top:10px;">&nbsp;</h5>
 				<div class="form-row" style="margin-top:15px;">
 					<div class="form-group col text-center">
-						<label class="gray_text_31">
+						<label class="main_theme_gray_text">
 							<input type="checkbox" checked id="checkbox"> I agree to the
 						</label>&nbsp;
-						<a href="<?= base_url(); ?>user/termsofservice" style="color:#311B92">
+						<a href="<?= base_url(); ?>user/termsofservice" class="main_theme_a">
 							<strong>terms of services</strong>
 						</a>
 					</div>
 				</div>
 				<div class="text-center">
-					<input type="submit" value="Login" class="btn btn-primary btn-block site_main_btn31" name="Submit" onclick="submitbtn()" id="submitbtn">
-
-					<input type="submit" value="Login" class="btn btn-primary btn-block site_main_btn31_disabled" id="submitbtn_disable" style="display:none">
+					<input type="submit" value="Login" class="btn mainbutton" name="Submit" onclick="submitbtn()" id="submitbtn" ><input type="submit" value="Login" class="btn btn-primary mainbutton_disable" id="submitbtn_disable" style="display:none">
 				</div>
 				<div class="text-center" style="margin-top:30px;">
 					Don't have an account? 
-					<a href="<?= base_url() ?>user/register" class="register31">
+					<a href="<?= base_url() ?>user/register" class="main_theme_a">
 					Create account</a>
 				</div>
 				<div class="text-center website_name_css" style="margin-top:15px;">
@@ -163,12 +193,6 @@ function submitbtn()
 			$("#submitbtn_disable").hide();
 		},
 		success    : function(data){
-			if(data!="")
-			{
-				$(".submit_div").html("");
-				$("#submitbtn").show();
-				$("#submitbtn_disable").hide();
-			}
 			$.each(data.items, function(i,item){	
 				if (item)
 				{
@@ -190,6 +214,11 @@ function submitbtn()
 					}else{
 						swal(item.user_alert);
 						$(".submit_div").html("<p class='text-danger'>"+item.user_alert+"</p>");
+
+						
+						$(".submit_div").html("&nbsp;");
+						$("#submitbtn").show();
+						$("#submitbtn_disable").hide();
 					}
 				}
 			});	

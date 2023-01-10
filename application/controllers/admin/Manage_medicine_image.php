@@ -1,8 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Manage_medicine_image extends CI_Controller {
-
 	var $Page_title = "Manage Medicine Image";
 	var $Page_name  = "manage_medicine_image";
 	var $Page_view  = "manage_medicine_image";
@@ -69,7 +67,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image = "";
 			}
-
 			if (!empty($_FILES["image2"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -85,7 +82,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image2 = "";
 			}
-
 			if (!empty($_FILES["image3"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -101,7 +97,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image3 = "";
 			}
-
 			if (!empty($_FILES["image4"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -117,6 +112,7 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image4 = "";
 			}
+			$download_status = 1;
 			//$description = base64_encode($description);
 			$result = "";
 			$dt = array(
@@ -126,8 +122,10 @@ class Manage_medicine_image extends CI_Controller {
 				'image2'=>$image2,
 				'image3'=>$image3,
 				'image4'=>$image4,
+				'title'=>$title,
 				'description'=>$description,
 				'status'=>$status,
+				'download_status'=>$download_status,
 				'date'=>$date,
 				'time'=>$time,
 			);
@@ -205,45 +203,51 @@ class Manage_medicine_image extends CI_Controller {
 			$this->Scheme_Model->edit_fun($tbl,$dt,$where);			
 		}
 	    $this->load->library('pagination');
-
-		$result = $this->db->query("select * from $tbl order by id desc")->result();
-		
-		$config['total_rows'] = count($result);
-		$data["count_records"] = count($result);
-        $config['per_page'] = 100;
-
-        if($num!=""){
-           $config['per_page'] = $num;
-        }
-        $config['full_tag_open']="<ul class='pagination'>";
-        $config['full_tag_close']="</ul>";
-        $config['first_tag_open']='<li>';
-        $config['first_tag_close']='</li>';
-        $config['last_tag_open']='<li>';
-        $config['last_tag_close']='</li>';
-        $config['next_tag_open']='<li>';
-        $config['next_tag_close']='</li>';
-        $config['prev_tag_open']='<li>';
-        $config['prev_tag_close']='</li>';
-        $config['num_tag_open']='<li>';
-        $config['num_tag_close']='</li>';
-        $config['cur_tag_open']="<li class='active'><a>";
-        $config['cur_tag_close']='</a></li>';
-        $config['num_links'] = 100;    
-        $config['page_query_string'] = TRUE;
-		$per_page=$_GET["pg"];
-		if($per_page=="")
+		if($_GET["search"]=="")
 		{
-			$per_page = 0;
+			$result = $this->db->query("select * from $tbl order by id desc")->result();
+			
+			$config['total_rows'] = count($result);
+			$data["count_records"] = count($result);
+			$config['per_page'] = 100;
+			if($num!=""){
+			$config['per_page'] = $num;
+			}
+			$config['full_tag_open']="<ul class='pagination'>";
+			$config['full_tag_close']="</ul>";
+			$config['first_tag_open']='<li>';
+			$config['first_tag_close']='</li>';
+			$config['last_tag_open']='<li>';
+			$config['last_tag_close']='</li>';
+			$config['next_tag_open']='<li>';
+			$config['next_tag_close']='</li>';
+			$config['prev_tag_open']='<li>';
+			$config['prev_tag_close']='</li>';
+			$config['num_tag_open']='<li>';
+			$config['num_tag_close']='</li>';
+			$config['cur_tag_open']="<li class='active'><a>";
+			$config['cur_tag_close']='</a></li>';
+			$config['num_links'] = 100;    
+			$config['page_query_string'] = TRUE;
+			$per_page=$_GET["pg"];
+			if($per_page=="")
+			{
+				$per_page = 0;
+			}
+			$data['per_page']=$per_page;
+			
+			$data['user_id'] = $user_id;
+			$query = $this->db->query("select * from $tbl order by id desc LIMIT $per_page,100");
+			$data["result"] = $query->result();
 		}
 
 
-		$data['per_page']=$per_page;
-		
-		$data['user_id'] = $user_id;
-
-		$query = $this->db->query("select * from $tbl order by id desc LIMIT $per_page,100");
-  		$data["result"] = $query->result();
+		if($_GET["search"]!="")
+		{
+			$search = $_GET["search"];
+			$query = $this->db->query("SELECT t2.* FROM tbl_medicine as t1 inner JOIN $tbl as t2 on t1.i_code = t2.itemid where t1.item_name like '%$search%'");
+  			$data["result"] = $query->result();
+		}
 		
 		$this->load->view("admin/header_footer/header",$data);
 		$this->load->view("admin/$Page_view/view",$data);
@@ -288,7 +292,6 @@ class Manage_medicine_image extends CI_Controller {
 			$time = time();
 			$date = date("Y-m-d",$time);
 			$where = array('id'=>$id);
-
 			if (!empty($_FILES["image"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -304,7 +307,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image = $old_image;
 			}
-
 			if (!empty($_FILES["image2"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -320,7 +322,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image2 = $old_image2;
 			}
-
 			if (!empty($_FILES["image3"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -336,7 +337,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image3 = $old_image3;
 			}
-
 			if (!empty($_FILES["image4"]["name"]))
 			{
 				$this->Image_Model->uploadTo = $upload_path;
@@ -353,6 +353,7 @@ class Manage_medicine_image extends CI_Controller {
 				$image4 = $old_image4;
 			}
 			
+			$download_status = 2;
 			$result = "";
 			$dt = array(
 				'itemid'=>$itemid,
@@ -361,7 +362,9 @@ class Manage_medicine_image extends CI_Controller {
 				'image2'=>$image2,
 				'image3'=>$image3,
 				'image4'=>$image4,
+				'title'=>$title,
 				'description'=>$description,
+				'download_status'=>$download_status,
 				'status'=>$status,
 				'date'=>$date,
 				'time'=>$time,
@@ -389,8 +392,8 @@ class Manage_medicine_image extends CI_Controller {
 				$this->Admin_Model->Add_Activity_log($message_db);
 				if($result)
 				{
-					redirect(current_url());
-					//redirect(base_url()."admin/$page_controllers/view");
+					//redirect(current_url());
+					redirect(base_url()."admin/".$page_controllers."/edit/".$id."?pg=".$_GET["pg"]);
 				}
 			}
 		}

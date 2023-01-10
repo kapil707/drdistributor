@@ -8,7 +8,7 @@
    	</div>
     <div class="col-xs-12">
         <div class="table-responsive">
-			<table class="table table-striped table-bordered table-hover dataTables-example">
+			<table id="data-table-basic" class="table table-striped">
                 <thead>
                     <tr>
                     	<th>
@@ -19,6 +19,9 @@
 						</th>
 						<th>
 							Version
+						</th>
+						<th>
+							Medicine
 						</th>
 						<th>
 							Cart
@@ -46,7 +49,10 @@
                         </td>
 						<td>
 							<?php if($row->user_type=="chemist") { ?>
-							<?= $row->name; ?> (<?= $row->chemist_id; ?>) - chemist
+							<?php
+							$row1 = $this->db->query("select name from tbl_acm where altercode='$row->chemist_id'")->row();
+							?>
+							<?= $row1->name; ?> (<?= $row->chemist_id; ?>) - chemist
 							<?php } ?>
 							
 							<?php if($row->user_type=="sales") { ?>
@@ -59,6 +65,9 @@
                         </td>
 						<td>
 							<?= $row->versioncode; ?>
+                        </td>
+						<td>
+							<?= $row->count_medicine; ?>
                         </td>
 						<td>
 							<?= $row->count_draft; ?>

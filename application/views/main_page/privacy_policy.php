@@ -17,7 +17,7 @@
 <script>
 $(".headertitle").html("Privacy policy");
 </script>
-<div class="container" style="margin-top:-10px;">
+<div class="container maincontainercss">
 	<div class="row">
 		<div class="col-sm-12 col-12">
 			<div class="row">

@@ -22,46 +22,45 @@ function goBack() {
 		<div class="col-sm-8 col-12">
 			<div class="row">
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="main_theme_li_bg p-4">
 						<div class="row">
-							<div class="col-sm-2 col-3">
-								<img src="<?= $_SESSION['user_image'] ?>" alt="<?= $_SESSION['user_fname'] ?>" title="<?= $_SESSION['user_fname'] ?>" class="rounded account_page_header_image">
+							<div class="col-sm-2 col-2">
+								<img src="<?= $_SESSION['user_image'] ?>" class="medicine_cart_item_image" onerror=this.src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png">
 							</div>
-							<div class="col-sm-9 col-9 text-left">
-								<span class="select_chemist_name"><?= $_SESSION['user_fname'] ?></span><br>
-								<span class="select_chemist_code">Code : <?= $_SESSION['user_altercode'] ?></span>
+							<div class="col-sm-10 col-10 text-left">
+								<span class="chemist_user_name"><?= $_SESSION['user_fname'] ?></span><br>
+								<span class="chemist_altercode">Code : <?= $_SESSION['user_altercode'] ?></span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/phone1.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-					<input type="text" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter mobile number" required="" name="mobile1" id="mobile1" title="Enter mobile number">
+					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/phone1.png" width="25px" style="float: left; margin-top: 7px;position: absolute;margin-left: 10px;" alt>
+					<input type="text" value="" class="input_type_text2" placeholder="Enter mobile number" required="" name="mobile1" id="mobile1" title="Enter mobile number" style="padding-left:40px;float: left;">
 				</div>
 				<div class="col-sm-12 m-1">
 					<div style="border-top: 1px solid white;"></div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/email1.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-					<input type="text" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter email" required="" name="email1" id="email1" title="Enter email">
+					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/email1.png" width="25px" style="float: left; margin-top: 7px;position: absolute;margin-left: 10px;" alt>
+					<input type="text" value="" class="input_type_text2" placeholder="Enter email" required="" name="email1" id="email1" title="Enter email" style="padding-left:40px;float: left;">
 				</div>
 				<div class="col-sm-12 m-1">
 					<div style="border-top: 1px solid white;"></div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/map1.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-					<input type="text" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter address" required="" name="address1" id="address1" title="Enter address">
+					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/map1.png" width="25px" style="float: left; margin-top: 7px;position: absolute;margin-left: 10px;" alt>
+					<input type="text" value="" class="input_type_text2" placeholder="Enter address" required="" name="address1" id="address1" title="Enter address" style="padding-left:40px;float: left;">
 				</div>
 				<div class="col-sm-12 m-2 text-center">
-					<span class="gray_text_31 submit_div" style="margin-top:10px;">&nbsp;</span>
+					<span class="main_theme_gray_text submit_div" style="margin-top:10px;">&nbsp;</span>
 				</div>
 				<div class="col-sm-12 m-2">
-					<input type="submit" value="Update account" class="btn btn-primary btn-block site_main_btn31" name="Submit" onclick="submitbtn()" id="submitbtn">
-
-					<input type="submit" value="Update account" class="btn btn-primary btn-block site_main_btn31_disabled" id="submitbtn_disable" style="display:none">
+					<input type="submit" value="Update account" class="btn mainbutton" name="Submit" onclick="submitbtn()" id="submitbtn">
+					<input type="submit" value="Update account" class="btn mainbutton_disable" id="submitbtn_disable" style="display:none">
 				</div>
 			</div>
-			<div class="round_white_bg load_page" style=" margin-top: 30px;">
+			<div class="main_theme_li_bg load_page" style="padding:10px; margin-top: 30px;">
 				
 			</div>
 		</div>

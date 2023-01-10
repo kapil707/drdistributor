@@ -22,21 +22,21 @@ function goBack() {
 		<div class="col-sm-8 col-12">
 			<div class="row">
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="main_theme_li_bg p-4">
 						<div class="row">
-							<div class="col-sm-2 col-3">
-								<img src="<?= $_SESSION['user_image'] ?>" alt="<?= $_SESSION['user_fname'] ?>" title="<?= $_SESSION['user_fname'] ?>" class="rounded account_page_header_image">
+							<div class="col-sm-2 col-2">
+								<img src="<?= $_SESSION['user_image'] ?>" class="medicine_cart_item_image" onerror=this.src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png">
 							</div>
-							<div class="col-sm-9 col-9 text-left">
-								<span class="select_chemist_name"><?= $_SESSION['user_fname'] ?></span><br>
-								<span class="select_chemist_code">Code : <?= $_SESSION['user_altercode'] ?></span>
+							<div class="col-sm-10 col-10 text-left">
+								<span class="chemist_user_name"><?= $_SESSION['user_fname'] ?></span><br>
+								<span class="chemist_altercode">Code : <?= $_SESSION['user_altercode'] ?></span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-					<input type="password" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter oldpassword" required="" name="old_password" id="old_password" style="float: left;" title="Enter oldpassword" autocomplete="new-password" onchange="check_old_password()">
+					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 7px;position: absolute;margin-left: 10px;" alt>
+					<input type="password" value="" class="input_type_text2" placeholder="Enter oldpassword" required="" name="old_password" id="old_password" title="Enter oldpassword" autocomplete="new-password" onchange="check_old_password()" style="padding-left:40px;float: left;">
 					<div style="float: right; margin-top: 10px;margin-left: -50px; width:45px;">
 						<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_eyes1.png" width="25px" onclick="showpassword()" id="eyes1" alt>
 						<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_eyes.png" width="25px" onclick="hidepassword()" id="eyes" style="display:none" alt>
@@ -46,8 +46,8 @@ function goBack() {
 					<div style="border-top: 1px solid white;"></div>
 				</div>
 				<div class="col-sm-12 m-2">
-					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-					<input type="password" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Enter newpassword" required="" name="new_password" id="new_password" style="float: left;" title="Enter newpassword" maxlength="16" autocomplete="new-password" onchange="check_password1()">
+					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 7px;position: absolute;margin-left: 10px;" alt>
+					<input type="password" value="" class="input_type_text2" placeholder="Enter newpassword" required="" name="new_password" id="new_password" title="Enter newpassword" maxlength="16" autocomplete="new-password" onchange="check_password1()" style="padding-left:40px;float: left;">
 					<div style="float: right; margin-top: 10px;margin-left: -50px; width:45px;">
 						<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_eyes1.png" width="25px" onclick="showpassword1()" id="eyes1" alt>
 						<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_eyes.png" width="25px" onclick="hidepassword1()" id="eyes" style="display:none" alt>
@@ -58,20 +58,19 @@ function goBack() {
 				</div>
 				
 				<div class="col-sm-12 m-2">
-					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 10px;position: absolute;margin-left: 20px;" alt>
-					<input type="password" value="" class="form-control form-control-lg new_text_box_bg_white" placeholder="Re-enter newpassword" required="" name="renew_password" id="renew_password" style="float: left;" title="Re-enter newpassword" autocomplete="new-password" onchange="check_password2()">
+					<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_lock.png" width="25px" style="float: left; margin-top: 7px;position: absolute;margin-left: 10px;" alt>
+					<input type="password" value="" class="input_type_text2" placeholder="Re-enter newpassword" required="" name="renew_password" id="renew_password" title="Re-enter newpassword" autocomplete="new-password" onchange="check_password2()" style="padding-left:40px;float: left;">
 					<div style="float: right; margin-top: 10px;margin-left: -50px; width:45px;">
 						<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_eyes1.png" width="25px" onclick="showpassword2()" id="eyes1" alt>
 						<img src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/b_eyes.png" width="25px" onclick="hidepassword2()" id="eyes" style="display:none" alt>
 					</div>
 				</div>
 				<div class="col-sm-12 m-1 text-center">
-					<span class="text-center gray_text_31 submit_div" style="margin-top:10px;">&nbsp;</span>
+					<span class="text-center main_theme_gray_text submit_div" style="margin-top:10px;">&nbsp;</span>
 				</div>
 				<div class="col-sm-12 m-2">
-					<input type="submit" value="Update password" class="btn btn-primary btn-block site_main_btn31" onclick="submitbtn()" id="submitbtn">
-
-					<input type="submit" value="Update password" class="btn btn-primary btn-block site_main_btn31_disabled" id="submitbtn_disable" style="display:none">
+					<input type="submit" value="Update password" class="btn mainbutton" onclick="submitbtn()" id="submitbtn">
+					<input type="submit" value="Update password" class="btn mainbutton_disable" id="submitbtn_disable" style="display:none">
 				</div>
 			</div> 
 		</div>

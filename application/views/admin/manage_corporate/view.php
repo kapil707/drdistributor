@@ -19,7 +19,7 @@
 	</div>*/ ?>
     <div class="col-xs-12">
          <div class="table-responsive">
-			<table id="data-table-basic" class="table table-striped">
+		 	<table class="table table-striped table-bordered table-hover dataTables-example">
                 <thead>
                     <tr>
 						<th>

@@ -68,11 +68,16 @@ class Manage_email_notification extends CI_Controller {
 				{
 					$email_function = "email_notification";
 
+					$date = date('Y-m-d');
+					$time = date("H:i",time());
+
 					$dt = array(
 					'user_email_id'=>$user_email_id,
 					'subject'=>$subject,
 					'message'=>$message,
 					'email_function'=>$email_function,
+					'date'=>$date,
+					'time'=>$time,
 					);
 					$result = $this->Scheme_Model->insert_fun("tbl_email_send",$dt);
 				}

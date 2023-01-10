@@ -529,20 +529,20 @@ if ($items != '') {
 		{
 			$i_code 		= $_GET["i_code"];
 			$chemist_id 	= $_GET["chemist_id"];
-			$selesman_id 	= $_GET["selesman_id"];
+			$salesman_id 	= $_GET["selesman_id"];
 			$user_type 		= $_GET["user_type"];
 		}
 		if($page_type=="post")
 		{
 			$i_code 		= $_POST["i_code"];
 			$chemist_id 	= $_POST["chemist_id"];
-			$selesman_id 	= $_POST["selesman_id"];
+			$salesman_id 	= $_POST["selesman_id"];
 			$user_type 		= $_POST["user_type"];
 		}
 		$session_id = "ok";
 		if($session_id!="")
 		{
-			$items = $this->Chemist_Model->get_single_medicine_info($i_code,$chemist_id,$selesman_id,$user_type);
+			$items = $this->Chemist_Model->get_single_medicine_info($i_code,$chemist_id,$salesman_id,$user_type);
 ?>
 [<?= $items;?>]
 <?php
@@ -564,7 +564,7 @@ if ($items != '') {
 			$sale_rate 		= $_GET['sale_rate'];
 			$scheme 		= $_GET['scheme'];
 			$chemist_id 	= $_GET['chemist_id'];
-			$selesman_id 	= $_GET['selesman_id'];
+			$salesman_id 	= $_GET['selesman_id'];
 			$user_type 		= $_GET['user_type'];
 			$mobilenumber 	= $_GET['mobilenumber'];
 			$modalnumber 	= $_GET['modalnumber'];
@@ -579,7 +579,7 @@ if ($items != '') {
 			$sale_rate 		= $_POST['sale_rate'];
 			$scheme 		= $_POST['scheme'];
 			$chemist_id 	= $_POST['chemist_id'];
-			$selesman_id 	= $_POST['selesman_id'];
+			$salesman_id 	= $_POST['selesman_id'];
 			$user_type 		= $_POST['user_type'];
 			$mobilenumber 	= $_POST['mobilenumber'];
 			$modalnumber 	= $_POST['modalnumber'];

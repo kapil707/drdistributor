@@ -54,14 +54,26 @@
 				<div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
-                            Order Limit
+                            Website Limit
                         </label>
                     </div>
                     <div class="col-sm-8">
-                        <input type="text" class="" value="<?= $row->order_limit ?>" required name="order_limit">
+                        <input type="text" class="form-control"  value="<?= $row->website_limit ?>" required name="website_limit">
                     </div>
 				</div>
-
+				
+				<div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Android Limit
+                        </label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control"  value="<?= $row->android_limit ?>" required name="android_limit">
+                    </div>
+				</div>
+			</div>
+			<div class="form-group" id="data_5">
 				<div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
@@ -69,7 +81,7 @@
                         </label>
                     </div>
                     <div class="col-sm-8">
-						<input type="text" class="" value="" name="new_password">
+						<input type="text" class="form-control"  value="" name="new_password">
                     </div>
 				</div>
 			</div>
@@ -81,7 +93,7 @@
                         </label>
                     </div>
                     <div class="col-sm-8">
-						<input type="file" class="" value="" name="image">
+						<input type="file" class="form-control"  value="" name="image">
                         <?php
                         $user_image 	= 	base_url()."user_profile/".$row->image;
 						if($row->image=="")

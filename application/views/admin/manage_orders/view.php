@@ -32,7 +32,8 @@
                         </th>
 						<th>
 							Order No
-							/ GSTVNO
+						</th><th>
+							GSTVNO
 						</th>
 						<th>
 							Date
@@ -79,11 +80,13 @@
                         </td>
 						<td>
                         	<?= $row->order_id;?>
-							<br>
+						</td>
+						<td>
 							<?= $row->gstvno;?>
                         </td>
 						<td>
-                        	<?= date("d-M-y h:i a ", ($row->time));?>
+                        	<?= $row->date;?>
+							<?= $row->time;?>
                         </td>
 						<td>
 							<?php

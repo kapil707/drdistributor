@@ -83,7 +83,8 @@ class Manage_chemist extends CI_Controller {
 
 			$where= array('code'=>$row->code);
 			$row1 = $this->Scheme_Model->select_row("tbl_acm_other",$where);
-			$order_limit 	= $row1->order_limit;
+			$website_limit 	= $row1->website_limit;
+			$android_limit 	= $row1->android_limit;
 			$status 		= $row1->status;
 			$block 			= $row1->block;
 			$new_request    = $row1->new_request;
@@ -106,7 +107,7 @@ class Manage_chemist extends CI_Controller {
 			}
 
 $items.= <<<EOD
-{"id":"{$id}","altercode":"{$altercode}","name":"{$name}","email":"{$email}","mobile":"{$mobile}","order_limit":"{$order_limit}","status":"{$status_text}","address":"{$address}"},
+{"id":"{$id}","altercode":"{$altercode}","name":"{$name}","email":"{$email}","mobile":"{$mobile}","website_limit":"{$website_limit}","android_limit":"{$android_limit}","status":"{$status_text}","address":"{$address}"},
 EOD;
 		}
 if ($items != '') {
@@ -191,7 +192,8 @@ if ($items != '') {
 				'new_request'=>"0",
 				'status'=>$status,
 				'block'=>$block,
-				'order_limit'=>$order_limit,
+				'website_limit'=>$website_limit,
+				'android_limit'=>$android_limit,
 				'image'=>$image,
 			);
 			if($new_password!="")
@@ -204,7 +206,8 @@ if ($items != '') {
 					'new_request'=>"0",
 					'status'=>$status,
 					'block'=>$block,
-					'order_limit'=>$order_limit,
+					'website_limit'=>$website_limit,
+					'android_limit'=>$android_limit,
 					'password'=>$password,
 				);
 			}
@@ -237,7 +240,7 @@ if ($items != '') {
 			}
 		}	
 
-		$query = $this->db->query("select tbl_acm.altercode,tbl_acm.code,tbl_acm.name,tbl_acm_other.status,tbl_acm_other.block,tbl_acm_other.order_limit,tbl_acm_other.image from tbl_acm,tbl_acm_other where tbl_acm.code=tbl_acm_other.code and tbl_acm.id='$id' order by tbl_acm.id desc");
+		$query = $this->db->query("select tbl_acm.altercode,tbl_acm.code,tbl_acm.name,tbl_acm_other.status,tbl_acm_other.block,tbl_acm_other.order_limit,tbl_acm_other.website_limit,tbl_acm_other.android_limit,tbl_acm_other.image from tbl_acm,tbl_acm_other where tbl_acm.code=tbl_acm_other.code and tbl_acm.id='$id' order by tbl_acm.id desc");
   		$data["result"] = $query->result();	
 		$x = $query->result();	
 		if(empty($x))

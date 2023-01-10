@@ -6,10 +6,28 @@
             </button>            
         </a>
    	</div>
+	<div class="col-xs-12" style="margin-bottom:5px;">
+		<form class="form-horizontal" role="form" method="get" enctype="multipart/form-data">
+			<div class="row">
+				<div class="col-xs-3" style="margin-bottom:5px;">
+					Search
+				</div>
+				<div class="col-xs-3" style="margin-bottom:5px;">
+				<input type="text" class="form-control" name="search" placeholder="Search" value="<?= $_GET["search"];?>" />
+				</div>
+				<div class="col-xs-3" style="margin-bottom:5px;">
+				<button type="submit" class="btn btn-info submit_button" name="Submit">
+					<i class="ace-icon fa fa-check bigger-110"></i>
+					Search
+				</button>
+				</div>
+			</div>
+		</form>
+   	</div>
     <div class="col-xs-12">
          <div class="table-responsive">
 		 	Total Records : <?php echo $count_records ?> / <?= count($result) + ($_GET["pg"]) ?>
-			<table class="table table-striped">
+			<table class="table table-striped table-bordered table-hover dataTables-example">
                 <thead>
                     <tr>
                     	<th>

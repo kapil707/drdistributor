@@ -19,7 +19,7 @@
 	</div>
     <div class="col-xs-12">
         <div class="table-responsive">
-			<table id="data-table-basic" class="table table-striped" aria-labelledby>
+			<table class="table table-striped table-bordered table-hover dataTables-example">
                 <thead>
                     <tr>
 						<th scope>
@@ -31,7 +31,7 @@
                         	Address
                         </th>
 						<th scope>
-							Order Limit
+							Website / Android Limit
 						</th>
 						<th scope>
                         	Status
@@ -86,12 +86,13 @@ function search_user()
 					email	 	= atob(item.email);
 					mobile	 	= atob(item.mobile);
 					status	 	= item.status;
-					order_limit = item.order_limit;
+					website_limit = item.website_limit;
+					android_limit = item.android_limit;
 					id	 		= item.id;
 					address		= atob(item.address);
 					logout_btn = '<a href="javascript:void(0)" onclick=logout_fun("'+altercode+'")>Logout</a>';
 					
-					$(".load_page").append('<tr><td>'+name+'<br> Code : '+altercode+'</td><td>'+email+'<br>'+mobile+'<br>'+address+'</td><td>Order Limit Rs.'+order_limit+' /-</td><td>'+status+'</td><td><div class="btn-group"><a href="edit/'+id+'" class="btn-white btn btn-xs">Edit</a></div></td><td>'+logout_btn+'</td></tr>');
+					$(".load_page").append('<tr><td>'+name+'<br> Code : '+altercode+'</td><td>'+email+'<br>'+mobile+'<br>'+address+'</td><td>Website limit Rs.'+website_limit+' /-  | Android limit Rs.'+android_limit+' /-</td><td>'+status+'</td><td><div class="btn-group"><a href="edit/'+id+'" class="btn-white btn btn-xs">Edit</a></div></td><td>'+logout_btn+'</td></tr>');
 					$(".lastid1").val(item.id);
 					if(item.css!="")
 					{

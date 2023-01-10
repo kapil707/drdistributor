@@ -5,11 +5,23 @@
                 Add
             </button>
         </a>
+		
+		<a href="<?php echo base_url(); ?>admin/manage_website/add/broadcast_title">
+		    <button type="button" class="btn btn-w-m btn-info">Broadcast Title</button>
+		</a>
+		
+		<a href="<?php echo base_url(); ?>admin/manage_website/add/broadcast_message">
+		    <button type="button" class="btn btn-w-m btn-info">Broadcast Message</button>
+		</a>
+		
+		<a href="<?php echo base_url(); ?>admin/manage_website/add/broadcast_status">
+		    <button type="button" class="btn btn-w-m btn-info">Broadcast Status</button>
+		</a>
    	</div>
     <div class="col-xs-12">
         <div class="table-responsive">
 			Total Records : <?php echo $count_records ?> / <?= count($result) + ($_GET["pg"]) ?>
-			<table class="table table-striped">
+			<table class="table table-striped table-bordered table-hover dataTables-example">
                 <thead>
                     <tr>
                     	<th>

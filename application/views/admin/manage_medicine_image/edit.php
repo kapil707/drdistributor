@@ -11,9 +11,9 @@
         foreach ($result as $row)
         { ?>
 			<input type="hidden" id="old_image" name="old_image" value="<?= $row->image?>"/>
-            <input type="hidden" id="old_image2" name="old_image2" value="<?= $row->image?>"/>
-            <input type="hidden" id="old_image3" name="old_image3" value="<?= $row->image?>"/>
-            <input type="hidden" id="old_image4" name="old_image4" value="<?= $row->image?>"/>
+            <input type="hidden" id="old_image2" name="old_image2" value="<?= $row->image2?>"/>
+            <input type="hidden" id="old_image3" name="old_image3" value="<?= $row->image3?>"/>
+            <input type="hidden" id="old_image4" name="old_image4" value="<?= $row->image4?>"/>
            	<div class="form-group">				
 				<div class="col-sm-6">
                     <div class="col-sm-4 text-right">
@@ -34,7 +34,43 @@
                             <?= form_error('itemid'); ?>
                         </span>
                     </div>
-                </div>				
+                </div>	
+            </div>   
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Title
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <textarea type="text" class="form-control" id="form-field-1" placeholder="Title" name="title" value=""><?= $row->title?></textarea>
+                    </div>
+                    <div class="help-inline col-sm-12 has-error">
+                        <span class="help-block reset middle">  
+                            <?= form_error('title'); ?>
+                        </span>
+                    </div>
+              	</div>
+
+                <div class="col-sm-6">
+                    <div class="col-sm-4 text-right">
+                        <label class="control-label" for="form-field-1">
+                            Description
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <textarea type="text" class="form-control" id="form-field-1" placeholder="Description" name="description" value=""><?= $row->description?></textarea>
+                    </div>
+                    <div class="help-inline col-sm-12 has-error">
+                        <span class="help-block reset middle">  
+                            <?= form_error('description'); ?>
+                        </span>
+                    </div>
+              	</div>
+            </div>
+        
+            <div class="form-group">
                 <div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
@@ -53,8 +89,6 @@
                         </span>
                     </div>
               	</div>
-			</div>
-            <div class="form-group">
                 <div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
@@ -73,6 +107,8 @@
                         </span>
                     </div>
               	</div>
+            </div>
+            <div class="form-group">
                 <div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
@@ -91,9 +127,6 @@
                         </span>
                     </div>
               	</div>
-            </div>
-
-            <div class="form-group">
                 <div class="col-sm-6">
                     <div class="col-sm-4 text-right">
                         <label class="control-label" for="form-field-1">
@@ -112,22 +145,8 @@
                         </span>
                     </div>
               	</div>
-                <div class="col-sm-6">
-                    <div class="col-sm-4 text-right">
-                        <label class="control-label" for="form-field-1">
-                            Description
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <textarea type="text" class="form-control" id="form-field-1" placeholder="Description" name="description" value=""><?= $row->description?></textarea>
-                    </div>
-                    <div class="help-inline col-sm-12 has-error">
-                        <span class="help-block reset middle">  
-                            <?= form_error('description'); ?>
-                        </span>
-                    </div>
-              	</div>
             </div>
+
 			<div class="form-group">
 				<div class="col-sm-6">
                     <div class="col-sm-4 text-right">

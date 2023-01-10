@@ -9,7 +9,7 @@ class Import_order extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		//error_reporting(0);
-		if($this->session->userdata('user_session')==""){
+		if($_COOKIE['user_session']==""){
 			redirect(base_url()."user/login");			
 		}
 		$under_construction = $this->Scheme_Model->get_website_data("under_construction");
@@ -23,42 +23,30 @@ class Import_order extends CI_Controller {
 	{
 		////error_reporting(0);
 		
-		$data["session_user_image"] 	= $this->session->userdata('user_image');
-		$data["session_user_fname"]     = $this->session->userdata('user_fname');
-		$data["session_user_altercode"] = $this->session->userdata('user_altercode');
-		//$data["chemist_id"] = $this->session->userdata('user_altercode');
+		$data["session_user_image"] 	= $_COOKIE['user_image'];
+		$data["session_user_fname"]     = $_COOKIE['user_fname'];
+		$data["session_user_altercode"] = $_COOKIE['user_altercode'];
+		//$data["chemist_id"] = $_COOKIE['user_altercode'];
 		
 		$data["main_page_title"] = "Upload order";
-		$user_altercode	= $this->session->userdata('user_altercode');
-		$user_type		= $this->session->userdata('user_type');
-		$data["chemist_id"] = $chemist_id = "";
-		if(!empty($_GET["chemist_id"])){
-			$data["chemist_id"] = $chemist_id = $_GET["chemist_id"];
-		}
-		if($user_type=="sales")
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$user_type		= $_COOKIE['user_type'];
+		$chemist_id		= $_COOKIE['chemist_id'];
+
+		$data["chemist_id"] = $chemist_id;
+
+		if(!empty($user_type))
 		{
-			if(empty($chemist_id))
+			if($user_type=="sales")
 			{
-				redirect(base_url()."import_order/select_chemist");
+				$data["session_user_fname"]  = "Code : ".$chemist_id." | <a href='".base_url()."home/select_chemist'> <img src='".base_url()."/img_v".constant('site_v')."/edit_icon_w.png' width='12px;' style='margin-top: 2px;margin-bottom: 2px;'></a>";
 			}
-			if(!empty($chemist_id))
+
+			$salesman_id = "";
+			if($user_type=="sales")
 			{
-				$where = array('altercode'=>$chemist_id);
-				$row = $this->Scheme_Model->select_row("tbl_acm",$where);
+				$salesman_id 	= $user_altercode;
 				$user_altercode = $chemist_id;
-				$data["chemist_name"] = $row->name;
-				$data["chemist_id"]   = $row->altercode;
-
-				$where= array('code'=>$row->code);
-				$row1 = $this->Scheme_Model->select_row("tbl_acm_other",$where);
-
-				$user_profile = base_url()."user_profile/$row1->image";
-				if(empty($row1->image))
-				{
-					$user_profile = base_url()."img_v".constant('site_v')."/logo.png";
-				}
-
-				$data["chemist_image"]   = $user_profile;
 			}
 		}
 		
@@ -75,64 +63,85 @@ class Import_order extends CI_Controller {
 		$data["chemist_id"] = $chemist_id;
 		
 		$this->load->view('home/header', $data);
-		$this->load->view('home/import_orders', $data);
+		$this->load->view('import_order/index', $data);
 	}
 	
 	public function select_chemist(){
-		////error_reporting(0);
-		
-		$data["session_user_image"] 	= $this->session->userdata('user_image');
-		$data["session_user_fname"]     = $this->session->userdata('user_fname');
-		$data["session_user_altercode"] = $this->session->userdata('user_altercode');
-		
-		$data["main_page_title"] = "Search chemist";
-		$data["chemist_id"] = "";
-		$this->load->view('home/header',$data);
-		$this->load->view('home/import_orders_select_chemist', $data);
-	}
-	
-	public function suggest_medicine(){
-		////error_reporting(0);
-		
-		$data["session_user_image"] 	= $this->session->userdata('user_image');
-		$data["session_user_fname"]     = $this->session->userdata('user_fname');
-		$data["session_user_altercode"] = $this->session->userdata('user_altercode');
-		$data["chemist_id"] = "";
-		
-		$data["main_page_title"] = "Suggest medicine";
-		$this->load->view('home/header',$data);
-		$this->load->view('home/import_orders_suggest_medicine', $data);
-		$this->load->view('home/footer', $data);
-	}
-	
-	public function search($order_id='',$chemist_id='')
-	{
-		////error_reporting(0);
-		
-		$data["session_user_image"] 	= $this->session->userdata('user_image');
-		$data["session_user_fname"]     = $this->session->userdata('user_fname');
-		$data["session_user_altercode"] = $this->session->userdata('user_altercode');
-		//$data["chemist_id"] = $this->session->userdata('user_altercode');
-		
-		$data["main_page_title"] = "Upload order";
-		$user_altercode	= $this->session->userdata('user_altercode');
-		$user_type		= $this->session->userdata('user_type');
-		if($user_type=="sales")
+		$chemist_id		= $_COOKIE['chemist_id'];
+		if(empty($chemist_id))
 		{
-			if(empty($chemist_id))
+			redirect(base_url()."home/select_chemist");
+		}
+		else{
+			redirect(base_url()."import_order");
+		}
+	}
+	
+	public function medicine_suggest(){
+		////error_reporting(0);
+		
+		$data["session_user_image"] 	= $_COOKIE['user_image'];
+		$data["session_user_fname"]     = $_COOKIE['user_fname'];
+		$data["session_user_altercode"] = $_COOKIE['user_altercode'];
+		$data["main_page_title"] = "Suggest medicine";
+
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$user_type		= $_COOKIE['user_type'];
+		$chemist_id		= $_COOKIE['chemist_id'];
+
+		$data["chemist_id"] = $chemist_id;
+
+		if(!empty($user_type))
+		{
+			if($user_type=="sales")
 			{
-				redirect(base_url()."import_order/select_chemist");
+				$data["session_user_fname"]  = "Code : ".$chemist_id." | <a href='".base_url()."home/select_chemist'> <img src='".base_url()."/img_v".constant('site_v')."/edit_icon_w.png' width='12px;' style='margin-top: 2px;margin-bottom: 2px;'></a>";
 			}
-			if(!empty($chemist_id))
+
+			$salesman_id = "";
+			if($user_type=="sales")
 			{
+				$salesman_id 	= $user_altercode;
 				$user_altercode = $chemist_id;
 			}
 		}
-		else
+
+		$this->load->view('home/header',$data);
+		$this->load->view('import_order/medicine_suggest', $data);
+		$this->load->view('home/footer', $data);
+	}
+	
+	public function medicine_search($order_id='')
+	{
+		////error_reporting(0);
+		
+		$data["session_user_image"] 	= $_COOKIE['user_image'];
+		$data["session_user_fname"]     = $_COOKIE['user_fname'];
+		$data["session_user_altercode"] = $_COOKIE['user_altercode'];
+		//$data["chemist_id"] = $_COOKIE['user_altercode'];
+		
+		$data["main_page_title"] = "Upload order";
+		
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$user_type		= $_COOKIE['user_type'];
+		$chemist_id		= $_COOKIE['chemist_id'];
+
+		$data["chemist_id"] = $chemist_id;
+
+		if(!empty($user_type))
 		{
-			$chemist_id = "0";
+			if($user_type=="sales")
+			{
+				$data["session_user_fname"]  = "Code : ".$chemist_id." | <a href='".base_url()."home/select_chemist'> <img src='".base_url()."/img_v".constant('site_v')."/edit_icon_w.png' width='12px;' style='margin-top: 2px;margin-bottom: 2px;'></a>";
+			}
+
+			$salesman_id = "";
+			if($user_type=="sales")
+			{
+				$salesman_id 	= $user_altercode;
+				$user_altercode = $chemist_id;
+			}
 		}
-		$data["chemist_id"]	= ($chemist_id);
 		$data["order_id"]	= $order_id = base64_decode($order_id);
 		$data["myname"] 	= $user_altercode;
 
@@ -146,38 +155,43 @@ class Import_order extends CI_Controller {
 
 		$data["import_order_page"] = "yes";
 		$this->load->view('home/header', $data);
-		$this->load->view('home/import_orders_search', $data);
+		$this->load->view('import_order/medicine_search', $data);
 		$this->load->view('home/footer', $data);
 	}
 	
-	public function delete_items($order_id='',$chemist_id='')
+	public function medicine_deleted_items($order_id='')
 	{
 		////error_reporting(0);
 		
-		$data["session_user_image"] 	= $this->session->userdata('user_image');
-		$data["session_user_fname"]     = $this->session->userdata('user_fname');
-		$data["session_user_altercode"] = $this->session->userdata('user_altercode');
+		$data["session_user_image"] 	= $_COOKIE['user_image'];
+		$data["session_user_fname"]     = $_COOKIE['user_fname'];
+		$data["session_user_altercode"] = $_COOKIE['user_altercode'];
 		
 		$data["main_page_title"] = "Deleted items";
 		
-		if($chemist_id=="0")
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$user_type		= $_COOKIE['user_type'];
+		$chemist_id		= $_COOKIE['chemist_id'];
+
+		$data["chemist_id"] = $chemist_id;
+
+		if(!empty($user_type))
 		{
-			$chemist_id = "";
+			if($user_type=="sales")
+			{
+				$data["session_user_fname"]  = "Code : ".$chemist_id." | <a href='".base_url()."home/select_chemist'> <img src='".base_url()."/img_v".constant('site_v')."/edit_icon_w.png' width='12px;' style='margin-top: 2px;margin-bottom: 2px;'></a>";
+			}
+
+			$salesman_id = "";
+			if($user_type=="sales")
+			{
+				$salesman_id 	= $user_altercode;
+				$user_altercode = $chemist_id;
+			}
 		}
-		$data["chemist_id"]	= ($chemist_id);
 		$data["order_id"]	= $order_id = base64_decode($order_id);
 		
 		/*****************************************/
-		$user_altercode	= $_SESSION["user_altercode"];
-		$user_type		= $_SESSION["user_type"];
-		if($user_type=="chemist")
-		{
-			$chemist_id = $user_altercode;
-		}
-		if($user_type=="sales")
-		{
-			$selesman_id = $user_altercode;
-		}
 		if($user_type=="chemist")
 		{
 			$users = $this->db->query("select * from tbl_acm where altercode='$chemist_id' ")->row();
@@ -192,14 +206,14 @@ class Import_order extends CI_Controller {
 		if($user_type=="sales")
 		{
 			//jab sale man say login hota ha to
-			$users = $this->db->query("select * from tbl_acm where altercode='$chemist_id' ")->row();
+			$users = $this->db->query("select * from tbl_acm where altercode='$user_altercode' ")->row();
 			$user_session	= $users->id;
 			$acm_altercode 	= $users->altercode;
 			$acm_name 		= $users->name;
 			$acm_email 		= $users->email;
 			$acm_mobile 	= $users->mobile;
 
-			$users = $this->db->query("select * from tbl_users where customer_code='$selesman_id' ")->row();
+			$users = $this->db->query("select * from tbl_users where customer_code='$salesman_id' ")->row();
 			$salesman_name 		= $users->firstname." ".$users->lastname;
 			$salesman_mobile	= $users->cust_mobile;
 			$salesman_altercode	= $users->customer_code;
@@ -212,7 +226,7 @@ class Import_order extends CI_Controller {
 		$data["result"]	= $result;
 		if(empty($result))
 		{
-			redirect(base_url()."home/search_medicine/".$chemist_id);
+			redirect(base_url()."home/my_cart");
 		}
 		
 		$i = 0;
@@ -230,7 +244,7 @@ class Import_order extends CI_Controller {
 		}
 		
 		$message = $dt1.$dt.$dt2;
-		$subject   = "Import Order Delete Items From D.R. Distributors Pvt. Ltd.";
+		$subject   = "Import order delete items from D.R. Distributors Pvt. Ltd.";
 		
 		$user_email_id = $acm_email;
 		if (filter_var($user_email_id, FILTER_VALIDATE_EMAIL)) {
@@ -249,10 +263,13 @@ class Import_order extends CI_Controller {
 			$file_name_1 = "Import-Order-Deleted-Items-Report.xls";
 			$file_name1  = $this->import_orders_delete_items($result);
 			
-			$subject = base64_encode($subject);
-			$message = base64_encode($message);
+			$subject = ($subject);
+			$message = ($message);
 			$email_function = "import_orders_delete_items";
 			$mail_server = "";
+
+			$date = date('Y-m-d');
+			$time = date("H:i",time());
 			
 			$dt = array(
 			'user_email_id'=>$user_email_id,
@@ -262,12 +279,14 @@ class Import_order extends CI_Controller {
 			'file_name1'=>$file_name1,
 			'file_name_1'=>$file_name_1,
 			'mail_server'=>$mail_server,
+			'date'=>$date,
+			'time'=>$time,
 			);
 			$this->Scheme_Model->insert_fun("tbl_email_send",$dt);				
 		}
 		
 		$this->load->view('home/header', $data);
-		$this->load->view('home/import_orders_delete_items', $data);
+		$this->load->view('import_order/medicine_deleted_items', $data);
 		$this->load->view('home/footer', $data);
 	}
 	
@@ -370,7 +389,7 @@ class Import_order extends CI_Controller {
 	
 	
 	public function upload_import_file(){
-		//error_reporting(0);
+		
 		header('Content-Type: application/json');
 		$items = "";
 		$headername	= strtoupper($_GET['headername']);
@@ -384,29 +403,21 @@ class Import_order extends CI_Controller {
 		$itemmrp    = str_replace(",","",$itemmrp);
 		$itemmrp    = str_replace(".","",$itemmrp);
 
-		$chemist_id = $_GET['chemist_id'];
-		
-		$user_altercode	= $_SESSION["user_altercode"];
-		$user_type		= $_SESSION["user_type"];
+		$user_type		= $_COOKIE['user_type'];
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$user_password	= $_COOKIE['user_password'];
+		$chemist_id		= $_COOKIE['chemist_id'];
+
+		$salesman_id = "";
 		if($user_type=="sales")
 		{
-			if($chemist_id=="")
-			{
-				redirect(base_url()."import_order/select_chemist");
-			}
-			if($chemist_id!="")
-			{
-				$user_altercode = $chemist_id;
-			}
-		}
-		else
-		{
-			$chemist_id = "0";
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
 		}
 		
 		$where = array('user_altercode'=>$user_altercode);
 		$row = $this->Scheme_Model->select_row("drd_excel_file",$where);
-		if($row->id=="")
+		if(empty($row->id))
 		{
 			$this->db->query("insert into drd_excel_file set headername='$headername',itemname='$itemname',itemqty='$itemqty',itemmrp='$itemmrp',user_altercode='$user_altercode'");
 		}
@@ -422,7 +433,11 @@ class Import_order extends CI_Controller {
 		{
 			/*****************************/
 			$row = $this->db->query("select order_id from drd_import_file order by id desc limit 1")->row();
-			$order_id = $row->order_id + 1;
+			$order_id = 1;
+			if(!empty($row->order_id))
+			{
+				$order_id = $row->order_id + 1;
+			}
 			/*****************************/
 			
 			$excelFile = $upload_path.$filename;
@@ -442,6 +457,11 @@ class Import_order extends CI_Controller {
 							$mrp 		= $worksheet->getCell($itemmrp.$row)->getValue();
 							
 							if($quantity=="")
+                            {
+                              	$quantity = 1;
+                            }
+
+							if($quantity==0)
                             {
                               	$quantity = 1;
                             }
@@ -470,10 +490,10 @@ class Import_order extends CI_Controller {
 				unlink($excelFile);
 			}
 			$order_id  = base64_encode($order_id);
-			$url = base_url()."import_order/search/$order_id/$chemist_id";
+			$url = base_url()."import_order/medicine_search/$order_id";
 		}
 		else{
-			$url = base_url()."import_order/?chemist_id=$chemist_id";
+			$url = base_url()."import_order";
 		}
 $items.= <<<EOD
 {"url":"{$url}"},
@@ -520,8 +540,8 @@ if ($items != '') {
 	
 	public function get_temp_rec($chemist_id)
 	{
-		$user_altercode = $_SESSION['user_altercode'];
-		$user_type 		= $_SESSION["user_type"];
+		$user_altercode = $_COOKIE['user_altercode'];
+		$user_type 		= $_COOKIE['user_type'];
 		if($user_type=="sales")
 		{
 			$temp_rec = $user_type."_".$user_altercode."_".$chemist_id;
@@ -550,28 +570,41 @@ if ($items != '') {
 	}
 	
 	
-	public function import_order_dropdownbox()
-	{
-		//error_reporting(0);
-		$order_id			= $_POST["order_id"];
-		$mytime				= $_POST["mytime"];
-		$order_quantity		= $_POST["item_qty"];
-		$excel_number		= $_POST["cssid"];
-		$chemist_id			= ($_POST["chemist_id"]);
-		$item_mrp 			= ($_POST["item_mrp"]);
-		$order_item_name	= $keyword 	= $this->clean1($_POST["item_name"]);
+	public function insert_main_row_data()
+	{		
+		$excel_number	= $_POST["row_id"];
+		
+		$user_type 		= $_COOKIE['user_type'];
+		$user_altercode = $_COOKIE['user_altercode'];
+		$user_password	= $_COOKIE['user_password'];
+		
+		$chemist_id 	= $_COOKIE['chemist_id'];
+
+		$salesman_id = "";
+		if($user_type=="sales")
+		{
+			$salesman_id 	= $user_altercode;
+			$user_altercode = $chemist_id;
+		}
+
+		$row = $this->db->query("select * from drd_import_file where id='$excel_number'")->row();
+
+		$order_id			= $row->order_id;
+		$order_quantity		= $row->quantity;
+		$item_mrp 			= $row->mrp;
+		$order_item_name	= $this->clean1($row->item_name);
 		
 		/******************************************/
 		$suggest_i_code = "";
 		$suggest = 0;
-		$where = array('your_item_name'=>$order_item_name);
-		$row = $this->Scheme_Model->select_row("drd_import_orders_suggest",$where);
-		if(!empty($row->id))
+
+		$row_s = $this->db->query("select * from drd_import_orders_suggest where your_item_name='$order_item_name' order by id desc")->row();
+		if(!empty($row_s->id))
 		{
 			$suggest = 1;
-			$order_item_name	= $keyword = $row->item_name;
-			$suggest_i_code 	= $row->i_code;
-			$suggest_altercode 	= $row->user_altercode;
+			$order_item_name	= $row_s->item_name;
+			$suggest_i_code 	= $row_s->i_code;
+			$suggest_altercode 	= $row_s->user_altercode;
 		}
 		$type_ = 1;
 		if(!empty($suggest_i_code))
@@ -582,40 +615,32 @@ if ($items != '') {
 		}
 		else{			
 			/******************************************/
-			$items=$this->Chemist_Model->import_order_dropdownbox($keyword,$item_mrp);
+			$items=$this->Chemist_Model->import_order_dropdownbox($order_item_name,$item_mrp);
 			/*****************************************/		
 			$type_ = $items["type"];
 			$i_code = $items["i_code"];
 			$where = array('i_code'=>$i_code);
 		}
 		
-		/*$this->db->select("m.*,(SELECT DISTINCT featured from tbl_medicine_image where itemid=m.i_code) as featured,(SELECT DISTINCT discount from tbl_company_discount where compcode=m.compcode and tbl_company_discount.status='1') as discount");*/
-		$this->db->select("m.*");
+		$this->db->select("*");
 		$this->db->where($where);
 		$this->db->limit(1);
-		$this->db->order_by('m.item_name','asc');
-		$row = $this->db->get("tbl_medicine as m")->row();
+		$this->db->order_by('item_name','asc');
+		$row = $this->db->get("tbl_medicine")->row();
 		$image1 = constant('img_url_site')."uploads/default_img.jpg";
-		/*$get_medicine_image	= 	$this->Chemist_Model->get_medicine_image($i_code);
-		$image1 = $get_medicine_image[0];
-		if(empty($image1))
-		{
-			$image1 = constant('img_url_site')."uploads/default_img.jpg";
-		}*/
-		$discount = $sale_rate = $gstper = 0;
+		
 		$selected_item_name = $selected_packing = $selected_batchqty = $selected_scheme = $selected_company_full_name = $selected_batch_no = $selected_expiry = "";
-		$selected_batchqty = $selected_mrp = $selected_sale_rate = $selected_final_price = 0;
+		$selected_batchqty = $selected_mrp = $selected_ptr = $selected_price = 0;
+		$item_code = "";
+		$return_status = 0;
 		if(!empty($row)) {
-			$compcode 	=	$row->compcode;
-			$gstper		=	$row->gstper;
-			$sale_rate	=	$row->sale_rate;
-			//$discount = 	$row->discount;
-			
-			$featured		=  $discount = "";
-			if(empty($discount))
+			if(!empty($row->image1))
 			{
-				$discount = "4.5";
+				$image1 = constant('img_url_site').$row->image1;
 			}
+			$selected_mrp	=	$row->mrp;
+			$selected_ptr	=	$row->sale_rate;
+			$selected_price	=	$row->final_price;
 			
 			$selected_item_name = ucwords(strtolower($row->item_name));
 			$selected_packing = $row->packing;
@@ -624,28 +649,17 @@ if ($items != '') {
 			$selected_batch_no = $row->batch_no;
 			$selected_batchqty = $row->batchqty;
 			$selected_scheme = $row->salescm1."+".$row->salescm2;
-
-			/*********************yha decount karta h**************/
-			$final_price0=  $sale_rate * $discount / 100;
-			$final_price0=	$sale_rate - $final_price0;
-			
-			/*********************yha gst add karta h**************/
-			$final_price=   $final_price0 * $gstper / 100;
-			$final_price=	$final_price0 + $final_price;
-			
-			$final_price= 	round($final_price,2);
-			/***************************************/
-			
-			$selected_mrp = $row->mrp;
-			$selected_sale_rate = $row->sale_rate;
-			$selected_final_price = $final_price;
 			
 			$selected_mrp = number_format($selected_mrp,2);
-			$selected_sale_rate = number_format($selected_sale_rate,2);
-			$selected_final_price = number_format($selected_final_price,2);
+			$selected_ptr = number_format($selected_ptr,2);
+			$selected_price = number_format($selected_price,2);
 			
 			/******************************************/
-			$this->add_excelFile_temp_tbl($excel_number,$order_id,$mytime,$order_item_name,$order_quantity,$chemist_id,$row->i_code,$row->batchqty,$selected_item_name,$selected_packing,$selected_expiry,$selected_company_full_name,$selected_scheme,$final_price,$image1);
+			if($row->batchqty!=0  && is_numeric($order_quantity)){
+
+				$item_code = $row->i_code;
+				$return_status = $this->add_excelFile_temp_tbl($item_code,$order_quantity,$excel_number,$order_id,$user_type,$user_altercode,$salesman_id);				
+			}
 			/******************************************/
 		}
 		?>
@@ -752,10 +766,10 @@ if ($items != '') {
 		$('.selected_mrp_<?= $excel_number ?>').html('<?php echo $selected_mrp; ?>');
 		$('.selected_scheme_<?= $excel_number ?>').html('Scheme : <?php echo $selected_scheme; ?>');
 		$('.selected_expiry_<?= $excel_number ?>').html('<b><?php echo $selected_expiry ?></b>');
-		$('.selected_sale_rate_<?= $excel_number ?>').html('<?php echo $selected_sale_rate ?>');
+		$('.selected_sale_rate_<?= $excel_number ?>').html('<?php echo $selected_ptr ?>');
 		$('.selected_batchqty_<?= $excel_number ?>').html('<?php echo $selected_batchqty ?>');
 		$('.selected_batch_no_<?= $excel_number ?>').html('<?php echo $selected_batch_no ?>');
-		$('.selected_final_price_<?= $excel_number ?>').html('<?php echo $selected_final_price; ?>');
+		$('.selected_final_price_<?= $excel_number ?>').html('<?php echo $selected_price; ?>');
 		$('.selected_company_full_name_<?= $excel_number ?>').html('<?php echo $selected_company_full_name; ?>');
 		</script>
 		<?php
@@ -780,93 +794,32 @@ if ($items != '') {
 		return $r;
 	}
 	
-	public function add_excelFile_temp_tbl($excel_number,$order_id,$mytime,$order_item_name,$order_quantity,$chemist_id,$i_code,$batchqty,$selected_item_name,$selected_packing,$selected_expiry,$selected_company_full_name,$selected_scheme,$final_price,$image)
+	public function add_excelFile_temp_tbl($item_code,$item_order_quantity,$excel_number,$order_id,$user_type,$user_altercode,$salesman_id)
 	{		
 		$return_status = 0;
-		$user_type	 	= $_SESSION["user_type"];
-		$user_altercode	= $_SESSION["user_altercode"];
-		
-		$temp_rec = $this->get_temp_rec($chemist_id);
-		if($user_type=="sales")
-		{
-			$selesman_id 	= $user_altercode;
-		}
-		else
-		{
-			$selesman_id 	= "";
-			$chemist_id 	= $user_altercode;
-		}
-		$excel_temp_id	= $temp_rec."_excelFile_".$order_id;
+
 		$order_type 	= "excelFile";
-		$your_item_name	= $this->clean1($order_item_name);	
+		$mobilenumber 	= "";
+		$modalnumber 	= "PC - Import Order";
+		$device_id    	= "";
 
-		$date = date('Y-m-d');
-		$time = $mytime;
-		$datetime = date("d-M-y H:i",$time);
-		$mobilenumber = "";
-		$modalnumber = "PC - Import Order";
-		
-		/***************yha change medcidine ke time work karta hta sirf***************************/
-		$this->db->query("delete from drd_temp_rec where excel_number='$excel_number'");
-		/*****************************************************************/
-
-		/********************old cart m medicine ko delete karta h yha**/
-		$where = array('chemist_id'=>$chemist_id,'selesman_id'=>$selesman_id,'user_type'=>$user_type,'i_code'=>$i_code,'status'=>'0');
-		$row = $this->Scheme_Model->select_row("drd_temp_rec",$where);
-		if(!empty($row->id))
+		if($item_code!="")
 		{
-			$this->db->query("delete from drd_temp_rec where id='$row->id'");	
-		}
-		/*****************************************************************/
-
-		if($i_code!="" && $batchqty!=0 && is_numeric($order_quantity))
-		{
-			$return_status = 1;
-
-			$dt = array(
-				'i_code'=>$i_code,
-				'quantity'=>$order_quantity,
-
-				'item_name'=>$selected_item_name,
-				'packing'=>$selected_packing,
-				'expiry'=>$selected_expiry,
-				'company_full_name'=>$selected_company_full_name,
-				'sale_rate'=>$final_price,
-				'scheme'=>$selected_scheme,
-				'image'=>$image,
-
-				'chemist_id'=>$chemist_id,
-				'selesman_id'=>$selesman_id,
-				'user_type'=>$user_type,
-				'date'=>$date,
-				'time'=>$time,
-				'datetime'=>$datetime,
-				'temp_rec'=>$temp_rec,
-				'order_type'=>$order_type,
-				'mobilenumber'=>$mobilenumber,
-				'modalnumber'=>$modalnumber,
-				'excel_temp_id'=>$excel_temp_id,
-				'excel_number'=>$excel_number,
-				'filename'=>$order_id,
-				'your_item_name'=>$your_item_name,
-				);
-			$this->Scheme_Model->insert_fun("drd_temp_rec",$dt);
+			$return_status = $this->Chemist_Model->medicine_add_to_cart_api($user_type,$user_altercode,$salesman_id,$order_type,$item_code,$item_order_quantity,$mobilenumber,$modalnumber,$device_id,$excel_number);
 
 			$this->db->query("update drd_import_file set status='1' where id='$excel_number' and order_id='$order_id'");
 		}
 		return $return_status;
 	}
 	
-	public function change_item_qty()
+	public function change_order_quantity()
 	{
-		//error_reporting(0);
 		header('Content-Type: application/json');
 		$items = "";
-		$filename 		= $_POST["order_id"]; //order no ka mtlb ha file ka name
-		$quantity		= $_POST["item_qty"];
-		$excel_number	= $_POST["cssid"];
+		$row_id 		= $_POST["row_id"];
+		$quantity		= $_POST["quantity"];
 		
-		$response = $this->db->query("update drd_temp_rec set quantity='$quantity' where excel_number='$excel_number' and filename='$filename' and status='0'");
+		$response = $this->db->query("update drd_import_file set quantity='$quantity' where id='$row_id'");
 
 $items.= <<<EOD
 {"response":"{$response}"},
@@ -878,21 +831,16 @@ if ($items != '') {
 {"items":[<?= $items;?>]}<?php
 	}
 	
-	public function remove_row()
+	public function delete_row_medicine()
 	{
 		//error_reporting(0);
 		header('Content-Type: application/json');
 		$items = "";
-		$excel_number	= $_POST["cssid"];
-		$filename 		= $_POST["order_id"];
-		$item_name 		= $_POST["item_name"];
-		if($excel_number!="")
+		$row_id	= $_POST["row_id"];
+		if($row_id!="")
 		{
-			/***yha to cart me say delete karna h rec ko */
-			$this->db->query("delete from drd_temp_rec where excel_number='$excel_number' and filename='$filename' and status='0'");
-
-			/***yha delete item me add krta haa */
-			$this->db->query("update drd_import_file set status='0' where id='".$excel_number."' and order_id='$filename'");
+			$this->db->query("update drd_import_file set status=0 where id='$row_id'");
+			$this->db->query("delete from drd_temp_rec where excel_number='$row_id'");
 		}
 		$response = "1";
 $items.= <<<EOD
@@ -906,27 +854,31 @@ if ($items != '') {
 	}
 	
 	/*21-01-2020*/
-	public function select_medicine_in_search_box()
+	public function change_medicine_2()
 	{
 		//error_reporting(0);
 		header('Content-Type: application/json');
 		$items = "";
 
-		$your_item_name = ($_POST["your_item_name"]);
-		$item_name		= ($_POST["item_name"]);
-		$i_code			= ($_POST["new_i_code"]);		
+		$item_code		= ($_POST["item_code"]);	
+		$row_id			= ($_POST["row_id"]);	
+		
+		$row = $this->db->query("select item_name from tbl_medicine where i_code='$item_code'")->row();
+		$item_name = $row->item_name;
 
-		$user_altercode	= $_SESSION["user_altercode"];
-		$row = $this->db->query("select id from drd_import_orders_suggest where your_item_name='$your_item_name'")->row();
-		if(!empty($row->id))
-		{
-			$this->db->query("delete from drd_import_orders_suggest where your_item_name='$your_item_name'");
-		}
+		$row1 = $this->db->query("select item_name from drd_import_file where id='$row_id'")->row();
+		$your_item_name = $row1->item_name;
+
+		$this->db->query("delete from drd_temp_rec where excel_number='$row_id'");
+		
+		$this->db->query("delete from drd_import_orders_suggest where your_item_name='$your_item_name'");
+
+		$user_altercode	= $_COOKIE["user_altercode"];
 		$date = date('Y-m-d');
 		$time = time();
 		$datetime = date("d-M-y H:i",$time);
 		
-		$response = $this->db->query("insert into drd_import_orders_suggest set your_item_name='$your_item_name',item_name='$item_name',i_code='$i_code',user_altercode='$user_altercode',date='$date',time='$time',datetime='$datetime'");
+		$response = $this->db->query("insert into drd_import_orders_suggest set your_item_name='$your_item_name',item_name='$item_name',i_code='$item_code',user_altercode='$user_altercode',date='$date',time='$time',datetime='$datetime'");
 
 $items.= <<<EOD
 {"response":"{$response}"},
@@ -938,14 +890,37 @@ if ($items != '') {
 {"items":[<?= $items;?>]}<?php
 	}
 	
-	public function delete_suggest()
+	public function delete_suggested_medicine()
 	{
 		//error_reporting(0);
 		header('Content-Type: application/json');
 		$items = "";
 
-		$item_name 	= ($_POST["item_name"]);
-		$response = $this->db->query("delete from drd_import_orders_suggest where your_item_name='$item_name'");
+		$user_type 		= $_COOKIE['user_type'];
+		$user_altercode	= $_REQUEST["user_altercode"];
+
+		$row_id 		= ($_REQUEST["row_id"]);
+		$response 		= 0;
+
+		$row = $this->db->query("select item_name from drd_import_file where id='$row_id'")->row();
+		if(!empty($row->item_name))
+		{
+			$row1 = $this->db->query("select i_code from drd_import_orders_suggest where your_item_name='$row->item_name'")->row();
+
+			$response = $this->db->query("delete from drd_import_orders_suggest where your_item_name='$row->item_name'");
+
+			$salesman_id = "";
+			if($user_type=="sales")
+			{
+				$salesman_id 	= $_COOKIE['user_altercode'];
+			}else{
+				$user_altercode	= $_COOKIE["user_altercode"];
+			}
+
+			$item_code = $row1->i_code;
+
+			$this->db->query("delete from drd_temp_rec where i_code='$item_code' and user_type='$user_type' and salesman_id='$salesman_id' and chemist_id='$user_altercode' and status=0");
+		}
 
 $items.= <<<EOD
 {"response":"{$response}"},
@@ -955,12 +930,6 @@ if ($items != '') {
 }
 ?>
 {"items":[<?= $items;?>]}<?php
-	}
-	
-	public function delete_suggest_by_id()
-	{
-		$id = ($_POST["id"]);
-		$this->db->query("delete from drd_import_orders_suggest where id='$id'");
 	}
 }
 ?>

@@ -22,14 +22,14 @@ function goBack() {
 		<div class="col-sm-8 col-12">
 			<div class="row">
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="main_theme_li_bg p-4">
 						<div class="row">
-							<div class="col-sm-2 col-3">
-								<img src="<?= $_SESSION['user_image'] ?>" alt="<?= $_SESSION['user_fname'] ?>" title="<?= $_SESSION['user_fname'] ?>" class="rounded account_page_header_image">
+							<div class="col-sm-2 col-2">
+								<img src="<?= $_SESSION['user_image'] ?>" class="medicine_cart_item_image" onerror=this.src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png">
 							</div>
-							<div class="col-sm-9 col-9 text-left">
-								<span class="select_chemist_name"><?= $_SESSION['user_fname'] ?></span><br>
-								<span class="select_chemist_code">Code : <?= $_SESSION['user_altercode'] ?></span>
+							<div class="col-sm-10 col-10 text-left">
+								<span class="chemist_user_name"><?= $_SESSION['user_fname'] ?></span><br>
+								<span class="chemist_altercode">Code : <?= $_SESSION['user_altercode'] ?></span>
 							</div>
 						</div>
 					</div>
@@ -38,7 +38,7 @@ function goBack() {
 					<img class="img-circle" src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/logo.png" width="40%" alt="Change Image" title="Change Image" style="margin-left:30%" id="user_profile">
 				</div>
 				<div class="col-sm-12 m-2">
-					<div class="round_white_bg">
+					<div class="cart_div_bg p-4">
 						<a href="javascript:getfile_fun()" title="Select image from gallery">
 							<img class="img-circle" src="<?= base_url() ?>/img_v<?= constant('site_v') ?>/photo1.png" width="30" alt="Select image from gallery" title="Select image from gallery">
 							<span style="margin-left:20px;">Select image from gallery</span>

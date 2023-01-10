@@ -14,15 +14,15 @@ class Message_Model extends CI_Model
 	
 	public function insert_whatsapp_message($mobile,$message,$altercode)
 	{
-		$time = time();
-		$date = date("Y-m-d",$time);
+		$date = date('Y-m-d');
+		$time = date("H:i",time());
 
 		$dt = array(
 		'mobile'=>$mobile,
-		'message'=>base64_encode($message),
+		'message'=>($message),
 		'chemist_id'=>$altercode,
-		'time'=>$time,
 		'date'=>$date,
+		'time'=>$time,
 		);
 		$this->Scheme_Model->insert_fun("tbl_whatsapp_message",$dt);
 	}
@@ -32,18 +32,20 @@ class Message_Model extends CI_Model
 		$whatsapp_key = $this->Scheme_Model->get_website_data("whatsapp_key");
 		
 		$this->db->limit(50);
+		$this->db->where(array('status'=>'0'));
 		$query = $this->db->get("tbl_whatsapp_message")->result();
 		foreach($query as $row)
 		{
-			$mid 			= $row->id;
+			$id 			= $row->id;
 			$mobile 		= $row->mobile;
 			$media 			= $row->media;
-			$message 		= base64_decode($row->message);
+			$message 		= ($row->message);
 			$message 		= str_replace("<br>","\\n",$message);
 			$message 		= str_replace("<b>","*",$message);
 			$message 		= str_replace("</b>","*",$message);
 			$chemist_id 	= $row->chemist_id;
-			$this->db->query("DELETE FROM `tbl_whatsapp_message` WHERE id='$mid'");
+
+			//$this->db->query("DELETE FROM `tbl_whatsapp_message` WHERE id='$mid'");
 		
 			if($media!="")
 			{
@@ -68,32 +70,38 @@ class Message_Model extends CI_Model
 			$response = curl_exec($curl);
 			$err = curl_error($curl);
 			curl_close($curl);
-			if ($err) {
+
+			$response = htmlspecialchars($response);
+			$response = str_replace("'","&#39;",$response);
+
+			$this->db->query("update `tbl_whatsapp_message` set status=1, respose='$response' WHERE id='$id'");
+
+			/*if ($err) {
 				echo "cURL Error #:" . $err;
 				$err = "Number stored is : $mobile";
-				$this->Message_Model->tbl_whatsapp_email_fail($mobile,$err,$altercode);
+				$this->Message_Model->tbl_whatsapp_email_fail($mobile,$err,$chemist_id);
 			} else {
 				//echo $response;
 				$someArray = json_decode($response,true);
 				if($someArray["status"]=="400"||$someArray["status"]=="401"||$someArray["status"]=="409"||$someArray["status"]=="500"||$someArray["status"]=="501"||$someArray["status"]=="503")
 				{
 					$err = "Number stored is : $mobile";
-					$this->Message_Model->tbl_whatsapp_email_fail($mobile,$err,$altercode);
+					$this->Message_Model->tbl_whatsapp_email_fail($mobile,$err,$chemist_id);
 				}
-			}
+			}*/
 		}
 	}
 	
 	public function insert_whatsapp_group_message($mobile,$message)
 	{
-		$time = time();
-		$date = date("Y-m-d",$time);
+		$date = date('Y-m-d');
+		$time = date("H:i",time());
 
 		$dt = array(
 		'mobile'=>$mobile,
-		'message'=>base64_encode($message),
-		'time'=>$time,
+		'message'=>($message),
 		'date'=>$date,
+		'time'=>$time,
 		);
 		$this->Scheme_Model->insert_fun("tbl_whatsapp_group_message",$dt);
 	}
@@ -103,17 +111,16 @@ class Message_Model extends CI_Model
 		$whatsapp_key = $this->Scheme_Model->get_website_data("whatsapp_key");
 		
 		$this->db->limit(50);
+		$this->db->where(array('status'=>'0'));
 		$query = $this->db->get("tbl_whatsapp_group_message")->result();
 		foreach($query as $row)
 		{
-			$mid 			= $row->id;
+			$id 			= $row->id;
 			$mobile 		= $row->mobile;
-			$message 		= base64_decode($row->message);
+			$message 		= ($row->message);
 			$message 		= str_replace("<br>","\\n",$message);
 			$message 		= str_replace("<b>","*",$message);
 			$message 		= str_replace("</b>","*",$message);
-			
-			$this->db->query("DELETE FROM `tbl_whatsapp_group_message` WHERE id='$mid'");
 			
 			$curl = curl_init();
 
@@ -132,7 +139,10 @@ class Message_Model extends CI_Model
 			$response = curl_exec($curl);
 			$err = curl_error($curl);
 			curl_close($curl);
-			if ($err) {
+
+			$this->db->query("update `tbl_whatsapp_group_message` set status=1,respose='$response' WHERE id='$id'");
+
+			/*if ($err) {
 				echo "cURL Error #:" . $err;
 				//$this->Email_Model->tbl_whatsapp_email_fail($number,$err,$altercode);
 			} else {
@@ -141,17 +151,17 @@ class Message_Model extends CI_Model
 				if($someArray["status"]=="400"||$someArray["status"]=="401"||$someArray["status"]=="409"||$someArray["status"]=="500"||$someArray["status"]=="501"||$someArray["status"]=="503")
 				{
 				}
-			}
+			}*/
 		}
 	}
 	
 	public function insert_android_notification($funtype,$title,$message,$chemist_id,$user_type)
 	{
-		$time = time();
-		$date = date("Y-m-d",$time);
+		$date = date('Y-m-d');
+		$time = date("H:i",time());
 		
-		$title 		= base64_encode($title);
-		$message 	= base64_encode($message);
+		$title 		= ($title);
+		$message 	= ($message);
 		
 		$device_id =  "default"; // yha sirf website or android me show ke liya use hota ha
 			
@@ -161,8 +171,8 @@ class Message_Model extends CI_Model
 		'title'=>$title,
 		'funtype'=>$funtype,
 		'message'=>$message,
-		'time'=>$time,
 		'date'=>$date,
+		'time'=>$time,
 		'device_id'=>$device_id,);
 		
 		$this->Scheme_Model->insert_fun("tbl_android_notification",$dt);
@@ -170,7 +180,7 @@ class Message_Model extends CI_Model
 	
 	function send_android_notification()
 	{
-		//error_reporting(0);
+		error_reporting(0);
 		define('API_ACCESS_KEY', 'AAAAdZCD4YU:APA91bFjmo0O-bWCz2ESy0EuG9lz0gjqhAatkakhxJmxK1XdNGEusI5s_vy7v7wT5TeDsjcQH0ZVooDiDEtOU64oTLZpfXqA8EOmGoPBpOCgsZnIZkoOLVgErCQ68i5mGL9T6jnzF7lO');
 		
 		$time = time();
@@ -182,11 +192,13 @@ class Message_Model extends CI_Model
 		$query = $this->db->get("tbl_android_notification")->result();
 		foreach($query as $row)
 		{
-			$id = $row->id;
+			$id 		= $row->id;
 			$user_type 	= $row->user_type;
 			$chemist_id = $row->chemist_id;
-			$title 		= base64_decode($row->title);
-			$message    = base64_decode($row->message);
+			$title 		= ($row->title);
+			$message    = ($row->message);
+			//$message    = htmlentities(str_replace("\n","<br>",$message));
+
 			$funtype 	= $row->funtype;
 			$itemid 	= $row->itemid;
 			$division 	= $row->division;
@@ -202,32 +214,41 @@ class Message_Model extends CI_Model
 					//$image =   base_url()."uploads/manage_featured_brand/photo/resize/".$row1->image;
 					
 					// jab tak old server on ha to iss code say img aya ge notication m
-					$image =   "http://drdmail.xyz/uploads/manage_featured_brand/photo/resize/".$row1->image;
+					$image =   constant('main_site')."uploads/manage_featured_brand/photo/resize/".$row1->image;
 				}
 				else{
-					$image = "http://drdmail.xyz/uploads/manage_users/photo/photo_1562659909.png";
+					$image = constant('main_site')."uploads/manage_users/photo/photo_1562659909.png";
 				}
 			}
 			
 			if($image1!="")
 			{
-				$image =   base_url()."uploads/manage_notification/photo/resize/".$image1;
+				$image =   constant('main_site')."uploads/manage_notification/photo/resize/".$image1;
 				
 				// jab tak old server on ha to iss code say img aya ge notication m
-				$image =   "http://drdmail.xyz/uploads/manage_notification/photo/resize/".$image1;
+				$image =   constant('main_site')."uploads/manage_notification/photo/resize/".$image1;
 			}
 			
 			if($image=="")
 			{
 				$image = "not";
 			}
+
 			if($company_full_name=="")
 			{
 				$company_full_name = "not";
 			}
-			
-			$this->db->query("update tbl_android_notification set firebase_status='1' where firebase_status='0' and id='$id'");
-			
+
+			if($itemid=="")
+			{
+				$itemid = "not";
+			}
+
+			if($division=="")
+			{
+				$division = "not";
+			}
+						
 			$query1 = $this->db->query("select firebase_token from tbl_android_device_id where chemist_id='$chemist_id' and user_type='$user_type'")->result();
 			foreach($query1 as $row1)
 			{
@@ -243,11 +264,13 @@ class Message_Model extends CI_Model
 					'company_full_name'=>$company_full_name,
 					'image'=>$image,
 				);
+				//print_r($data);
 					
 				$fields = array
 				(
 					'to'=>$token,
 					'data'=>$data,
+					"priority"=>"high",
 				);
 
 				$headers = array
@@ -257,15 +280,17 @@ class Message_Model extends CI_Model
 				);
 				#Send Reponse To FireBase Server	
 				$ch = curl_init();
-				curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-				curl_setopt( $ch,CURLOPT_POST, true );
-				curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
-				curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
-				curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-				curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
-				$result = curl_exec($ch);
-				echo $result;
+				curl_setopt($ch,CURLOPT_URL,'https://fcm.googleapis.com/fcm/send');
+				curl_setopt($ch,CURLOPT_POST,true);
+				curl_setopt($ch,CURLOPT_HTTPHEADER,$headers);
+				curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+				curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
+				curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+				$respose = curl_exec($ch);
+				//echo $respose;
 				curl_close($ch);
+			
+				$this->db->query("update tbl_android_notification set firebase_status='1',respose='$respose' where firebase_status='0' and id='$id'");
 			}
 		}
 	}
@@ -274,6 +299,7 @@ class Message_Model extends CI_Model
 	{
 		//error_reporting(0);
 		$this->db->limit(1);
+		$this->db->where(array('status'=>'0'));
 		$this->db->order_by('id','desc');
 		$query = $this->db->get("tbl_email_send")->result();
 		
@@ -285,8 +311,8 @@ class Message_Model extends CI_Model
 			/************************************************/
 			$id 			= $row->id;
 			$user_email_id 	= $row->user_email_id;
-			$subject 		= base64_decode($row->subject);
-			$message 		= base64_decode($row->message);
+			$subject 		= ($row->subject);
+			$message 		= ($row->message);
 			$email_function = $row->email_function;
 			$file_name1 	= $row->file_name1;
 			$file_name2 	= $row->file_name2;
@@ -380,8 +406,10 @@ class Message_Model extends CI_Model
 			}
 			
 			/************************************************/
-			$this->db->query("delete from tbl_email_send where id='$id'");
+			//$this->db->query("delete from tbl_email_send where id='$id'");
 			/************************************************/
+
+			$this->db->query("update tbl_email_send set status='1' where id='$id'");
 			
 			$email->IsHTML(true);		
 			if($email->Send()){
@@ -390,7 +418,7 @@ class Message_Model extends CI_Model
 			else{
 				echo "Mail Failed";
 			}
-			if($file_name1)
+			/*if($file_name1)
 			{
 				unlink($file_name1);
 			}
@@ -401,7 +429,7 @@ class Message_Model extends CI_Model
 			if($file_name3)
 			{
 				unlink($file_name3);
-			}
+			}*/
 		}
 	}
 }

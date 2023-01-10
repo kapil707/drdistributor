@@ -9,7 +9,7 @@
     <div class="col-xs-12">
          <div class="table-responsive">
 		    Total Records : <?php echo $count_records ?> / <?= count($result) + ($_GET["pg"]) ?>
-			<table class="table table-striped">
+			<table class="table table-striped table-bordered table-hover dataTables-example">
                 <thead>
                     <tr>
                     	<th>
