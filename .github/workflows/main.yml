@@ -14,6 +14,6 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: ftp.drdweb.co.in
+        server: 97.74.82.55
         username: kapil_git@drdweb.co.in
         password: ${{ secrets.FTP_PASSWORD }}
