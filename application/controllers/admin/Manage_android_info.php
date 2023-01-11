@@ -111,7 +111,7 @@ class Manage_android_info extends CI_Controller {
 		$data['url_path'] = base_url()."uploads/$page_controllers/photo/";
 		$upload_path = "./uploads/$page_controllers/photo/";
 
-		$data["result"] = $this->db->query("SELECT * from tbl_acm_info where user_altercode='$id'")->result();
+		$data["result"] = $this->db->query("SELECT * from tbl_android_device_id where chemist_id='$id'")->result();
 
 		if (isset($_GET["Notification"])) {
 			$altercode = $_GET["altercode"];

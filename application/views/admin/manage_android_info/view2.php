@@ -31,7 +31,7 @@ function initMap() {
 		foreach($result as $row) {
 		$row->name = $row->name." - (". $row->user_altercode.") <br> Date / Time:-".$row->date.",".$row->time; ?>
 		["<?= $row->name; ?>", <?= $row->latitude; ?>, <?= $row->longitude; ?>, <?= $i; ?>],
-			<?php 
+		<?php 
 		} 
         $latitude  = $row->latitude;
         $longitude = $row->longitude;
@@ -91,24 +91,6 @@ function initMap() {
         }
       })(marker, i));
     }
-	<?php
-		if(!empty($altercode)){ ?>
-		var flightPlanCoordinates = [
-			<?php
-			foreach($result as $row) { ?>
-        {lat: <?= $row->latitude; ?>, lng: <?= $row->longitude; ?>},
-			<?php } ?>
-		];
-        var flightPath = new google.maps.Polyline({
-          path: flightPlanCoordinates,
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 2
-        });
-
-        flightPath.setMap(map);
-		<?php } ?>
 setTimeout(function(){
 initMap();
 }, 60000);
