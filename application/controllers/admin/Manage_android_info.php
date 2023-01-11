@@ -111,7 +111,62 @@ class Manage_android_info extends CI_Controller {
 		$data['url_path'] = base_url()."uploads/$page_controllers/photo/";
 		$upload_path = "./uploads/$page_controllers/photo/";
 
-  		$data["result"] = $this->db->query("select * from tbl_order where order_id='$id'")->result();		
+		$data["result"] = $this->db->query("SELECT * from tbl_acm_info where user_altercode='$id'")->result();
+
+		if (isset($_GET["Notification"])) {
+			$altercode = $_GET["altercode"];
+
+			define('API_ACCESS_KEY', 'AAAAdZCD4YU:APA91bFjmo0O-bWCz2ESy0EuG9lz0gjqhAatkakhxJmxK1XdNGEusI5s_vy7v7wT5TeDsjcQH0ZVooDiDEtOU64oTLZpfXqA8EOmGoPBpOCgsZnIZkoOLVgErCQ68i5mGL9T6jnzF7lO');
+
+			$row = $this->db->query("SELECT tbl_master_other.firebase_token FROM `tbl_master_other`,tbl_master WHERE tbl_master.code=tbl_master_other.code and tbl_master_other.firebase_token!='' and tbl_master.altercode='$altercode'")->row();
+
+			$id = "1";
+			$title = "DRD";
+			$message = "D R Distributors Pvt Ltd";
+			$body = "D R Distributors Pvt Ltd";
+			$funtype = "1000";
+			$division = "";
+			$company_full_name = "";
+			$image = "";
+			$itemid = "";
+			
+			$token = $row->firebase_token;
+			$data = array
+			(
+				'id'=>$id,
+				'title'=>$title,
+				'message'=>$message,
+				'body'=>$body,
+				'funtype'=>$funtype,
+				'itemid'=>$itemid,
+				'division'=>$division,
+				'company_full_name'=>$company_full_name,
+				'image'=>$image,
+			);
+				
+			$fields = array
+			(
+				'to'=>$token,
+				'data'=>$data,
+			);
+
+			$headers = array
+			(
+				'Authorization: key=' . API_ACCESS_KEY,
+				'Content-Type: application/json'
+			);
+			#Send Reponse To FireBase Server	
+			$ch = curl_init();
+			curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+			curl_setopt( $ch,CURLOPT_POST, true );
+			curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+			curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+			curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+			curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
+			$result1 = curl_exec($ch);
+			echo $result1;
+			curl_close($ch);
+		}	
 
 		$this->load->view("admin/header_footer/header",$data);
 		$this->load->view("admin/$Page_view/view2",$data);

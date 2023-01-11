@@ -17,47 +17,6 @@
         width: 100%;  /* The width is the width of the web page */
        }
     </style>
-		<form method="get">
-			<div class="form-group">
-        <div class="col-sm-4">
-          <div class="col-sm-6 text-right">
-                <label class="control-label" for="form-field-1">
-                    Select date
-                </label>
-            </div>
-            <div class="col-sm-6" id="data_5">
-              <div class='input-group date input-daterange'>
-                <input type='text' class="form-control" value="<?= $vdt; ?>" name="vdt" />
-                <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-              </div>
-          </div>
-        </div>
-				<div class="col-sm-4">
-          <div class="col-sm-6 text-right">
-              <label class="control-label" for="form-field-1">
-                  Select Users
-              </label>
-          </div>
-          <div class="col-sm-6">
-              <select name="altercode" id="altercode" data-placeholder="Select Status" class="chosen-select" >
-              <?php foreach($dropdown as $row) { ?>
-              <option value="<?php echo $row->altercode; ?>" <?php if($row->altercode==$altercode) { ?> selected <?php } ?>>
-              <?php echo $row->name; ?> (<?php echo $row->altercode; ?>)
-              </option>
-              <?php } ?>
-            </select>
-          </div>
-        </div>
-				<div class="col-xs-2">
-					<button type="submit" class="btn btn-primary block full-width m-b" name="Submit" value="Submit">Submit</button>
-				</div>
-				<div class="col-xs-2">
-					<button type="submit" class="btn btn-primary block full-width m-b" name="Notification" value="Notification">Notification</button>
-				</div>
-			</div>
-		</form>
         <div id="map"></div>
     <script>
 setTimeout(function(){
@@ -69,33 +28,14 @@ function initMap() {
 	var locations = [
 		<?php
 		$i = 1;
-		if(empty($altercode)){ 
-			foreach($dropdown as $row) {
-			$row->name = $row->name." - (". $row->altercode.") <br> Date / Time:-".$row->date.",".$row->time; ?>
-			["<?= $row->name; ?>", <?= $row->latitude; ?>, <?= $row->longitude; ?>, <?= $i; ?>],
-				<?php 
-				$i++;
-			} 
-      $latitude = "28.5183163";
-      $longitude = "77.279475";?>
-      ['DRD Office', <?= $latitude;?>, <?= $longitude;?>, <?= $i; ?>] 
-      <?php
-		} else {
-			foreach($result as $row) {
-        if ($i == 1) {
-          $row1 = $this->db->query("SELECT * FROM `tbl_master` where altercode='$row->user_altercode' order by id asc")->row();
-        }
-        $row1->name = $row1->name." - (". $row1->altercode.") <br> Date / Time:-".$row->date.",".$row->time;
-        if ($i == 1) { ?>
-        ["<?= $row1->name; ?>", <?= $row->latitude; ?>, <?= $row->longitude; ?>, <?= $i; ?>],
-        <?php } $i++;
-        }
-        ?>
-        ["<?= $row1->name; ?>", <?= $row->latitude; ?>, <?= $row->longitude; ?>, <?= $i; ?>],
-        <?php
+		foreach($result as $row) {
+		$row->name = $row->name." - (". $row->user_altercode.") <br> Date / Time:-".$row->date.",".$row->time; ?>
+		["<?= $row->name; ?>", <?= $row->latitude; ?>, <?= $row->longitude; ?>, <?= $i; ?>],
+			<?php 
+		} 
         $latitude  = $row->latitude;
         $longitude = $row->longitude;
-		} ?>
+		?>
 	];
 
     var map = new google.maps.Map(document.getElementById('map'), {
