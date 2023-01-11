@@ -29,12 +29,12 @@ function initMap() {
 		<?php
 		$i = 1;
 		foreach($result as $row) {
-		$row->name = $row->name." - (". $row->user_altercode.") <br> Date / Time:-".$row->date.",".$row->time; ?>
-		["<?= $row->name; ?>", <?= $row->latitude; ?>, <?= $row->longitude; ?>, <?= $i; ?>],
+		$row->name = "(". $row->chemist_id.") <br> Date / Time:-".$row->getdate.",".$row->gettime; ?>
+		["<?= $row->name; ?>", <?= $row->getlatitude; ?>, <?= $row->getlongitude; ?>, <?= $i; ?>],
 		<?php 
 		} 
-        $latitude  = $row->latitude;
-        $longitude = $row->longitude;
+        $latitude  = $row->getlatitude;
+        $longitude = $row->getlongitude;
 		?>
 	];
 
