@@ -7,7 +7,7 @@ error_reporting(0);
 define("api_url","http://49.205.182.192:7272/");
 //define("api_url","https://2f7985e091f4.ngrok.io/drd_local_server/corporate_api/");
 define("server_type","0"); // 0 ka maltb ha same server or 1 ka matlb ha alg server say
-define("site_v","36");
+define("site_v","41");
 define("img_url_site","https://www.drdweb.co.in/");
 define("main_site","https://www.drdistributor.com/");
 /*
