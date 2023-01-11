@@ -1,21 +1,61 @@
-(function() {
-    "use strict";
-
-    // custom scrollbar
-
-    $("html").niceScroll({styler:"fb",cursorcolor:"#009BBB", cursorwidth: '4', cursorborderradius: '10px', background: '#FFFFFF', spacebarenabled:false, cursorborder: '0',  zindex: '1000'});
-
-    $(".scrollbar1").niceScroll({styler:"fb",cursorcolor:"#FF9554", cursorwidth: '4', cursorborderradius: '0',autohidemode: 'false', background: '#FFFFFF', spacebarenabled:false, cursorborder: '0'});
-
-	
-	
-    $(".scrollbar1").getNiceScroll();
-    if ($('body').hasClass('scrollbar1-collapsed')) {
-        $(".scrollbar1").getNiceScroll().hide();
-    }
-
-})(jQuery);
-
-                     
-     
-  
+var swiper = new Swiper(".featured-slider", {
+  spaceBetween: 10,
+  loop:true,
+  centeredSlides: true,
+  autoplay: {
+    delay: 9500,
+    disableOnInteraction: false,
+  },
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    0: {
+      slidesPerView: 2,
+    },
+    450: {
+      slidesPerView: 3,
+    },
+    768: {
+      slidesPerView: 5,
+    },
+    1024: {
+      slidesPerView: 6,
+    },
+	1366: {
+      slidesPerView: 7,
+    },
+  },
+});
+
+var swiper = new Swiper(".featured-slider1", {
+  spaceBetween: 10,
+  loop:true,
+  centeredSlides: true,
+  autoplay: {
+    delay: 9500,
+    disableOnInteraction: false,
+  },
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    0: {
+      slidesPerView: 2,
+    },
+    450: {
+      slidesPerView: 3,
+    },
+    768: {
+      slidesPerView: 4,
+    },
+    1024: {
+      slidesPerView: 5,
+    },
+	1366: {
+      slidesPerView: 6,
+    },
+  },
+});
