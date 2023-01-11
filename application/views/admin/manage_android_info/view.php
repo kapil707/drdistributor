@@ -21,10 +21,7 @@
 							Version
 						</th>
 						<th>
-							Medicine
-						</th>
-						<th>
-							Cart
+							Broadcast
 						</th>
 						<th>
 							Logout
@@ -33,7 +30,7 @@
 							Clear Data
 						</th>
 						<th>
-							Broadcast
+							View On Map
 						</th>
                     </tr>
                 </thead>
@@ -67,10 +64,7 @@
 							<?= $row->versioncode; ?>
                         </td>
 						<td>
-							<?= $row->count_medicine; ?>
-                        </td>
-						<td>
-							<?= $row->count_draft; ?>
+							<?= base64_decode($row->broadcast); ?>
                         </td>
 						<td>
 							<?php if($row->logout==0) { ?>
@@ -99,8 +93,11 @@
 							<?php } ?>
                         </td>
 						<td>
-							<?= base64_decode($row->broadcast); ?>
-                        </td>
+							<a href="view2/<?= $row->chemist_id; ?>"  class="btn btn-info submit_button">
+							<i class="ace-icon fa fa-check bigger-110"></i>
+							View On Map
+							</a>
+						</td>
                     </tr>
                     <?php
                     }
