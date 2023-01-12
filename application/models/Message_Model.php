@@ -24,6 +24,7 @@ class Message_Model extends CI_Model
 		'date'=>$date,
 		'time'=>$time,
 		'status'=>0,
+		'respose'=>'',
 		);
 		$this->Scheme_Model->insert_fun("tbl_whatsapp_message",$dt);
 	}
