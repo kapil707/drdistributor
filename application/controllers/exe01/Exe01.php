@@ -465,11 +465,12 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]))
 			{
 				$mobile 	= $row["mobile"];
-				$message 	= base64_decode($row["message"]);
+				$message 	= $this->new_clean(base64_decode($row["message"]));
 				$altercode  = $row["altercode"];
 
 				$row = $this->db->query("insert into testnew (mobile,message,altercode) values ('$mobile','$message','$altercode')");
 				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
+				echo "done";
 			}
 		}
 	}
