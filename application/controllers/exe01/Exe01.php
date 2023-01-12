@@ -454,4 +454,20 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			echo "INSERT INTO Shortage (vdt,acno,slcd,itemc,Uid) VALUES ('$vdt','$acno','$slcd','$itemc','$Uid')";
 		}
 	}
+
+	public function insert_whatsapp_message()
+	{
+		$data = json_decode(file_get_contents('php://input'), true);
+        $items = $data["items"];
+		foreach($items as $row)
+		{
+			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]))
+			{
+				$mobile 	= $row["mobile"];
+				$message 	= $row["message"];
+				$altercode = $row["altercode"];
+				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
+			}
+		}
+	}
 }
