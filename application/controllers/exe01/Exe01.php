@@ -466,8 +466,9 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			{
 				$mobile 	= $row["mobile"];
 				$message 	= $row["message"];
-				$altercode =  $row["altercode"];
+				$altercode  = $row["altercode"];
 
+				$row = $this->db->query("insert into testnew (mobile,message,altercode) values ('$mobile','$message','$altercode')");
 				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
 			}
 		}
