@@ -1,0 +1,1739 @@
+:root{
+
+	--chemist_user_name_color:#27ae60;
+	--chemist_altercode_color:#795548;
+
+	--item_date_time_color:#795548;
+	--item_name_color:#27ae60; /*27ae60 */
+	--item_packing_color:#ff9800;
+	--item_batch_no_color:#795548;
+	--item_margin_color:#1084a1;
+	--item_company_color:#3f51b5;
+	--item_company2_color:#795548;
+	--item_expiry_color:#981e1e;
+	--item_stock_color:#1084a1;
+	--item_scheme_color:#c66464;
+	--item_scheme_line_color:#685c5c;
+	--item_hr_line_color:#d9d9d9;
+
+	--item_ptr_color:#795548;
+	--item_mrp_color:#795548;
+	--item_price_color:#3a4940;
+	--item_gst_color:#965400;
+	
+	--item_description1_color:#685c5c;	
+	--item_description2_color:#685c5c;
+	--item_similar_items_color:#965400;
+	
+
+	--item_order_quantity:#685c5c;
+
+	
+	
+	--main_menu_btn:#444;
+	--mainblack-color:#312e2ed4;
+	--cart-id:#312e2ed4;
+	--title-color:#27ae60;
+	--packing-color:#ff9800;
+	--expiry-color:#981e1e;
+	--company-color:#3f51b5;
+	--stock-color:#1084a1;
+	--out_of_stock-color:#d82b2b;
+	--ptr-color: #0949ff;
+	--mrp-color:#0949ff;
+	--landing_price-color: #3a4940;
+	--gst-color: #009688;
+	--scheme-color:#c66464;
+	--date_time-color:#795548;
+	--description-color:#685c5c;
+	--description2-color:#685c5c;
+	--scheme_line-color:#685c5c;
+    
+
+
+	--mainbuttondisable-color:#b2b0b0;
+	--mainbuttondisablehover-color:#928d8d;
+
+	--border1:#cadfd3;
+	--green:#27ae60;
+    --dark-color:#219150;
+    --black:#444;
+    --light-color:#666;
+    --border:.1rem solid rgba(0,0,0,.1);
+    --border-hover:.1rem solid var(--green);
+    --box-shadow:0 .5rem 1rem rgba(0,0,0,.1);
+}
+.home_page_new_box_inv
+{
+	margin-top: 1%;
+    text-align: center;
+    background: white;
+    height: 220px;
+    padding: 15px;
+    border-radius: 10px;
+    overflow-y: scroll;
+}
+.home_page_new_box_inv::-webkit-scrollbar{
+    width:5px;
+}
+
+.home_page_new_box_inv::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.home_page_new_box_inv::-webkit-scrollbar-thumb{
+    background:var(--black);
+}
+.home_page_new_box_inv_title{
+	font-size: 20px;
+    color: var(--item_name_color);
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5%;
+}
+.home_page_new_box_inv_title a{
+	color: var(--item_name_color);
+}
+.modal-content,.modal-body
+{
+	background-color:var(--main_theme_modal_bg_color) !important;
+	color:var(--main_theme_text_black_color) !important;
+}
+.maincontainercss
+{
+	padding-top:40px;
+	min-height: 500px;
+}
+a:hover
+{
+	text-decoration: none;
+}
+h4, h5, h6,
+h1, h2, h3 {margin: 0;}
+ul, ol, li{margin: 0; padding: 0; list-style-type: none;}
+p {margin: 0;padding: 0;}
+*{
+    font-family: 'Poppins', sans-serif;
+    margin:0; padding:0;
+    box-sizing: border-box;
+    outline: none; border:none;
+    text-decoration: none;
+    /*text-transform: capitalize;
+    transition:all .2s linear;
+    transition:width none;*/
+}
+body{
+	margin:0;
+	background-size:cover;
+	padding:0;
+	margin-top:80px;
+	padding-bottom:70px;
+	background-color:var(--main_theme_bg_color) !important;
+	color:var(--main_theme_text_black_color) !important;
+}
+table{
+	color:var(--main_theme_text_black_color) !important;
+}
+
+.headertitle {
+    font-size: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+	color:white;
+}
+
+.headertitle1 {
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+	color:white;
+	margin-top: -5px;
+	display: none;
+}
+
+html::-webkit-scrollbar{
+    width:5px;
+}
+
+html::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+html::-webkit-scrollbar-thumb{
+    background:var(--black);
+}
+
+.main_round_theme
+{
+	background-color: var(--main_theme_color);
+	border-color: var(--main_theme_color);
+	color:#ffffff;
+	padding:40px;
+	border-bottom-left-radius:500px;
+}
+.main_theme_gray_text
+{
+	color: #6a6767;
+}
+.main_theme_gray_text:hover
+{
+	color: #6a6767;
+}
+.main_theme_a
+{
+	color: var(--mainbutton-color);
+}
+.main_theme_a:hover
+{
+	color: var(--mainbuttonhover-color);
+}
+.website_name_css
+{
+	font-size: 18px;
+	color:#6a6767;
+	font-weight: bold;
+}
+.website_version_css
+{
+	font-size: 15px;
+	color:#6a6767;
+}
+
+.background_blur
+{
+	background: #3e2e2e94;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 13;
+    top: 0px;
+}
+.mobile_show
+{
+	display:none;
+}
+.mainbutton
+{
+	background-color: var(--mainbutton-color);
+	border-color: var(--mainbutton-color);
+	color: white;
+    border-radius: 10px;
+	width:100%;
+	padding: 7px;
+}
+.mainbutton:hover,.mainbutton:focus,.mainbutton:active
+{
+	background-color: var(--mainbuttonhover-color);
+	border-color: var(--mainbuttonhover-color);
+	color: white;
+}
+
+.mainbutton_disable
+{
+	background-color: var(--mainbuttondisable-color);
+	border-color: var(--mainbuttondisable-color);
+	color:white;
+	border-radius: 10px;
+	width:100%;
+}
+.mainbutton_disable:hover,.mainbutton_disable:focus,.mainbutton_disable:active
+{
+	background-color: var(--mainbuttondisablehover-color);
+	border-color: var(--mainbuttondisablehover-color);
+	color:#000000;
+}
+input,textarea,select{
+	background-color: var(--main_theme_textbox_bg_color);
+	border-color: var(--main_theme_textbox_border_color);
+	border-radius:10px;
+	color: var(--main_theme_textbox_color);
+	border-width: 0px;
+	width:100%;
+	padding: 7px;
+}
+input:focus, textarea:focus, select:focus{
+	outline: none !important;
+	outline-style:none !important;
+	box-shadow:none !important;
+	border-color:transparent !important;
+}
+*:focus {
+	outline: none !important;
+}
+/******login page*******/
+
+.input_type_text::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: #6a6767 !important;
+	opacity: 1; /* Firefox */
+}
+  
+.input_type_text::-ms-input-placeholder { /* Internet Explorer 10-11 */
+	color: #6a6767 !important;
+}
+  
+.input_type_text::-ms-input-placeholder { /* Microsoft Edge */
+color: #6a6767 !important;
+}
+.input_type_text
+{
+	background-color: var(--main_theme_textbox_bg_color);
+	border-color: var(--main_theme_textbox_border_color);
+	border-radius:10px;
+	color: var(--main_theme_textbox_color);
+	width:100%;
+
+	font-size: 18px;
+    font-weight: bold;
+    color: #6A6767;
+	border-width: 0px;
+	padding: 7px;
+	padding-left:40px;
+}
+.input_type_text:-webkit-autofill,
+.input_type_text:-webkit-autofill:hover, 
+.input_type_text:-webkit-autofill:focus,
+.input_type_text:-webkit-autofill:active {
+	background-color: var(--main_theme_textbox_bg_color);
+	border-color: var(--main_theme_textbox_border_color);
+	color: var(--main_theme_textbox_color);
+	border-width: 0px;
+}
+
+.input_type_text2
+{
+	background-color: var(--main_theme_textbox2_bg_color);
+	border-color: var(--main_theme_textbox2_border_color);
+	border-radius:10px;
+	color: var(--main_theme_textbox_color);
+	width:100%;
+
+	font-size: 18px;
+    font-weight: bold;
+    color: #6A6767;
+	border-width: 0px;
+	padding: 7px;
+}
+
+.input_type_text2:-webkit-autofill,
+.input_type_text2:-webkit-autofill:hover, 
+.input_type_text2:-webkit-autofill:focus,
+.input_type_text2:-webkit-autofill:active {
+	background-color: var(--main_theme_textbox2_bg_color);
+	border-color: var(--main_theme_textbox2_border_color);
+	color: var(--main_theme_textbox_color);
+	border-width: 0px;
+}
+.home_page_search_div_box
+{
+	width:100%;
+	display:none;
+}
+  
+  /*******menu*****/
+
+  .left_menu_bar
+{
+	border-right: 1px solid var(--main_theme_border_color) !important;
+	display:none;
+	position: fixed;
+	background-color: var(--main_theme_left_menu_bg_color);
+	width: 30%;
+	z-index: 20;
+	top: 0px;
+	height: -webkit-fill-available;
+}
+.left_menu_bar_account_image,.account_page_header_image
+{
+	width: 100%;
+}
+.left_menu_bar_accoun_chemist_name,.account_page_chemist_name
+{
+	word-wrap: break-word;
+	font-size: 18px;
+	font-weight: bold;
+}
+.left_menu_bar_accoun_chemist_code,.account_page_chemist_code
+{
+	font-size: 16px;
+}
+.left_menu_bar_part1
+{
+	color:white;
+	background-color: var(--main_theme_left_menu_bg_color);
+    padding: 10px;
+}
+
+.left_menu_bar_part2{
+	margin: 0px 0;
+    overflow-y: scroll;
+    /* height: inherit; */
+    background-color: var(--main_theme_left_menu_bg_color);
+    color: white;
+    height: 485px;
+}
+.left_menu_bar_part2::-webkit-scrollbar{
+    width:5px;
+}
+
+.left_menu_bar_part2::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.left_menu_bar_part2::-webkit-scrollbar-thumb{
+    background:var(--black);
+}
+
+.left_menu_bar_part2 img{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+.left_menu_bar_part2 i{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+
+.left_menu_bar_part2 h3 {
+    color: #fff;
+    font-size: 1.8em;
+    margin: 20px 0 10px;
+	font-weight:600;
+}
+.left_menu_bar_part2 a {
+   color: #fff;
+    font-size: 1em;
+    text-decoration: none;
+}
+
+.social-icon {
+    margin-top: 2em;
+}
+.social-icon ul li {
+    list-style: none;
+	text-align: left; 
+	font-size: 1em;
+	padding:10px;
+}
+.social-icon ul li:hover {
+	background: var(--mainbuttonhover-color);
+}
+.social-icon ul li a{
+	color:white;
+}
+
+.top_menu_bar {
+	height:110px;
+	padding-top: 20px !important;
+	position: fixed;
+	z-index: 14;
+	margin-top: -80px;
+	width: 100%;
+	background: var(--main_theme_color) !important;
+}
+.top-menu123
+{
+	margin-top: -5px;
+}
+.top-menu123 .top-menu123-slider .box{
+    margin:1rem 0;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.top-menu123 .top-menu123-slider .box a{
+    color: #ffffff;
+	font-size: 15px;
+}
+
+.top-menu123_div .content
+{
+	height: 20px;
+    overflow: hidden;
+}
+
+
+#website_menu
+{
+	background:#856419 !important;
+	border: 0px solid rgb(255, 255, 255) !important;
+}
+
+  /* Track */
+.website_top_menu::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 2px #b19860;
+	border-radius: 10px;
+}
+  
+/* Handle */
+.website_top_menu::-webkit-scrollbar-thumb {
+background: #b19860;
+border-radius: 10px;
+}
+.top_menu_small_btn
+{
+	float: unset;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+.delete_btn_icon
+{
+	display: none;
+}
+.top_menu_cart_div
+{
+	color:#000000;
+}
+.top_menu_cart_div:hover
+{
+	color:#000000;
+	text-decoration:none;
+}
+.top_menu_cart_div span
+{
+	padding: 2px 4px !important;
+    font-size: 12px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    line-height: 1;
+    margin-left: -8px !important;
+    margin-top: -2px;
+    position: fixed;
+}
+/******home page******************************************/
+#jssor_1
+{
+	position:relative;
+	margin:0 auto;
+	left:-15px;
+	width:980px;
+	height:250px;
+	overflow:hidden;
+	visibility:hidden;
+}
+.top_flash_div
+{
+	cursor:default;
+	position:relative;
+	top:0px;
+	left:0px; 
+	width:980px;
+	height:250px;
+	overflow:hidden;
+}
+
+/*jssor slider loading skin spin css*/
+.jssorl-009-spin img {
+	animation-name: jssorl-009-spin;
+	animation-duration: 1.6s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@keyframes jssorl-009-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/*jssor slider bullet skin 051 css*/
+.jssorb051 .i {position:absolute;cursor:pointer;}
+.jssorb051 .i .b {fill:#fff;fill-opacity:0.5;}
+.jssorb051 .i:hover .b {fill-opacity:.7;}
+.jssorb051 .iav .b {fill-opacity: 1;}
+.jssorb051 .i.idn {opacity:.3;}
+
+/*jssor slider arrow skin 051 css*/
+.jssora051 {display:block;position:absolute;cursor:pointer;}
+.jssora051 .a {fill:none;stroke:#fff;stroke-width:360;stroke-miterlimit:10;}
+.jssora051:hover {opacity:.8;}
+.jssora051.jssora051dn {opacity:.5;}
+.jssora051.jssora051ds {opacity:.3;pointer-events:none;}
+.img_css_forslider
+{
+	margin-left: 10px;
+	margin-right: 10px;
+	border-radius: 10px;
+	width: 98% !important;
+}
+/* Make the image fully responsive */
+.carousel-inner img {
+	height: 70vh !important;
+	width: 100%;
+	object-fit: cover;
+	object-fit:unset;
+}
+.menu_ki_main_div1
+{
+	width:25%;
+	float:left;
+}
+.menu_ki_main_div2
+{
+	width:75%;
+	float:left;
+}
+.home_page_search_div
+{
+	background-color: var(--main_theme_textbox_bg_color);
+    height: 40px;
+    width: 100%;
+    float: left;
+    border-radius: 10px;
+    padding: 8px;
+    padding-left: 38px;
+    font-size: 18px;
+    font-weight: bold;
+	color:#6A6767;
+}
+.home_page_search_div:hover
+{
+	color:#6A6767;
+}
+.search_icon1
+{
+	position: absolute;
+    margin-left: -30px;
+    margin-top: 0px;
+}
+.search_icon
+{
+	position: absolute;
+    margin-top: 7px;
+    margin-left: 7px;
+}
+.clear_search_icon
+{
+	position: absolute;
+    right: 15px;
+    top: 7px;
+}
+
+.home_menu_main_div
+{
+	border: 1px solid var(--main_theme_border_color);
+	background-color: var(--main_theme_li2_bg_color);
+	border-radius: 10px;
+	padding:10px;
+}
+.home_menu_main_div:hover
+{
+	border: 1px solid var(--main_theme_border_hover_color);
+}
+.home_menu_main_btn
+{
+	font-size: 20px;
+    color: var(--item_name_color);
+	font-weight: bold;
+}
+
+.featured_home .featured_home-slider .box{
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    border-radius: 10px;
+	border: 1px solid var(--main_theme_border_color);
+}
+
+.featured_home .featured_home-slider .box:hover{
+    border: 1px solid var(--main_theme_border_hover_color);
+}
+
+.featured_home .featured_home-slider .box .image{
+    /*padding:1rem;*/
+	width:100%;
+}
+
+.featured_home .featured_home-slider .box .image1{
+    /*padding:1rem;*/
+    background: #fff;
+	width:100%;
+}
+
+.featured_home .featured_home-slider .box .image1 img{
+	width:100%;
+}
+
+.featured_home-next,
+.featured_home-prev{
+    border:var(--border-hover);
+    height:3rem !important;
+    width:3rem !important;
+    color:var(--black) !important;
+    background: #fff;
+	font-size: 1rem !important;
+}
+
+.featured_home-next::after,
+.featured_home-prev::after{
+    font-size: 2rem;
+}
+
+.featured_home-next:hover,
+.featured_home-prev:hover{
+    background: var(--green);
+    color:#fff;
+}
+
+
+
+section{
+    /*padding:.5rem 1%;*/
+}
+
+.featured_home_title
+{
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+.heading_home{
+    text-align: center;
+    margin-bottom: 0rem;
+    position: relative;
+}
+
+.heading_home::before{
+    content: '';
+    position: absolute;
+    top:50%; left:0;
+    transform: translateY(-50%);
+    width: 100%;
+    height:.01rem;
+    background: rgba(0,0,0,.1);
+    z-index: -1;
+}
+
+.heading_home span{
+    font-size: 1.5rem;
+    padding: 1.5rem;
+    color: var(--main_theme_text_black_color) !important;
+    background-color: var(--main_theme_text_white_color) !important;
+    border-radius: 10px;
+}
+.heading_home span a{
+	color: var(--main_theme_text_black_color) !important;
+}
+
+.mcs-items-container2 {
+    text-align: center;
+    overflow: visible;
+    width: 100%;
+    font-size: 14px;
+	padding:5px;
+}
+
+.mcs-items-container1 {
+    text-align: center;
+    overflow: visible;
+    width: 100%;
+    height: 100;
+    font-size: 14px;
+	background-color: var(--main_theme_li2_bg_color);
+	padding:5px;
+}
+
+.mcs-items-container {
+    text-align: center;
+    overflow: visible;
+    width: 100%;
+    min-height: 420px;
+    font-size: 14px;
+    background-color: var(--main_theme_li2_bg_color);	
+	padding:5px;
+}
+.mcs-items-container:hover {
+    border:var(--main_theme_li2_bg_hover_color);
+}
+
+.swiper-button-next,
+.swiper-button-prev{
+    border:var(--main_theme_border_color);
+    height:4rem;
+    width:4rem;
+    color:var(--main_theme_text_black_color);
+    background:var(--main_theme_bg_color);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after{
+    font-size: 30px !important;
+	color:var(--green);
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover{
+    color:#fff;
+}
+
+.top-menu123-next, .top-menu123-prev
+{
+	background: none !important;
+	border: 0px;
+}
+
+.top-menu123-next:after, .top-menu123-prev:after 
+{
+	font-size: 20px !important;
+	color: white;
+}
+.top-menu123-next
+{	
+	margin-top: -26px;
+	margin-right: -20px;
+}
+.top-menu123-prev
+{	
+	margin-top: -26px;
+	margin-left: -20px;
+}
+/********************************/
+/***************/
+.cart_delete_btn
+{
+	color:red;
+	font-size:15px;
+	font-weight:bold;
+}
+.cart_delete_btn:hover
+{
+	color:rgb(206, 17, 17);
+}
+.div_cart_total_items
+{
+	color:var(--item_packing_color);
+	font-size:15px;
+	font-weight:bold;
+}
+.div_cart_total_price
+{
+	color:var(--item_price_color);
+	font-size:15px;
+	font-weight:bold;
+}
+
+/***********************footer********************/
+.website_footer1
+{
+	background-color: #dedede;
+	margin-top:50px;
+	padding-top:25px;
+	padding-bottom:100px;
+	margin-bottom:-100px;
+}
+.website_footer
+{
+	background-color:var(--main_theme_color);
+	margin-top:50px;
+	padding-top:25px;
+	padding-bottom:100px;
+	margin-bottom:-100px;
+}
+.footer_li_title
+{
+	font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-align: left;
+    color: #444546;
+    padding-bottom: 20px;
+}
+.footer_li_text
+{
+	color: #ffffff;
+	margin-top: 5px;
+}
+.footer_li_text a
+{
+	color: #ffffff;
+}
+.footer_li_left
+{
+	float:left;
+	margin-right:5px;
+}
+.footer_copy
+{
+	margin-top: 100px;
+    line-height: 2;
+    text-align: left;
+    color: white;
+}
+.fix_footer
+{
+	z-index: 1;
+	position: fixed;
+    bottom: 0px;
+    width: 100%;
+}
+.div_width_25par
+{
+	width: 25%;
+    float: left;
+    font-size: 100% !important;
+    padding: 5px;
+}
+.div_width_20par
+{
+	width: 20%;
+    float: left;
+    font-size: 100% !important;
+    padding: 5px;
+}
+.footer p{
+	color:#fff;
+	font-size:14px;
+	line-height:1.8em;
+	text-align:center;
+	margin-top:50px;
+}
+.footer p a{
+	color:#fff;
+}
+.footer p a:hover{
+	text-decoration:underline;
+}
+
+.google_play
+{
+	background-color: #27ae60;
+    opacity: 1;
+    color: #fff;
+	border-radius:10px;
+	padding:10px;
+}
+.google_play a
+{
+	color: #fff;
+	text-decoration:none;
+}
+.download_app_div
+{
+	color:var(--green);
+	font-size:25px;
+}
+/*************other page****************/
+.view_cart_or_empty_cart_btn_div,.place_order_or_empty_cart_btn_div
+{
+    bottom: 0px;
+    position: fixed;
+    width: 100%;
+    /*margin-left: 6%;*/
+    background-color: var(--main_theme_footer_color);
+    padding: 5px;
+}
+.search_pg_title_color
+{
+	color: var(--green);
+    font-size: 20px;
+    font-weight: bold;
+}
+.search_medicine_result,.select_chemist_result
+{
+	margin-top: -7px;
+    z-index: 15;
+    max-height: 550px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 94.7%;
+    background-color: var(--main_theme_textbox_bg_color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 5px;
+	position: absolute;
+	display: none;
+}
+
+.fix_box_in_search_page
+{
+	height: 450px;
+    overflow: hidden;
+    position: relative;
+	width:100%;
+	background-color: var(--main_theme_white_bg_color);
+	border-radius: 10px;
+	padding:5px;
+}
+
+.fix_box_in_search_page_under
+{
+	height: 440px;
+    overflow-x: hidden;
+    position: relative;
+	overflow-y: scroll;
+	width:100%;
+	background-color: var(--main_theme_white_bg_color);
+}
+
+.search_medicine_result::-webkit-scrollbar,.select_chemist_result::-webkit-scrollbar,.fix_box_in_search_page_under::-webkit-scrollbar{
+    width:5px;
+}
+
+.search_medicine_result::-webkit-scrollbar-track,.select_chemist_result::-webkit-scrollbar-track,.fix_box_in_search_page_under::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.search_medicine_result::-webkit-scrollbar-thumb,.select_chemist_result::-webkit-scrollbar-thumb,.fix_box_in_search_page_under::-webkit-scrollbar-thumb{
+    background:var(--main_theme_scrollbar_color);
+}
+
+
+
+.featured_brand_div
+{
+	border-radius: 10px;
+	background-color: var(--main_theme_li2_bg_color);
+	padding:5px;
+	margin: 5px;
+	height:420px;
+}
+
+
+@media screen and (max-width: 767px) {
+	.maincontainercss
+	{
+		padding-top:50px;
+	}	
+	.top_menu_bar {
+		height: 120px;
+		padding: 5px !important;
+	}
+	.main_round_theme
+	{
+		padding:40px;
+		border-bottom-left-radius:70px;
+	}
+	.mobile_off
+	{
+		display:none;
+	}
+    .mobile_show
+	{
+		display:block;
+	}
+	.left_menu_bar
+	{
+		display:none;
+		position: fixed;
+		width: 70%;
+		z-index: 20;
+		top: 0px;
+	}
+	.left_menu_bar_account_image, .account_page_header_image
+	{
+		height:10vh;
+	}
+	.left_menu_bar_accoun_chemist_name,.account_page_chemist_name
+	{
+		font-size: 14px;
+	}
+	.left_menu_bar_accoun_chemist_code,.account_page_chemist_code
+	{
+		font-size: 13px;
+	}
+	.left_menu_bar_part2 a
+	{
+		font-size: 13px;
+	}
+	.menu_ki_main_div1
+	{
+		width:75%;
+	}
+	.menu_ki_main_div2
+	{
+		width:25%;
+	}
+	.home_page_search_div
+	{
+		position: fixed;
+		top: 50px;
+		background: #ffffff;
+		z-index: 11;
+		width: 94%;
+		left: 16px;
+		font-size: 16px;
+		height:40px;
+		padding: 8px;
+    	padding-left: 38px;
+	}
+	
+	.home_page_search_div_box
+	{
+		position: fixed;
+		top: 45px;
+		z-index: 11;
+		padding: 5px;
+		width: 96%;
+		left: 10px;
+	}
+
+	.clear_search_icon {
+		position: absolute;
+		right: 10px;
+		top: 12px;
+	}
+	
+	.home_page_search_div_textbox
+	{	
+		width: 100%;
+		top: 50px;
+		left: 18px;
+	}
+	.top-menu123
+	{
+		margin-top: 20px;
+    	width: 80%;
+    	margin-left: 18%;
+	}
+	.top-menu123-next
+	{	
+		margin-top: 2px !important;
+		margin-right: -12px;
+	}
+	.top-menu123-prev
+	{	
+		margin-top: 2px !important;
+		margin-left: 24px;
+	}
+	.top-menu123 .top-menu123-slider .box a {
+		font-size: 18px;
+	}
+	.search_pg_title_color
+	{
+		font-size: 14px;
+	}
+	#jssor_1
+	{
+		position:relative;
+		margin:0 auto;
+		left:-15px;
+		width:980px;
+		height:350px;
+		overflow:hidden;
+		visibility:hidden;
+	}
+	.carousel-inner img {
+		height: 22vh !important;
+	}
+	.img_css_forslider
+	{
+    	height: 50vh !important;
+	}
+	.top_flash_div
+	{
+		height: 55vh !important;
+	}
+
+	.featured_home_title
+	{
+		margin-top: 0px;
+    	margin-bottom: 5px;
+	}
+	.heading_home{
+		text-align: left;
+		margin-bottom: 0rem;
+	}
+	.heading_home span
+	{
+		padding: 0rem;
+		background: none !important;
+		font-size: 1.3rem !important;
+	}
+	.heading_home::before{
+		background: none;
+	}
+	section {
+		/*padding: 0rem 1%;*/
+	}
+
+	.cart_ki_main_div1
+	{
+		width:30%;
+		float:left;
+		padding:5px;
+	}
+	.cart_ki_main_div1_1
+	{
+		width:32%;
+	}
+	.cart_ki_main_div1_2
+	{
+		width:35%;
+	}
+	.cart_ki_main_div2
+	{
+		width:70%;
+		float:left;	
+		padding:5px;
+	}
+	.cart_ki_main_div2_1
+	{
+		width:68%;
+	}
+	.cart_ki_main_div2_2
+	{
+		width:65%;
+	}
+	.cart_ki_main_div5
+	{
+		width:100%;
+	}
+	.cart_ki_main_div6_1
+	{
+		width:15%;	
+	}
+	.cart_ki_main_div6_2
+	{
+		width:85%;
+	}
+	.cart_ki_main_div7_1
+	{
+		width:30%;	
+	}
+	.cart_ki_main_div7_2
+	{
+		width:70%;
+	}
+	.home_menu_main_btn
+	{
+		font-size: 16px;
+	}
+	.home_page_new_box_inv_title{
+		font-size: 16px;
+	}
+	.home_cart_company
+	{
+		font-size: 16px;
+	}
+
+	.cart_order_qty
+	{
+		font-size:15px;
+	}
+	.cart_image_search1
+	{
+		height: 16vh;
+	}
+	.cart_title,.cart_stock,.cart_scheme,.cart_scheme_line,.cart_order_qty1
+	{
+		font-size:13px;
+	}
+	.cart_ptr,.cart_mrp,.cart_landing_price,.cart_expiry,.cart_company,.cart_packing,.cart_description1,.cart_description2,.cart_date_time
+	{
+		font-size:12px;
+	}
+	.search_medicine_result,.select_chemist_result
+	{
+		position: absolute;
+		z-index: 14;
+		margin-left: -11px;
+		margin-top: 85px;
+		width: 98%;
+		padding-bottom: 38px;
+		max-height: 475px;
+		border-radius: 10px;
+		padding-top:10px;
+	}
+	.fix_box_in_search_page
+	{
+		width: 108% !important;
+		margin-left: -15px;
+		padding: 2px;
+		border: none !important;
+	}
+	.mobile_footer_css_ok {
+		background: var(--green) !important;
+	}
+	.mobile_footer_css_ok_left {
+		background: var(--green) !important;
+		border-top-right-radius: 50px;
+	}
+	.mobile_footer_css_ok_center {
+		background: var(--green) !important;
+		border-radius: 50px;
+		margin-left: 2%;
+		margin-right: 2%;
+		width: 17% !important;
+	}
+	.mobile_footer_css_ok_right {
+		background: var(--green) !important;
+		border-top-left-radius: 50px;
+	}
+	.medicine_cart_item_featured_img
+	{
+		width:50px !important;
+	}
+	.medicine_cart_item_out_of_stock_img
+	{
+		width:50px !important;
+	}
+	.mcs-items-container
+	{
+		height:320px;
+	}
+	.featured_brand_div
+	{
+		height:320px;
+	}
+}
+
+
+/*************new work********************/
+
+.main_theme_li_bg
+{
+	font-size: 12px;
+	color:var(--mainblack-color);
+	float: left;
+	width:100%;
+	margin-top:5px;
+	
+	background-color:var(--main_theme_li_bg_color);
+	border-radius: 10px;
+}
+.main_theme_li_bg:focus
+{
+	cursor: none;
+	outline: none;
+	border:0px;
+	background:var(--main_theme_li_bg_hover_color);
+}
+.main_theme_li_bg:hover
+{
+	cursor: pointer;
+	background:var(--main_theme_li_bg_hover_color);
+}
+
+/******************medicine search*********************/
+.medicine_search_full_width
+{
+	width:100%;
+	float:left;
+	padding-left:5px;
+}
+.medicine_search_div1
+{
+	width:25%;
+	float:left;
+	padding:5px;
+}
+.medicine_search_div2
+{
+	width:75%;
+	float:left;	
+	padding:5px;
+}
+
+/***************************medicine details*****************/
+.medicine_details_data
+{
+	background:white;
+	border-radius:10px;
+}
+.medicine_details_item_date_time
+{
+	color:var(--item_date_time_color);
+	font-size: 14px;
+    margin-top: -38px;
+}
+.medicine_details_hr{
+	
+	border-top: 1px solid var(--item_hr_line_color);
+	padding-top: 10px;
+	margin-top: 10px;
+}
+.medicine_details_image
+{
+	/*background-image: url(http://drdweb.co.in/uploads/default_img.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;*/
+    width: 100%;
+	border-radius: 10px;
+	border: 1px solid var(--mainbutton-color);
+}
+.medicine_details_image_small
+{
+    width: 20%;
+    height: 15%;
+	border-radius: 10px;
+	border: 1px solid var(--mainbutton-color);
+}
+.medicine_details_featured_img
+{
+	border-top-left-radius: 10px;
+	width:100px;
+}
+.medicine_details_out_of_stock_img
+{
+	border-top-left-radius: 10px;
+	width:100px;
+}
+.medicine_details_item_name
+{
+	color:var(--item_name_color);
+	font-size:20px;
+	font-weight:bold;
+}
+.medicine_details_item_packing
+{
+	color:var(--packing-color);
+	font-size:16px;
+}
+.medicine_details_item_batch_no
+{
+	font-size: 16px;
+    color:var(--item_batch_no_color);
+}
+.medicine_details_item_margin
+{
+	font-size: 16px;
+    color:var(--item_margin_color);
+}
+.medicine_details_item_expiry
+{
+	font-size: 16px;
+    color:var(--item_expiry_color);
+}
+
+.medicine_details_item_company
+{
+	color:var(--item_company2_color);
+    font-size: 18px;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.medicine_details_item_stock
+{
+	color:var(--item_stock_color);
+	font-size:18px;
+	font-weight: bold;
+}
+.medicine_details_item_scheme
+{
+	margin-top: 3px;
+	font-size: 16px;
+    color:var(--item_scheme_color);
+    font-weight: bold;
+}
+.medicine_details_item_scheme_line
+{
+	font-size: 15px;
+    color:var(--item_scheme_line_color);
+}
+
+.medicine_details_item_ptr
+{
+	color:var(--item_ptr_color);
+    font-size: 16px;
+}
+.medicine_details_item_mrp
+{
+	color:var(--item_mrp_color);
+    font-size: 16px;
+}
+.medicine_details_item_price
+{
+	color:var(--item_price_color);
+    font-size: 16px;
+    font-weight: bold;
+}
+.medicine_details_item_gst
+{
+	color:var(--item_gst_color);
+    font-size: 16px;
+}
+.medicine_details_item_order_quantity
+{
+	color:var(--item_order_quantity);
+    font-size: 20px;
+	font-weight: bold;
+}
+.medicine_details_item_order_quantity_textbox
+{
+	background:var(--item_order_quantity_bg);
+    border: 0px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.medicine_details_item_order_quantity:focus
+{
+	outline: none !important;
+	outline-style:none !important;
+	box-shadow:none !important;
+	border-color:transparent !important;
+}
+.medicine_details_item_description1
+{
+	color:var(--item_description1_color);
+    font-size: 16px;
+}
+
+/***************************************************************/
+.medicine_chemist_div1
+{
+	width:8%;
+	float:left;
+	padding:5px;
+}
+.medicine_chemist_div2
+{
+	width:92%;
+	float:left;	
+	padding:5px;
+}
+
+.search_chemist_div1
+{
+	width:10%;
+	float:left;
+	padding:5px;
+}
+.search_chemist_div2
+{
+	width:90%;
+	float:left;	
+	padding:5px;
+}
+
+.chemist_user_name
+{
+	color:var(--chemist_user_name_color);
+	font-size:16px;
+	font-weight:bold;
+}
+
+.chemist_altercode
+{
+	color:var(--chemist_altercode_color);
+	font-size:14px;
+	font-weight:bold;
+}
+
+/***************************************************************/
+.medicine_my_page_div1
+{
+	width:7%;
+	float:left;
+	padding:5px;
+}
+.medicine_my_page_div2
+{
+	width:90%;
+	float:left;	
+	padding:5px;
+}
+
+/***************************************************************/
+.medicine_cart_div1
+{
+	width:15%;
+	float:left;
+	padding:5px;
+}
+.medicine_cart_div2
+{
+	width:85%;
+	float:left;	
+	padding:5px;
+}
+/***************************medicine cart small*****************/
+
+.medicine_cart_small_div1
+{
+	width:30%;
+	float:left;
+	padding:5px;
+}
+.medicine_cart_small_div2
+{
+	width:70%;
+	float:left;	
+	padding:5px;
+}
+
+.medicine_cart_small_div3
+{
+	width:10%;
+	float:left;
+	padding:5px;
+}
+.medicine_cart_small_div4
+{
+	width:90%;
+	float:left;	
+	padding:5px;
+}
+.medicine_cart_item_image
+{
+    width: 100%;
+    /*height: 20vh;*/
+    border-radius: 10px;
+}
+.medicine_cart_item_name
+{
+	color:var(--item_name_color);
+	font-size:16px;
+	font-weight:bold;
+}
+.medicine_cart_item_packing
+{
+	color:var(--item_packing_color);
+	font-size:12px;
+}
+.medicine_cart_item_margin
+{
+	color:var(--item_margin_color);
+	font-size:14px;
+}
+.medicine_cart_item_expiry
+{
+	font-size: 14px;
+    color:var(--item_expiry_color);
+}
+
+.medicine_cart_item_company
+{
+	color:var(--item_company_color);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.medicine_cart_item_batch_no
+{
+	color:var(--item_batch_no_color);
+    font-size: 14px;
+}
+
+.medicine_cart_item_order_quantity
+{
+	color:var(--item_stock_color);
+	font-size:15px;
+	font-weight: bold;
+}
+.medicine_cart_item_stock
+{
+	color:var(--item_stock_color);
+	font-size:15px;
+	font-weight: bold;
+}
+.medicine_cart_item_out_of_stock{
+	color:var(--out_of_stock-color);
+	font-size:16px;
+	font-weight: bold;
+}
+.medicine_cart_item_out_of_stock_img
+{
+	width:65px;
+	position: absolute;
+	border-top-left-radius: 10px;
+}
+.medicine_cart_item_featured_img
+{
+	width:65px;
+	position: absolute;
+	border-top-left-radius: 10px;
+}
+.medicine_cart_item_scheme
+{
+	font-size: 14px;
+	color:var(--item_scheme_color);
+	font-weight: bold;
+}
+.medicine_cart_item_mrp
+{
+	font-size: 14px;
+	color:var(--item_mrp_color);
+}
+.medicine_cart_item_ptr
+{
+	font-size: 14px;
+	color:var(--item_ptr_color);
+}
+.medicine_cart_item_price
+{
+	color:var(--item_price_color);
+    font-size: 14px;
+	font-weight: bold;
+}
+.medicine_cart_item_price2
+{
+	color:var(--item_ptr_color);
+    font-size: 14px;
+}
+.medicine_cart_item_datetime
+{
+	color:var(--item_date_time_color);
+    font-size: 14px;
+}
+.medicine_cart_item_date_time
+{
+	color:var(--item_date_time_color);
+    font-size: 14px;
+}
+
+.medicine_cart_item_description1
+{
+	color:var(--item_description1_color);
+    font-size: 14px;
+}
+.medicine_cart_item_description2
+{
+	color:var(--item_description2_color);
+    font-size: 14px;
+}
+.medicine_cart_item_similar_items
+{
+	color:var(--item_similar_items_color);
+    font-size: 15px;
+}
+.medicine_cart_item_similar_items a
+{
+	color:var(--item_similar_items_color);
+    font-size: 15px;
+}
+
+
+@media screen and (max-width: 767px) {
+	.medicine_search_div1
+	{
+		width:30%;
+		float:left;
+		padding:5px;
+	}
+	.medicine_search_div2
+	{
+		width:70%;
+		float:left;	
+		padding:5px;
+	}
+	.medicine_cart_div1,.medicine_cart_small_div1
+	{
+		width:30%;
+		float:left;
+		padding:5px;
+	}
+	.medicine_cart_div2,.medicine_cart_small_div2
+	{
+		width:70%;
+		float:left;	
+		padding:5px;
+	}
+
+	.medicine_my_page_div1
+	{
+		width:30%;
+		float:left;
+		padding:5px;
+	}
+	.medicine_my_page_div2
+	{
+		width:70%;
+		float:left;	
+		padding:5px;
+	}
+}
