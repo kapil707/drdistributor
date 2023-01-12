@@ -470,7 +470,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 
 				$row = $this->db->query("insert into testnew (mobile,message,altercode) values ('$mobile','$message','$altercode')");
 				$this->Message_Model->insert_android_notification("5","Invoice",$message,$altercode,"chemist");
-				//$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
+				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
 				echo "done";
 			}
 		}
