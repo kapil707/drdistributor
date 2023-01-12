@@ -465,7 +465,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]))
 			{
 				$mobile 	= $row["mobile"];
-				$message 	= $row["message"];
+				$message 	= base64_decode($row["message"]);
 				$altercode  = $row["altercode"];
 
 				$row = $this->db->query("insert into testnew (mobile,message,altercode) values ('$mobile','$message','$altercode')");
