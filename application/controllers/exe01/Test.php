@@ -9,7 +9,7 @@ class Test extends CI_Controller
     public function test_me()
     {
         //error_reporting(0);
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = (file_get_contents('php://input'));
         $items = $data["items"];
         print_r($items);
     }
