@@ -23,6 +23,7 @@ class Message_Model extends CI_Model
 		'chemist_id'=>$altercode,
 		'date'=>$date,
 		'time'=>$time,
+		'status'=>0,
 		);
 		$this->Scheme_Model->insert_fun("tbl_whatsapp_message",$dt);
 	}
