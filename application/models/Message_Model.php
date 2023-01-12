@@ -19,7 +19,7 @@ class Message_Model extends CI_Model
 
 		$dt = array(
 		'mobile'=>$mobile,
-		'message'=>($message),
+		'message'=>$message,
 		'chemist_id'=>$altercode,
 		'date'=>$date,
 		'time'=>$time,
