@@ -1,6 +1,6 @@
 <script src="<?= base_url(); ?>assets/website/js/scripts.js"></script>
 <?php
-$website_menu 	= file_get_contents('./json_api/website_menu.json');
+$website_menu 	= file_get_contents('./json_api/website_menu_json_new.json');
 $website_menu 	= '['.$website_menu.']';
 $website_menu 	= json_decode($website_menu, true);
 

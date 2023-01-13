@@ -172,7 +172,7 @@ if(empty($chemist_id_for_cart_total))
 {
 	$chemist_id_for_cart_total = "";
 }
-$website_menu 	= file_get_contents('./json_api/website_menu.json');
+$website_menu 	= file_get_contents('./json_api/website_menu_json_new.json');
 $website_menu 	= '['.$website_menu.']';
 $website_menu 	= json_decode($website_menu, true);
 ?>
