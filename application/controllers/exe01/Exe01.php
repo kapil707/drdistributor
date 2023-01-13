@@ -489,4 +489,20 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			echo "done";
 		}
 	}
+
+	public function download_order_in_folder()
+	{
+		$items = "";
+		$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,remarks from tbl_order where temp_rec='265078_chemist_R218'")->result();
+		foreach($result as $row){
+			$remarks = $this->new_clean(htmlentities($row->remarks));
+			$items.='{"id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","remarks": "'.$remarks.'"},';
+		}
+		if (!empty($items)) {
+			if ($items != '') {
+				$items = substr($items, 0, -1);
+			}
+			echo $parmiter = '{"items": ['.$items.']}';
+		}
+	}
 }
