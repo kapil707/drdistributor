@@ -53,9 +53,8 @@ class Main extends CI_Controller {
 		$title0 = "Our top brands";
 		$data["title0"] = $title0;
 		//$this->Chemist_Model->featured_brand_json_new();
-		$featured_brand_json_new = fopen("json_api/featured_brand_json_new.json", "r") or die("Unable to open file!");
-		echo fread($featured_brand_json_new,filesize($featured_brand_json_new));
-		fclose($featured_brand_json_new);
+		$featured_brand_json_new = fopen("json_api/featured_brand_json_new.json", "r");
+		print_r($featured_brand_json_new);
 		$result0 = $featured_brand_json_new;
 		$result0 = json_decode("[$result0]", true);	
 		$data["result0"] = $result0;
