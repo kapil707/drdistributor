@@ -418,6 +418,18 @@ class Cronjob_page extends CI_Controller
 		/*************************************************************/
 	}
 
+	public function cronjob_top_flash()
+	{
+		$result0 = $this->Chemist_Model->top_flash();
+		file_put_contents("json_api/top_flash.json", $result0);
+	}
+
+	public function cronjob_top_flash2()
+	{
+		$result0 = $this->Chemist_Model->top_flash2();
+		file_put_contents("json_api/top_flash2.json", $result0);
+	}
+
 	public function cronjob_featured_brand_json_new()
 	{
 		$result0 = $this->Chemist_Model->featured_brand_json_new();

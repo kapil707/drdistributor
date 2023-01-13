@@ -115,46 +115,46 @@ class Home extends CI_Controller {
 		
 		$data["main_page_title"] = "Home";
 		
-		if ($_SESSION["top_flash"] == "") {
-			$_SESSION["top_flash"] = $this->Chemist_Model->top_flash();
-		}
-		$top_flash = $_SESSION["top_flash"];
+		/***************************************************/
+		$top_flash = file_get_contents('./json_api/top_flash.json');
 		$top_flash = json_decode("[$top_flash]", true);
 		$data["top_flash"] = $top_flash;
 
-		if ($_SESSION["top_flash2"] == "") {
-			$_SESSION["top_flash2"] = $this->Chemist_Model->top_flash2();
-		}
-		$top_flash2 = $_SESSION["top_flash2"];
+		/***************************************************/
+		$top_flash2 = file_get_contents('./json_api/top_flash2.json');
 		$top_flash2 = json_decode("[$top_flash2]", true);
 		$data["top_flash2"] = $top_flash2;
 
+		/***************************************************/
 		$title0 = "Our top brands";
 		$data["title0"] = $title0;
 		//$this->Chemist_Model->featured_brand_json_new();
-		echo $featured_brand_json_new = file_get_contents('./json_api/featured_brand_json_new.json');
-		$result0 = $featured_brand_json_new;
+		$result0 = file_get_contents('./json_api/featured_brand_json_new.json');
 		$result0 = json_decode("[$result0]", true);	
 		$data["result0"] = $result0;
-		
 
-		$result1 = $this->Chemist_Model->new_medicine_this_month_json_new();
+		/***************************************************/
+		$result1 = file_get_contents('./json_api/new_medicine_this_month_json_new.json');
 		$result1 = json_decode("[$result1]", true);	
 		$data["result1"] = $result1;
 
-		$result2 = $this->Chemist_Model->hot_selling_today_json_new();
+		/***************************************************/
+		$result2 = file_get_contents('./json_api/hot_selling_today_json_new.json');
 		$result2 = json_decode("[$result2]", true);
 		$data["result2"] = $result2;
 
-		$result3 = $this->Chemist_Model->must_buy_medicines_json_new();
+		/***************************************************/
+		$result3 = file_get_contents('./json_api/must_buy_medicines_json_new.json');
 		$result3 = json_decode("[$result3]", true);
 		$data["result3"] = $result3;
 
-		$result4 = $this->Chemist_Model->frequently_use_medicines_json_new();
+		/***************************************************/
+		$result4 = file_get_contents('./json_api/frequently_use_medicines_json_new.json');
 		$result4 = json_decode("[$result4]", true);
 		$data["result4"] = $result4;
-		
-		$result5 = $this->Chemist_Model->stock_now_available();
+
+		/***************************************************/
+		$result5  = file_get_contents('./json_api/stock_now_available.json');
 		$result5 = json_decode("[$result5]", true);
 		$data["result5"] = $result5;
 

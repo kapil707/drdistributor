@@ -36,20 +36,17 @@ class Main extends CI_Controller {
 		
 		$this->load->view('home/header', $data);
 
-		if ($_SESSION["top_flash"] == "") {
-			$_SESSION["top_flash"] = $this->Chemist_Model->top_flash();
-		}
-		$top_flash = $_SESSION["top_flash"];
+		/***************************************************/
+		$top_flash = file_get_contents('./json_api/top_flash.json');
 		$top_flash = json_decode("[$top_flash]", true);
 		$data["top_flash"] = $top_flash;
 
-		if ($_SESSION["top_flash2"] == "") {
-			$_SESSION["top_flash2"] = $this->Chemist_Model->top_flash2();
-		}
-		$top_flash2 = $_SESSION["top_flash2"];
+		/***************************************************/
+		$top_flash2 = file_get_contents('./json_api/top_flash2.json');
 		$top_flash2 = json_decode("[$top_flash2]", true);
 		$data["top_flash2"] = $top_flash2;
 
+		/***************************************************/
 		$title0 = "Our top brands";
 		$data["title0"] = $title0;
 		//$this->Chemist_Model->featured_brand_json_new();
