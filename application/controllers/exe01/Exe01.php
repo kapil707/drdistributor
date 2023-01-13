@@ -458,8 +458,9 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 	public function insert_whatsapp_message()
 	{
 		/********************** */
-		$data = json_decode(file_get_contents('php://input'), true);
-        $items = $data["items"];
+		$isdone	="";
+		$data 	= json_decode(file_get_contents('php://input'), true);
+        $items 	= $data["items"];
 		foreach($items as $row)
 		{
 			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]) && $row["type_of_message"] == "message")
@@ -470,6 +471,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 
 				$this->Message_Model->insert_android_notification("5","Invoice",$message,$altercode,"chemist");
 				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
+				$isdone="yes";
 			}
 
 			if(!empty($row["mobile"]) && !empty($row["message"]) && $row["type_of_message"] == "group")
@@ -479,7 +481,10 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 				$altercode  = "";
 
 				$this->Message_Model->insert_whatsapp_group_message($mobile,$message);
+				$isdone="yes";
 			}
+		}
+		if($isdone=="yes"){
 			echo "done";
 		}
 	}
