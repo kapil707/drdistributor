@@ -1,11 +1,11 @@
 <script src="<?= base_url(); ?>assets/website/js/scripts.js"></script>
 <?php
-$website_menu 	= $_SESSION["website_menu"];
-$website_menu = '['.$website_menu.']';
+$website_menu 	= file_get_contents('./json_api/website_menu.json');
+$website_menu 	= '['.$website_menu.']';
 $website_menu 	= json_decode($website_menu, true);
 
 $title0 = "Our top brands";
-$featured_brand_json = $_SESSION["result0"];
+$featured_brand_json 	= file_get_contents('./json_api/featured_brand_json_new.json');
 $featured_brand_json	= '['.$featured_brand_json.']';
 $featured_brand_json 	= json_decode($featured_brand_json, true);
 ?>

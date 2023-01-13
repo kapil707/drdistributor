@@ -441,28 +441,28 @@ class Api_mobile41 extends CI_Controller {
 			
 			/*******************featured_brand_json******************/
 			$medicine_title0 = "Our top brands";
-			$medicine_json0 = $this->Chemist_Model->featured_brand_json_new();
+			$medicine_json0 = file_get_contents('./json_api/featured_brand_json_new.json');
 			$medicine_json0 = "[$medicine_json0]";
 			
 			/**********************hot_selling_today_json************/
-			$medicine_json1 = $this->Chemist_Model->new_medicine_this_month_json_new();
+			$medicine_json1 = file_get_contents('./json_api/new_medicine_this_month_json_new.json');
 			$medicine_json1 = "[$medicine_json1]";
 			
 			/**********************must_buy_medicines_json************/
-			$medicine_json2 = $this->Chemist_Model->hot_selling_today_json_new();
+			$medicine_json2 = file_get_contents('./json_api/hot_selling_today_json_new.json');
 			$medicine_json2 = "[$medicine_json2]";
 
 			/**********************short_medicines_available_now_json******/
-			$medicine_json3 = $this->Chemist_Model->must_buy_medicines_json_new();
+			$medicine_json3 = file_get_contents('./json_api/must_buy_medicines_json_new.json');
 			$medicine_json3 = "[$medicine_json3]";
 
 			/**********************new 5 number box************/
-			$medicine_json4 = $this->Chemist_Model->frequently_use_medicines_json_new();
+			$medicine_json4 = file_get_contents('./json_api/frequently_use_medicines_json_new.json');
 			$medicine_json4 = "[$medicine_json4]";
 			/***************************************************/
 
 			/**********************new 5 number box************/
-			$medicine_json5 = $this->Chemist_Model->stock_now_available();
+			$medicine_json5 = file_get_contents('./json_api/stock_now_available.json');
 			$medicine_json5 = "[$medicine_json5]";
 			/***************************************************/
 

@@ -172,11 +172,8 @@ if(empty($chemist_id_for_cart_total))
 {
 	$chemist_id_for_cart_total = "";
 }
-if ($_SESSION["website_menu"] == "") {
-	$_SESSION["website_menu"] = $this->Chemist_Model->website_menu_json_new();
-}
-$website_menu 	= $_SESSION["website_menu"];
-$website_menu = '['.$website_menu.']';
+$website_menu 	= file_get_contents('./json_api/website_menu.json');
+$website_menu 	= '['.$website_menu.']';
 $website_menu 	= json_decode($website_menu, true);
 ?>
 	<img src="<?= base_url(); ?>img_v<?= constant('site_v') ?>/logo.png" style="display:none" alt="Dr. Distributor" title="Dr. Distributor">
