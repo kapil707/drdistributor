@@ -469,7 +469,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 				$message 	= (base64_decode($row["message"]));
 				$altercode  = $row["altercode"];
 
-				$this->Message_Model->insert_android_notification("5","Invoice",$message,$altercode,"chemist");
+				$this->Message_Model->insert_android_notification("5","Invoice Generated",$message,$altercode,"chemist");
 				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
 				$isdone="yes";
 			}
