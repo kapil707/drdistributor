@@ -57,6 +57,7 @@ class Main extends CI_Controller {
 		$result0 = $featured_brand_json_new;
 		$result0 = json_decode("[$result0]", true);	
 		$data["result0"] = $result0;
+		
 
 
 		if ($_SESSION["result1"] == "") {

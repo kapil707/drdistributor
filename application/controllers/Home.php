@@ -136,6 +136,7 @@ class Home extends CI_Controller {
 		$result0 = $featured_brand_json_new;
 		$result0 = json_decode("[$result0]", true);	
 		$data["result0"] = $result0;
+		
 
 		$result1 = $this->Chemist_Model->new_medicine_this_month_json_new();
 		$result1 = json_decode("[$result1]", true);	
