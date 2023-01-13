@@ -5,8 +5,6 @@ ini_set('post_max_size','500M');
 ini_set('upload_max_filesize','500M');
 ini_set('max_execution_time',36000);
 class Exe01 extends CI_Controller {
-
-
 	function new_clean($string) {
 		$k= str_replace('\n', '<br>', $string);
 		$k= preg_replace('/[^A-Za-z0-9\#]/', ' ', $k);
@@ -493,10 +491,11 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 	public function download_order_in_folder()
 	{
 		$items = "";
-		$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,remarks from tbl_order where temp_rec='265078_chemist_R218'")->result();
+		$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,remarks from tbl_order where temp_rec='265078_chemist_R218'")->result();
 		foreach($result as $row){
+			$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 			$remarks = $this->new_clean(htmlentities($row->remarks));
-			$items.='{"id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","remarks": "'.$remarks.'"},';
+			$items.='{"online_id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","temp_rec": "'.$row->temp_rec.'","order_status": "0","sale_rate": "'.$row->sale_rate.'","new_temp_rec": "'.$new_temp_rec.'","date": "'.$row->date.'","time": "'.$row->time.'","remarks": "'.$remarks.'"},';
 		}
 		if (!empty($items)) {
 			if ($items != '') {
