@@ -418,9 +418,39 @@ class Cronjob_page extends CI_Controller
 		/*************************************************************/
 	}
 
-	public function create_new_json()
+	public function cronjob_featured_brand_json_new()
 	{
 		$result0 = $this->Chemist_Model->featured_brand_json_new();
-		file_put_contents("json_api/geeks_data.json", $result0);
+		file_put_contents("json_api/featured_brand_json_new.json", $result0);
+	}
+
+	public function cronjob_new_medicine_this_month_json_new()
+	{
+		$result0 = $this->Chemist_Model->new_medicine_this_month_json_new();
+		file_put_contents("json_api/new_medicine_this_month_json_new.json", $result0);
+	}
+
+	public function cronjob_hot_selling_today_json_new()
+	{
+		$result0 = $this->Chemist_Model->hot_selling_today_json_new();
+		file_put_contents("json_api/hot_selling_today_json_new.json", $result0);
+	}
+
+	public function cronjob_must_buy_medicines_json_new()
+	{
+		$result0 = $this->Chemist_Model->must_buy_medicines_json_new();
+		file_put_contents("json_api/must_buy_medicines_json_new.json", $result0);
+	}
+
+	public function cronjob_frequently_use_medicines_json_new()
+	{
+		$result0 = $this->Chemist_Model->frequently_use_medicines_json_new();
+		file_put_contents("json_api/frequently_use_medicines_json_new.json", $result0);
+	}
+
+	public function cronjob_stock_now_available()
+	{
+		$result0 = $this->Chemist_Model->stock_now_available();
+		file_put_contents("json_api/stock_now_available.json", $result0);
 	}
 }
