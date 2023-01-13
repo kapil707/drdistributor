@@ -421,7 +421,7 @@ class Cronjob_page extends CI_Controller
 	public function cronjob_website_menu_json_new()
 	{
 		$result0 = $this->Chemist_Model->website_menu_json_new();
-		file_put_contents("json_api/top_flash.json", $result0);
+		file_put_contents("json_api/website_menu_json_new.json", $result0);
 	}
 
 	public function cronjob_top_flash()
