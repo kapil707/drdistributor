@@ -18,13 +18,14 @@ class Message_Model extends CI_Model
 		$time = date("H:i",time());
 
 		$dt = array(
-		'mobile'=>$mobile,
-		'message'=>$message,
-		'chemist_id'=>$altercode,
-		'date'=>$date,
-		'time'=>$time,
-		'status'=>0,
-		'respose'=>'',
+			'mobile'=>$mobile,
+			'message'=>$message,
+			'media'=>'',
+			'chemist_id'=>$altercode,
+			'date'=>$date,
+			'time'=>$time,
+			'status'=>0,
+			'respose'=>'',
 		);
 		$this->Scheme_Model->insert_fun("tbl_whatsapp_message",$dt);
 	}
@@ -76,21 +77,8 @@ class Message_Model extends CI_Model
 			$response = htmlspecialchars($response);
 			$response = str_replace("'","&#39;",$response);
 
-			$this->db->query("update `tbl_whatsapp_message` set status=1, respose='$response' WHERE id='$id'");
-
-			/*if ($err) {
-				echo "cURL Error #:" . $err;
-				$err = "Number stored is : $mobile";
-				$this->Message_Model->tbl_whatsapp_email_fail($mobile,$err,$chemist_id);
-			} else {
-				//echo $response;
-				$someArray = json_decode($response,true);
-				if($someArray["status"]=="400"||$someArray["status"]=="401"||$someArray["status"]=="409"||$someArray["status"]=="500"||$someArray["status"]=="501"||$someArray["status"]=="503")
-				{
-					$err = "Number stored is : $mobile";
-					$this->Message_Model->tbl_whatsapp_email_fail($mobile,$err,$chemist_id);
-				}
-			}*/
+			$this->db->query("update `tbl_whatsapp_message` set status=1 WHERE id='$id'");
+			$this->db->query("update `tbl_whatsapp_message` set respose='$response' WHERE id='$id'");
 		}
 	}
 	
@@ -100,10 +88,13 @@ class Message_Model extends CI_Model
 		$time = date("H:i",time());
 
 		$dt = array(
-		'mobile'=>$mobile,
-		'message'=>($message),
-		'date'=>$date,
-		'time'=>$time,
+			'mobile'=>$mobile,
+			'message'=>$message,
+			'media'=>'',
+			'date'=>$date,
+			'time'=>$time,
+			'status'=>0,
+			'respose'=>'',
 		);
 		$this->Scheme_Model->insert_fun("tbl_whatsapp_group_message",$dt);
 	}
@@ -142,18 +133,9 @@ class Message_Model extends CI_Model
 			$err = curl_error($curl);
 			curl_close($curl);
 
-			$this->db->query("update `tbl_whatsapp_group_message` set status=1,respose='$response' WHERE id='$id'");
+			$this->db->query("update `tbl_whatsapp_group_message` set status=1 WHERE id='$id'");
 
-			/*if ($err) {
-				echo "cURL Error #:" . $err;
-				//$this->Email_Model->tbl_whatsapp_email_fail($number,$err,$altercode);
-			} else {
-				//echo $response;
-				$someArray = json_decode($response,true);
-				if($someArray["status"]=="400"||$someArray["status"]=="401"||$someArray["status"]=="409"||$someArray["status"]=="500"||$someArray["status"]=="501"||$someArray["status"]=="503")
-				{
-				}
-			}*/
+			$this->db->query("update `tbl_whatsapp_group_message` set respose='$response' WHERE id='$id'");
 		}
 	}
 	
@@ -162,20 +144,26 @@ class Message_Model extends CI_Model
 		$date = date('Y-m-d');
 		$time = date("H:i",time());
 		
-		$title 		= ($title);
-		$message 	= ($message);
-		
 		$device_id =  "default"; // yha sirf website or android me show ke liya use hota ha
-			
+
+		$itemid = $compid = $status = $firebase_status = "0";
+		$division = $image = $respose = "";
 		$dt = array(
-		'chemist_id'=>$chemist_id,
-		'user_type'=>$user_type,
-		'title'=>$title,
-		'funtype'=>$funtype,
-		'message'=>$message,
-		'date'=>$date,
-		'time'=>$time,
-		'device_id'=>$device_id,);
+			'title'=>$title,
+			'message'=>$message,
+			'user_type'=>$user_type,
+			'chemist_id'=>$chemist_id,
+			'device_id'=>$device_id,
+			'funtype'=>$funtype,
+			'itemid'=>$itemid,
+			'compid'=>$compid,
+			'division'=>$division,
+			'image'=>$image,
+			'date'=>$date,
+			'time'=>$time,
+			'status'=>$status,
+			'firebase_status'=>$firebase_status,
+			'respose'=>$respose,);
 		
 		$this->Scheme_Model->insert_fun("tbl_android_notification",$dt);
 	}

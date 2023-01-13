@@ -417,5 +417,10 @@ class Cronjob_page extends CI_Controller
 		$this->Message_Model->insert_whatsapp_group_message($whatsapp_group2,$group2_message);
 		/*************************************************************/
 	}
-	
+
+	public function create_new_json()
+	{
+		$result0 = $this->Chemist_Model->featured_brand_json_new();
+		file_put_contents("json_api/geeks_data.json", $result0);
+	}
 }
