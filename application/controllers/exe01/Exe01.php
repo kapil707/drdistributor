@@ -489,6 +489,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 				$funtype 	= $row["funtype"];
 
 				$this->Message_Model->insert_android_notification($funtype,$title,$message,$altercode,"chemist");
+				$isdone="yes";
 			}
 		}
 		if($isdone=="yes")
