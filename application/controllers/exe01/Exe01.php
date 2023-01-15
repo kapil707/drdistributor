@@ -461,18 +461,17 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
         $items 	= $data["items"];
 		foreach($items as $row)
 		{
-			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]) && $row["type_of_message"] == "message")
+			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]) && $row["type_of_message"] == "whatsapp_message")
 			{
 				$mobile 	= $row["mobile"];
 				$message 	= (base64_decode($row["message"]));
 				$altercode  = $row["altercode"];
 
-				$this->Message_Model->insert_android_notification("5","Invoice Generated",$message,$altercode,"chemist");
 				$this->Message_Model->insert_whatsapp_message($mobile,$message,$altercode);
 				$isdone="yes";
 			}
 
-			if(!empty($row["mobile"]) && !empty($row["message"]) && $row["type_of_message"] == "group")
+			if(!empty($row["mobile"]) && !empty($row["message"]) && $row["type_of_message"] == "whatsapp_group")
 			{
 				$mobile 	= $row["mobile"];
 				$message 	= (base64_decode($row["message"]));
@@ -480,6 +479,16 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 
 				$this->Message_Model->insert_whatsapp_group_message($mobile,$message);
 				$isdone="yes";
+			}
+
+			if(!empty($row["title"]) && !empty($row["message"]) && !empty($row["altercode"]) && !empty($row["funtype"]) && $row["type_of_message"] == "notification_message")
+			{
+				$title 		= $row["title"];
+				$message 	= (base64_decode($row["message"]));
+				$altercode  = $row["altercode"];
+				$funtype 	= $row["funtype"];
+
+				$this->Message_Model->insert_android_notification($funtype,$title,$message,$altercode,"chemist");
 			}
 		}
 		if($isdone=="yes")
