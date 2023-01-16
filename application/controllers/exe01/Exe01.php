@@ -500,6 +500,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 
 	public function download_order_in_folder()
 	{
+		echo "asdfasF";
 		$items 		= "";
 		$total_line = 0;
 		$q = $this->db->query("select temp_rec from tbl_order where download_status='0' order by id asc limit 1")->row();
