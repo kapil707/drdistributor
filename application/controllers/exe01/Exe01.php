@@ -501,7 +501,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 	public function download_order_in_folder()
 	{
 		$items = "";
-		$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,remarks from tbl_order where temp_rec='265078_chemist_R218'")->result();
+		$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,remarks from tbl_order where temp_rec='274428_chemist_R51'")->result();
 		foreach($result as $row){
 			$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 			$remarks = $this->new_clean(htmlentities($row->remarks));
