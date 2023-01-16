@@ -502,23 +502,26 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 	{
 		$items 		= "";
 		$total_line = 0;
-		$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,sale_rate,remarks,date,time from tbl_order where temp_rec='274428_chemist_R51'")->result();
-		foreach ($result as $row) {
-			$total_line++;
-		}
-		foreach($result as $row){
-			$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
-			$remarks = $this->new_clean(htmlentities($row->remarks));
-			$items.='{"online_id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","sale_rate": "'.$row->sale_rate.'","remarks": "'.$remarks.'","date": "'.$row->date.'","time": "'.$row->time.'","total_line": "'.$total_line.'","temp_rec": "'.$row->temp_rec.'","new_temp_rec": "'.$new_temp_rec.'","order_status": "0"},';
+		$q = $this->db->query("select temp_rec from tbl_order where download_status='0' order by id asc limit 1")->row();
+		if (!empty($q->temp_rec)) {
+			$temp_rec = $q->temp_rec;
 
-			$temp_rec = $row->temp_rec;
-		}
-		if (!empty($items)) {
-			if ($items != '') {
-				$items = substr($items, 0, -1);
+			$result = $this->db->query("select id,order_id,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,sale_rate,remarks,date,time from tbl_order where temp_rec='".$temp_rec."'")->result();
+			foreach ($result as $row) {
+				$total_line++;
 			}
-			$parmiter = '{"items": ['.$items.']}';
-			file_put_contents("json_order_download/".$temp_rec.".json", $parmiter);
+			foreach ($result as $row) {
+				$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
+				$remarks = $this->new_clean(htmlentities($row->remarks));
+				$items .= '{"online_id":"' . $row->id . '","order_id": "' . $row->order_id . '","item_code": "' . $row->item_code . '","quantity": "' . $row->quantity . '","user_type": "' . $row->user_type . '","chemist_id": "' . $row->chemist_id . '","selesman_id": "' . $row->selesman_id . '","sale_rate": "' . $row->sale_rate . '","remarks": "' . $remarks . '","date": "' . $row->date . '","time": "' . $row->time . '","total_line": "' . $total_line . '","temp_rec": "' . $row->temp_rec . '","new_temp_rec": "' . $new_temp_rec . '","order_status": "0"},';
+			}
+			if (!empty($items)) {
+				if ($items != '') {
+					$items = substr($items, 0, -1);
+				}
+				echo $parmiter = '{"items": [' . $items . ']}';
+				file_put_contents("json_order_download/" . $temp_rec . ".json", $parmiter);
+			}
 		}
 	}
 }
