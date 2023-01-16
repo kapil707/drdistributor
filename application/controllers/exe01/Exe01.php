@@ -506,12 +506,15 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 			$remarks = $this->new_clean(htmlentities($row->remarks));
 			$items.='{"online_id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","temp_rec": "'.$row->temp_rec.'","order_status": "0","sale_rate": "'.$row->sale_rate.'","new_temp_rec": "'.$new_temp_rec.'","date": "'.$row->date.'","time": "'.$row->time.'","remarks": "'.$remarks.'"},';
+
+			$temp_rec = $row->temp_rec
 		}
 		if (!empty($items)) {
 			if ($items != '') {
 				$items = substr($items, 0, -1);
 			}
-			echo $parmiter = '{"items": ['.$items.']}';
+			$parmiter = '{"items": ['.$items.']}';
+			file_put_contents("json_order_download/".$temp_rec.".json", $parmiter);
 		}
 	}
 }
