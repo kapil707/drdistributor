@@ -509,7 +509,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 		foreach($result as $row){
 			$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 			$remarks = $this->new_clean(htmlentities($row->remarks));
-			$items.='{"online_id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","sale_rate": "'.$row->sale_rate.'","new_temp_rec": "'.$new_temp_rec.'","remarks": "'.$remarks.'","date": "'.$row->date.'","time": "'.$row->time.'","total_line": "'.$total_line.'","temp_rec": "'.$row->temp_rec.'","order_status": "0"},';
+			$items.='{"online_id":"'.$row->id.'","order_id": "'.$row->order_id.'","item_code": "'.$row->item_code.'","quantity": "'.$row->quantity.'","user_type": "'.$row->user_type.'","chemist_id": "'.$row->chemist_id.'","selesman_id": "'.$row->selesman_id.'","sale_rate": "'.$row->sale_rate.'","remarks": "'.$remarks.'","date": "'.$row->date.'","time": "'.$row->time.'","total_line": "'.$total_line.'","temp_rec": "'.$row->temp_rec.'","new_temp_rec": "'.$new_temp_rec.'","order_status": "0"},';
 
 			$temp_rec = $row->temp_rec;
 		}
