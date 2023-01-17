@@ -3,3 +3,7 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/drdwebco/public_html/
     - /bin/cp * $DEPLOYPATH
+     - /bin/cp/ -r * $DEPLOYPATH
+    - /bin/chmod 755 ${DEPLOYPATH}
+    - /bin/find ${DEPLOYPATH} -type d -exec /bin/chmod 755 '{}' \;
+    - /bin/find ${DEPLOYPATH} -type f -exec /bin/chmod 644 '{}' \;
