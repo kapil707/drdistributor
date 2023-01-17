@@ -500,10 +500,11 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 
 	public function download_order_in_folder()
 	{
-		echo "asdfasF";
 		$items 		= "";
 		$total_line = 0;
 		$q = $this->db->query("select temp_rec from tbl_order where download_status='0' order by id asc limit 1")->row();
+
+		$q = $this->db->query("select temp_rec from tbl_order where temp_rec='282880_chemist_V153' order by id asc limit 1")->row();
 		if (!empty($q->temp_rec)) {
 			$temp_rec = $q->temp_rec;
 
@@ -514,7 +515,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 			foreach ($result as $row) {
 				$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 				$remarks = $this->new_clean(htmlentities($row->remarks));
-				$items .= '{"online_id":"' . $row->id . '","order_id": "' . $row->order_id . '","item_code": "' . $row->item_code . '","quantity": "' . $row->quantity . '","user_type": "' . $row->user_type . '","chemist_id": "' . $row->chemist_id . '","selesman_id": "' . $row->selesman_id . '","sale_rate": "' . $row->sale_rate . '","remarks": "' . $remarks . '","date": "' . $row->date . '","time": "' . $row->time . '","total_line": "' . $total_line . '","temp_rec": "' . $row->temp_rec . '","new_temp_rec": "' . $new_temp_rec . '","order_status": "0"},';
+				$items .= '{"online_id":"' . $row->id . '","order_id": "' . $row->order_id . '","code": "' . $row->i_code . '","item_code": "' . $row->item_code . '","quantity": "' . $row->quantity . '","user_type": "' . $row->user_type . '","chemist_id": "' . $row->chemist_id . '","salesman_id": "' . $row->selesman_id . '","sale_rate": "' . $row->sale_rate . '","remarks": "' . $remarks . '","date": "' . $row->date . '","time": "' . $row->time . '","total_line": "' . $total_line . '","temp_rec": "' . $row->temp_rec . '","new_temp_rec": "' . $new_temp_rec . '","order_status": "0"},';
 			}
 			if (!empty($items)) {
 				if ($items != '') {
