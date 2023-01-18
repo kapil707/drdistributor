@@ -90,11 +90,12 @@ class Exe02 extends CI_Controller {
 		$items 	= "";
 		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 100")->result();
 		foreach($result as $row){
-			$description = htmlentities($row->description);
-			$description = str_replace("'","&prime;",$description);
-			$description = base64_encode($description);
+			$description 	= htmlentities($row->description);
+			$description 	= str_replace("'","&prime;",$description);
+			$description 	= base64_encode($description);
+			$title 			= base64_encode($row->title);
 			
-			$items .= '{"itemid":"' . $row->itemid.'","featured":"'.$row->featured.'","image":"' . $row->image.'","image2":"'.$row->image2.'","image3":"' . $row->image3.'","image4":"'.$row->image4.'","title":"'.$row->title.'","description":"'.$description.'","status":"'.$row->status.'","date":"'.$row->date.'","time":"'.$row->time.'"},';
+			$items .= '{"itemid":"'.$row->itemid.'","featured":"'.$row->featured.'","image":"'.$row->image.'","image2":"'.$row->image2.'","image3":"'.$row->image3.'","image4":"'.$row->image4.'","title":"'.$title.'","description":"'.$description.'","status":"'.$row->status.'","date":"'.$row->date.'","time":"'.$row->time.'"},';
 
 			$qry.= "update tbl_medicine_image set download_status=0 where id='$row->id';";
 		}
