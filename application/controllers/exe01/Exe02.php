@@ -87,8 +87,8 @@ class Exe02 extends CI_Controller {
 
 	public function download_medicine_image()
 	{
-		$items 		= "";
-		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 100")->result();
+		$items 	= "";
+		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 1")->result();
 		foreach($result as $row){
 			$description = htmlentities($row->description);
 			$description = str_replace("'","&prime;",$description);
