@@ -103,7 +103,7 @@ class Exe02 extends CI_Controller {
 			
 			$items .= '{"query_type":"' . $query_type . '","itemid": "' . $row->itemid . '","featured": "' . $row->featured . '","image": "' . $row->image . '","image2": "' . $row->image2 . '","image3": "' . $row->image3 . '","image4": "' . $row->image4 . '","title": "' . $row->title . '","description": "' . $description . '","status": "' . $row->status . '","date": "' . $row->date . '","time": "' . $row->time . '"},';
 
-			$qry.= "update tbl_medicine_image set upload_status=0 where id='$row->id';";
+			$qry.= "update tbl_medicine_image set download_status=0 where id='$row->id';";
 		}
 
 		if (!empty($items)) {
