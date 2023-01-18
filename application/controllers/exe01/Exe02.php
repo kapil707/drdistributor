@@ -85,7 +85,7 @@ class Exe02 extends CI_Controller {
 		}
 	}
 
-	public function download_image_from_server()
+	public function download_medicine_image()
 	{
 		$items 		= "";
 		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 50")->result();
@@ -103,15 +103,45 @@ class Exe02 extends CI_Controller {
 			
 			$items .= '{"query_type":"' . $query_type . '","itemid": "' . $row->itemid . '","featured": "' . $row->featured . '","image": "' . $row->image . '","image2": "' . $row->image2 . '","image3": "' . $row->image3 . '","image4": "' . $row->image4 . '","title": "' . $row->title . '","description": "' . $description . '","status": "' . $row->status . '","date": "' . $row->date . '","time": "' . $row->time . '"},';
 
-			$this->db->query("update tbl_medicine_image set download_status=0 where id='$row->id'");
+			$qry.= "update tbl_medicine_image set upload_status=0 where id='$row->id';";
 		}
 
 		if (!empty($items)) {
 			if ($items != '') {
 				$items = substr($items, 0, -1);
 			}
-			echo $parmiter = '{"items": [' . $items . ']}';
-			file_put_contents("json_order_download/" . $temp_rec . ".json", $parmiter);
+			$parmiter = '{"items": [' . $items . ']}';
+
+			$curl = curl_init();
+
+			curl_setopt_array($curl, array(
+					CURLOPT_URL => 'http://122.160.139.36:7272/drd_local_server/cronjob_page/download_medicine_image',
+					CURLOPT_RETURNTRANSFER => true,
+					CURLOPT_ENCODING => '',
+					CURLOPT_MAXREDIRS => 10,
+					CURLOPT_TIMEOUT => 0,
+					CURLOPT_FOLLOWLOCATION => true,
+					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+					CURLOPT_CUSTOMREQUEST => 'POST',
+					CURLOPT_POSTFIELDS => $parmiter,
+					CURLOPT_HTTPHEADER => array(
+						'Content-Type: application/json',
+					),
+				)
+			);
+
+			$response = curl_exec($curl);
+			curl_close($curl);
+			echo $response;
+			if($response=="done")
+			{
+				$arr = explode(";",$qry);
+				foreach($arr as $row_q){
+					if($row_q!=""){
+						$this->db->query("$row_q");
+					}
+				}
+			}
 		}
 	}
 }
