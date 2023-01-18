@@ -19,7 +19,7 @@ class Exe02 extends CI_Controller {
         $items 	= $data["items"];
 		foreach($items as $row)
 		{
-			if(!empty($row["mobile"]) && !empty($row["message"]) && !empty($row["altercode"]) && $row["type_of_message"] == "whatsapp_message")
+			if(!empty($row["mobile"]) && !empty($row["message"]) && $row["type_of_message"] == "whatsapp_message")
 			{
 				$mobile 	= $row["mobile"];
 				$message 	= (base64_decode($row["message"]));
