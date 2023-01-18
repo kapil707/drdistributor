@@ -88,20 +88,12 @@ class Exe02 extends CI_Controller {
 	public function download_medicine_image()
 	{
 		$items 	= "";
-		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 5")->result();
+		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 10")->result();
 		foreach($result as $row){
 			$description = htmlentities($row->description);
 			$description = str_replace("'","&prime;",$description);
-
-			if($row->download_status=="1"){
-				$query_type = "insert";
-			}
-
-			if($row->download_status=="2"){
-				$query_type = "update";
-			}
 			
-			$items .= '{"query_type":"'.$query_type.'","itemid":"' . $row->itemid.'","featured":"'.$row->featured.'","image":"' . $row->image.'","image2":"'.$row->image2.'","image3":"' . $row->image3.'","image4":"'.$row->image4.'","title":"'.$row->title.'","description":"'.$description.'","status":"'.$row->status.'","date":"'.$row->date.'","time":"'.$row->time.'"},';
+			$items .= '{"itemid":"' . $row->itemid.'","featured":"'.$row->featured.'","image":"' . $row->image.'","image2":"'.$row->image2.'","image3":"' . $row->image3.'","image4":"'.$row->image4.'","title":"'.$row->title.'","description":"'.$description.'","status":"'.$row->status.'","date":"'.$row->date.'","time":"'.$row->time.'"},';
 
 			$qry.= "update tbl_medicine_image set download_status=0 where id='$row->id';";
 		}
@@ -118,7 +110,7 @@ class Exe02 extends CI_Controller {
 					CURLOPT_URL => 'http://122.160.139.36:7272/drd_local_server/cronjob_page/download_medicine_image',
 					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_ENCODING => '',
-					CURLOPT_MAXREDIRS =>10,
+					CURLOPT_MAXREDIRS =>0,
 					CURLOPT_TIMEOUT =>10,
 					CURLOPT_FOLLOWLOCATION => true,
 					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
