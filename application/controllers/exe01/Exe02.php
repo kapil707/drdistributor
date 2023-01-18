@@ -101,7 +101,7 @@ class Exe02 extends CI_Controller {
 				$query_type = "update";
 			}
 			
-			$items .= '{"query_type":"' . $query_type . '","itemid": "' . $row->itemid . '","featured": "' . $row->featured . '","image": "' . $row->image . '","image2": "' . $row->image2 . '","image3": "' . $row->image3 . '","image4": "' . $row->image4 . '","title": "' . $row->title . '","description": "' . $description . '","status": "' . $row->status . '","date": "' . $row->date . '","time": "' . $row->time . '"},';
+			$items .= '{"query_type":"'.$query_type.'","itemid":"' . $row->itemid.'","featured":"'.$row->featured.'","image":"' . $row->image.'","image2":"'.$row->image2.'","image3":"' . $row->image3.'","image4":"'.$row->image4.'","title":"'.$row->title.'","description":"'.$description.'","status":"'.$row->status.'","date":"'.$row->date.'","time":"'.$row->time.'"},';
 
 			$qry.= "update tbl_medicine_image set download_status=0 where id='$row->id';";
 		}
@@ -118,8 +118,8 @@ class Exe02 extends CI_Controller {
 					CURLOPT_URL => 'http://122.160.139.36:7272/drd_local_server/cronjob_page/download_medicine_image',
 					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_ENCODING => '',
-					CURLOPT_MAXREDIRS => 10,
-					CURLOPT_TIMEOUT => 0,
+					CURLOPT_MAXREDIRS =>10,
+					CURLOPT_TIMEOUT =>10,
 					CURLOPT_FOLLOWLOCATION => true,
 					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 					CURLOPT_CUSTOMREQUEST => 'POST',
