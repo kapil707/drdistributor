@@ -110,7 +110,7 @@ class Exe02 extends CI_Controller {
 			if ($items != '') {
 				$items = substr($items, 0, -1);
 			}
-			echo $parmiter = '{"items": [' . $items . ']}';
+			$parmiter = '{"items": [' . $items . ']}';
 
 			$curl = curl_init();
 
