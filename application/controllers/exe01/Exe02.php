@@ -88,7 +88,7 @@ class Exe02 extends CI_Controller {
 	public function download_medicine_image()
 	{
 		$items 		= "";
-		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 50")->result();
+		$result = $this->db->query("select * from tbl_medicine_image where download_status=1 or download_status=2 limit 1")->result();
 		foreach($result as $row){
 			$description = htmlentities($row->description);
 			$description = str_replace("'","&prime;",$description);
@@ -101,7 +101,7 @@ class Exe02 extends CI_Controller {
 				$query_type = "update";
 			}
 			
-			echo $items .= '{"query_type":"' . $query_type . '","itemid": "' . $row->itemid . '","featured": "' . $row->featured . '","image": "' . $row->image . '","image2": "' . $row->image2 . '","image3": "' . $row->image3 . '","image4": "' . $row->image4 . '","title": "' . $row->title . '","description": "' . $description . '","status": "' . $row->status . '","date": "' . $row->date . '","time": "' . $row->time . '"},';
+			$items .= '{"query_type":"' . $query_type . '","itemid": "' . $row->itemid . '","featured": "' . $row->featured . '","image": "' . $row->image . '","image2": "' . $row->image2 . '","image3": "' . $row->image3 . '","image4": "' . $row->image4 . '","title": "' . $row->title . '","description": "' . $description . '","status": "' . $row->status . '","date": "' . $row->date . '","time": "' . $row->time . '"},';
 
 			$qry.= "update tbl_medicine_image set upload_status=0 where id='$row->id';";
 		}
@@ -110,7 +110,7 @@ class Exe02 extends CI_Controller {
 			if ($items != '') {
 				$items = substr($items, 0, -1);
 			}
-			$parmiter = '{"items": [' . $items . ']}';
+			echo $parmiter = '{"items": [' . $items . ']}';
 
 			$curl = curl_init();
 
