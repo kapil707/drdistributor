@@ -124,32 +124,6 @@ class Exe02 extends CI_Controller
 		}
 
 		if (empty($items)) {
-			$result = $this->db->query("select * from tbl_acm_other where download_status=0 limit 100")->result();
-			foreach ($result as $row) {
-
-				$code 			= $row->code;
-				$status 		= $row->status;
-				$exp_date 		= $row->exp_date;
-				$password 		= $row->password;
-				$broadcast 		= $row->broadcast;
-				$block 			= $row->block;
-				$image 			= $row->image;
-				$user_phone 	= $row->user_phone;
-				$user_email 	= $row->user_email;
-				$user_address 	= $row->user_address;
-				$user_update 	= $row->user_update;
-				$order_limit 	= $row->order_limit;
-				$new_request 	= $row->new_request;
-				$website_limit 	= $row->website_limit;
-				$android_limit 	= $row->android_limit;
-	
-				$items .= '{"query_type":"acm_other","code":"'.$code.'","status":"'.$status.'","exp_date":"'.$exp_date.'","password":"'.$password.'","broadcast":"'.$broadcast.'","block":"'.$block.'","image":"'.$image.'","user_phone":"'.$user_phone.'","user_email":"'.$user_email.'","user_address":"'.$user_address.'","user_update":"'.$user_update.'","order_limit":"'.$order_limit.'","new_request":"'.$new_request.'","website_limit":"'.$website_limit.'","android_limit":"'.$android_limit.'"},';
-	
-				$qry.= "update tbl_acm_other set download_status=1 where id='$row->id'";
-			}
-		}
-
-		if (empty($items)) {
 			$result = $this->db->query("SELECT tbl_low_stock_alert.id,tbl_low_stock_alert.date,tbl_low_stock_alert.time,tbl_acm.code,tbl_low_stock_alert.i_code FROM tbl_low_stock_alert,tbl_acm where tbl_acm.altercode=tbl_low_stock_alert.chemist_id and tbl_low_stock_alert.user_type='chemist' and tbl_low_stock_alert.download_status=0 limit 100")->result();
 			foreach ($result as $row) {
 
