@@ -137,7 +137,7 @@ class Exe02 extends CI_Controller
 				$image 			= $row->image;
 				$user_phone 	= $row->user_phone;
 				$user_email 	= $row->user_email;
-				$user_address 	= $row->user_address;
+				$user_address 	= base64_encode($row->user_address);
 				$user_update 	= $row->user_update;
 				$order_limit 	= $row->order_limit;
 				$new_request 	= $row->new_request;
