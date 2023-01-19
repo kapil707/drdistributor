@@ -3554,9 +3554,9 @@ if ($items != ''){
 
 	public function add_low_stock_alert($i_code)
 	{	
-		$user_type 		= $this->session->userdata('user_type');
-		$user_altercode = $this->session->userdata('user_altercode');		
-		$chemist_id 	= $this->session->userdata('chemist_id');
+		$user_type 		= $_COOKIE['user_type'];
+		$user_altercode	= $_COOKIE['user_altercode'];
+		$chemist_id 	= $_COOKIE['chemist_id'];
 		
 		$salesman_id = "";
 		if($user_type=="sales")
