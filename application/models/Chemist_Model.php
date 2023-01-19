@@ -36,6 +36,7 @@ class Chemist_Model extends CI_Model
 				'website_limit'=>"500",
 				'android_limit'=>"500",
 				'user_phone'=>$phone_number,
+				'download_status'=>1,
 				);
 				$this->Scheme_Model->insert_fun("tbl_acm_other",$dt);
 
@@ -514,7 +515,7 @@ if ($items != '') {
 				{
 					$code = $query->code;
 					$new_password = md5($new_password);
-					$this->db->query("update tbl_acm_other set password='$new_password' where code='$code'");
+					$this->db->query("update tbl_acm_other set password='$new_password',download_status=0 where code='$code'");
 					$status = "Updated successfully";
 					$status1 = "1";
 				}
@@ -538,7 +539,7 @@ if ($items != '') {
 				{
 					$code = $query->customer_code;
 					$new_password = md5($new_password);
-					$this->db->query("update tbl_users_other set password='$new_password' where customer_code='$code'");
+					$this->db->query("update tbl_users_other set password='$new_password',download_status=0 where customer_code='$code'");
 					$status = "Password Change Successfully";
 					$status1 = "1";
 				}
@@ -3611,6 +3612,7 @@ if ($items != ''){
 				'item_code'=>$item_code,
 				'date'=>$date,
 				'time'=>$time,
+				'download_status'=>0,
 				);
 				$query = $this->Scheme_Model->insert_fun("tbl_low_stock_alert",$dt);
 			}

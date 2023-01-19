@@ -112,7 +112,7 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image4 = "";
 			}
-			$download_status = 1;
+			$download_status = 0;
 			//$description = base64_encode($description);
 			$result = "";
 			$dt = array(
@@ -353,7 +353,8 @@ class Manage_medicine_image extends CI_Controller {
 				$image4 = $old_image4;
 			}
 			
-			$download_status = 2;
+			$download_status = 0;
+			
 			$result = "";
 			$dt = array(
 				'itemid'=>$itemid,

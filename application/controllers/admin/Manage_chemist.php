@@ -195,6 +195,7 @@ if ($items != '') {
 				'website_limit'=>$website_limit,
 				'android_limit'=>$android_limit,
 				'image'=>$image,
+				'download_status'=>0,
 			);
 			if($new_password!="")
 			{
@@ -209,6 +210,7 @@ if ($items != '') {
 					'website_limit'=>$website_limit,
 					'android_limit'=>$android_limit,
 					'password'=>$password,
+					'download_status'=>0,
 				);
 			}
 			$where = array('code'=>$code);
