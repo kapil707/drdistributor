@@ -106,7 +106,7 @@ class Exe02 extends CI_Controller
 				$status 		= $row->status;
 				$exp_date 		= $row->exp_date;
 				$password 		= $row->password;
-				$broadcast 		= $row->broadcast;
+				$broadcast 		= "";
 				$block 			= $row->block;
 				$image 			= $row->image;
 				$user_phone 	= $row->user_phone;
