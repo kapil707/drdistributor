@@ -112,7 +112,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image4 = "";
 			}
-			$download_status = 0;
 			//$description = base64_encode($description);
 			$result = "";
 			$dt = array(
@@ -125,7 +124,7 @@ class Manage_medicine_image extends CI_Controller {
 				'title'=>$title,
 				'description'=>$description,
 				'status'=>$status,
-				'download_status'=>$download_status,
+				'download_status'=>0,
 				'date'=>$date,
 				'time'=>$time,
 			);
@@ -352,9 +351,6 @@ class Manage_medicine_image extends CI_Controller {
 			{
 				$image4 = $old_image4;
 			}
-			
-			$download_status = 0;
-			
 			$result = "";
 			$dt = array(
 				'itemid'=>$itemid,
@@ -365,7 +361,7 @@ class Manage_medicine_image extends CI_Controller {
 				'image4'=>$image4,
 				'title'=>$title,
 				'description'=>$description,
-				'download_status'=>$download_status,
+				'download_status'=>0,
 				'status'=>$status,
 				'date'=>$date,
 				'time'=>$time,
