@@ -151,7 +151,7 @@ class Exe02 extends CI_Controller
 		}
 
 		if (!empty($items)) {
-			
+
 			if ($items != '') {
 				$items = substr($items, 0, -1);
 			}
