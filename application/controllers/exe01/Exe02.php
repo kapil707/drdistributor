@@ -149,7 +149,7 @@ class Exe02 extends CI_Controller
 			curl_setopt_array(
 				$curl,
 				array(
-					CURLOPT_URL => 'http://122.160.139.36:7272/drd_local_server/cronjob_page/download_query_for_local_server',
+					CURLOPT_URL => 'http://122.160.139.36:7272/drd_local_server/exe01/download_query_for_local_server',
 					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_ENCODING => '',
 					CURLOPT_MAXREDIRS => 0,
