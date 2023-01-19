@@ -150,23 +150,8 @@ class Exe02 extends CI_Controller
 			}
 		}
 
-		if (empty($items)) {
-			$result = $this->db->query("SELECT tbl_low_stock_alert.id,tbl_low_stock_alert.date,tbl_low_stock_alert.time,tbl_acm.code,tbl_low_stock_alert.i_code FROM tbl_low_stock_alert,tbl_acm where tbl_acm.altercode=tbl_low_stock_alert.chemist_id and tbl_low_stock_alert.user_type='chemist' and tbl_low_stock_alert.download_status=0 limit 100")->result();
-			foreach ($result as $row) {
-
-				$slcd  	= "CL";
-				$uid   	= "DRD";
-	
-				$vdt 	= date("Y-m-d H:i:s",$row->time);
-				$acno 	= $row->code;
-				$itemc 	= $row->i_code;
-	
-				$items .= '{"query_type":"low_stock_alert","vdt":"'.$vdt.'","acno":"'.$acno.'","slcd":"'.$slcd.'","itemc":"'.$itemc.'","uid":"'.$uid.'"},';
-	
-				$qry.= "update tbl_low_stock_alert set download_status=1 where id='$row->id';";
-			}
-		}
 		if (!empty($items)) {
+			
 			if ($items != '') {
 				$items = substr($items, 0, -1);
 			}
