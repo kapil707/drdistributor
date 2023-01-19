@@ -228,7 +228,7 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 				$code = $row->code;
 				$row1 = $this->db->query("select * from tbl_staffdetail_other where code='$code'")->row();
 				if(empty($row1->id)){
-					$this->db->query("INSERT INTO tbl_staffdetail_other (code,daily_date,stock_and_sales_analysis, stock_and_sales_analysis_daily_email,download_status) VALUES ('$code','$daily_date','1', '1','2')");
+					$this->db->query("INSERT INTO tbl_staffdetail_other (code,daily_date,stock_and_sales_analysis, stock_and_sales_analysis_daily_email,download_status) VALUES ('$code','$daily_date','1', '1','0')");
 				}
 			}
 		}
@@ -366,10 +366,10 @@ INSERT INTO tbl_order (online_id,order_id,item_code,quantity,chemist_id,user_typ
 		$monthly = date('Y-m-01', strtotime("+1 months", $time));
 		$row1 = $this->db->query("select * from tbl_staffdetail_other where code='$code'")->row();
 		if($row1->id==""){
-			$this->db->query("INSERT INTO tbl_staffdetail_other (code,daily_date,monthly,stock_and_sales_analysis, stock_and_sales_analysis_daily_email, download_status) VALUES ('$code','$daily_date','$monthly','1', '1', '2')");
+			$this->db->query("INSERT INTO tbl_staffdetail_other (code,daily_date,monthly,stock_and_sales_analysis, stock_and_sales_analysis_daily_email, download_status) VALUES ('$code','$daily_date','$monthly','1', '1', '0')");
 		}
 		else{
-			$this->db->query("update tbl_staffdetail_other set daily_date='$daily_date',monthly='$monthly',download_status='2' where code='$code'");
+			$this->db->query("update tbl_staffdetail_other set daily_date='$daily_date',monthly='$monthly',download_status='0' where code='$code'");
 		}
 	}
 

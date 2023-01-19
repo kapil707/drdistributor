@@ -36,7 +36,7 @@ class Chemist_Model extends CI_Model
 				'website_limit'=>"500",
 				'android_limit'=>"500",
 				'user_phone'=>$phone_number,
-				'download_status'=>1,
+				'download_status'=>0,
 				);
 				$this->Scheme_Model->insert_fun("tbl_acm_other",$dt);
 

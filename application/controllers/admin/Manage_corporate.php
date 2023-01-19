@@ -153,7 +153,7 @@ if ($items != '') {
 			'chemist_wise_report_monthly_email'=>$chemist_wise_report_monthly_email,
 			'whatsapp_message'=>$whatsapp_message,
 			'password'=>$password,
-			'download_status'=>'1'
+			'download_status'=>'0'
 			);
 			$result = $this->Scheme_Model->edit_fun("tbl_staffdetail_other",$dt,$where);			
 
