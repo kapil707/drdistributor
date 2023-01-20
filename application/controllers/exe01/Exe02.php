@@ -124,6 +124,31 @@ class Exe02 extends CI_Controller
 			}
 		}
 
+		if (empty($items)) {
+			$result = $this->db->query("select * from tbl_staffdetail_other where download_status=0 limit 100")->result();
+			foreach ($result as $row) {
+
+				$code 			= $row->code;
+				$status 		= $row->status;
+				$password 		= $row->password;
+				$daily_date 	= $row->daily_date;
+				$monthly 		= $row->monthly;
+				$whatsapp_message = $row->whatsapp_message;
+				$item_wise_report = $row->item_wise_report;
+				$chemist_wise_report = $row->chemist_wise_report;
+				$stock_and_sales_analysis = $row->stock_and_sales_analysis;
+				$item_wise_report_daily_email = $row->item_wise_report_daily_email;
+				$chemist_wise_report_daily_email = $row->chemist_wise_report_daily_email;
+				$stock_and_sales_analysis_daily_email = $row->stock_and_sales_analysis_daily_email;
+				$item_wise_report_monthly_email = $row->item_wise_report_monthly_email;
+				$chemist_wise_report_monthly_email 		= $row->chemist_wise_report_monthly_email;
+	
+				$items .= '{"query_type":"staffdetail_other","code":"'.$code.'","status":"'.$status.'","password":"'.$password.'","daily_date":"'.$daily_date.'","monthly":"'.$monthly.'","whatsapp_message":"'.$whatsapp_message.'","item_wise_report":"'.$item_wise_report.'","chemist_wise_report":"'.$chemist_wise_report.'","stock_and_sales_analysis":"'.$stock_and_sales_analysis.'","item_wise_report_daily_email":"'.$item_wise_report_daily_email.'","chemist_wise_report_daily_email":"'.$chemist_wise_report_daily_email.'","stock_and_sales_analysis_daily_email":"'.$stock_and_sales_analysis_daily_email.'","website_limit":"'.$website_limit.'","item_wise_report_monthly_email":"'.$item_wise_report_monthly_email.'","chemist_wise_report_monthly_email":"'.$chemist_wise_report_monthly_email.'"},';
+	
+				$qry.= "update tbl_staffdetail_other set download_status=1 where id='$row->id';";				
+			}
+		}
+
 		if (!empty($items)) {
 
 			if ($items != '') {
