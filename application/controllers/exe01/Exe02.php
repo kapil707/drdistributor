@@ -146,8 +146,7 @@ class Exe02 extends CI_Controller
 	
 				$items .= '{"query_type":"acm_other","code":"'.$code.'","status":"'.$status.'","exp_date":"'.$exp_date.'","password":"'.$password.'","broadcast":"'.$broadcast.'","block":"'.$block.'","image":"'.$image.'","user_phone":"'.$user_phone.'","user_email":"'.$user_email.'","user_address":"'.$user_address.'","user_update":"'.$user_update.'","order_limit":"'.$order_limit.'","new_request":"'.$new_request.'","website_limit":"'.$website_limit.'","android_limit":"'.$android_limit.'"},';
 	
-				$qry.= "update tbl_acm_other set download_status=1 where id='$row->id';";
-				
+				$qry.= "update tbl_acm_other set download_status=1 where id='$row->id';";				
 			}
 		}
 
