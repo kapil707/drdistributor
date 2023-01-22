@@ -163,7 +163,7 @@ class Cronjob_page extends CI_Controller
 		$vdt45 = date("Y-m-d", strtotime("-45 days", $time));
 		$vdt60 = date("Y-m-d", strtotime("-60 days", $time));
 
-		$this->db->query("update tbl_staffdetail_other set daily_date='$vdt',download_status='1' where daily_date='$day1'"); 
+		$this->db->query("update tbl_staffdetail_other set daily_date='$vdt',download_status='0' where daily_date='$day1'"); 
 
 		//$this->db->query("DELETE FROM `tbl_email_send` WHERE date<='$day7'");
 		$this->db->query("DELETE FROM `tbl_whatsapp_message` WHERE date<='$day7'");
