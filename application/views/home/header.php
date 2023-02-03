@@ -480,7 +480,7 @@ function callandroidfun(funtype,id,compname,image,division) {
 	}
 	if(funtype=="2")
 	{
-		window.location.href = '<?= base_url(); ?>home/featured_brand/'+id+'/'+division;
+		window.location.href = '<?= base_url(); ?>home/medicine_category/featured_brand/'+id+'/'+division;
 	}
 }
 function gosearchpage()

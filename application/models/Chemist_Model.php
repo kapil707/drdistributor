@@ -101,8 +101,6 @@ if ($items != '') {
 			$subject = "D.R. distributor OTP Verify";
 			$message = $w_message;
 
-			$subject = ($subject);
-			$message = ($message);
 			$email_function = "password";
 			$mail_server = "";
 
@@ -3612,7 +3610,7 @@ if ($items != ''){
 				'item_code'=>$item_code,
 				'date'=>$date,
 				'time'=>$time,
-				'download_status'=>0,
+				'download_status'=>'0',
 				);
 				$query = $this->Scheme_Model->insert_fun("tbl_low_stock_alert",$dt);
 			}

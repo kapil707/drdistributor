@@ -53,8 +53,16 @@ class Exe02 extends CI_Controller
 		}
 	}
 
-	public function download_order_in_folder()
+	public function download_order_in_localhost()
 	{
+		$data = json_decode(file_get_contents('php://input'), true);
+		$items = $data["items"];
+		foreach ($items as $row) {
+			if (!empty($row["mobile"])) {
+				
+			}
+		}
+		
 		$items = "";
 		$total_line = 0;
 		$q = $this->db->query("select temp_rec from tbl_order where download_status='0' order by id asc limit 1")->row();
@@ -66,36 +74,74 @@ class Exe02 extends CI_Controller
 			$result = $this->db->query("select id,order_id,i_code,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,sale_rate,remarks,date,time from tbl_order where temp_rec='" . $temp_rec . "'")->result();
 			foreach ($result as $row) {
 				$total_line++;
+				$chemist_id = $row->chemist_id;
 			}
+			
+			$row2 = $this->db->query("SELECT code,slcd FROM `tbl_acm` WHERE `altercode`='" . $chemist_id . "'")->row();
+			if (!empty($row2->code)) {
+				$acno = $row2->code;
+				$slcd = $row2->slcd;
+			}
+			
 			foreach ($result as $row) {
 				$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 				$remarks = $this->new_clean(htmlentities($row->remarks));
-				$items .= '{"online_id":"' . $row->id . '","order_id": "' . $row->order_id . '","code": "' . $row->i_code . '","item_code": "' . $row->item_code . '","quantity": "' . $row->quantity . '","user_type": "' . $row->user_type . '","chemist_id": "' . $row->chemist_id . '","salesman_id": "' . $row->selesman_id . '","sale_rate": "' . $row->sale_rate . '","remarks": "' . $remarks . '","date": "' . $row->date . '","time": "' . $row->time . '","total_line": "' . $total_line . '","temp_rec": "' . $row->temp_rec . '","new_temp_rec": "' . $new_temp_rec . '","order_status": "0"},';
+				$remarks = base64_encode($remarks);
+				
+				$items .= '{"online_id":"' . $row->id . '","order_id": "' . $row->order_id . '","i_code": "' . $row->i_code . '","item_code": "' . $row->item_code . '","quantity": "' . $row->quantity . '","sale_rate": "' . $row->sale_rate . '","user_type": "' . $row->user_type . '","chemist_id": "' . $row->chemist_id . '","salesman_id": "' . $row->selesman_id . '","acno": "' . $acno . '","slcd": "' . $slcd . '","remarks": "' . $remarks . '","date": "' . $row->date . '","time": "' . $row->time . '","total_line": "' . $total_line . '","temp_rec": "' . $row->temp_rec . '","new_temp_rec": "' . $new_temp_rec . '","order_status": "0"},';
 			}
 			if (!empty($items)) {
 				if ($items != '') {
 					$items = substr($items, 0, -1);
 				}
 				echo $parmiter = '{"items": [' . $items . ']}';
-				file_put_contents("json_order_download/" . $temp_rec . ".json", $parmiter);
 			}
 		}
 	}
 
 	public function download_query_for_local_server()
 	{
-		$qry = "";
-		$items = "";
-		$result = $this->db->query("select * from tbl_medicine_image where download_status=0 limit 100")->result();
-		foreach ($result as $row) {
-			$description = htmlentities($row->description);
-			$description = str_replace("'", "&prime;", $description);
-			$description = base64_encode($description);
-			$title = base64_encode($row->title);
+		$qry 	= "";
+		$items 	= "";
+		$result0 = $this->db->query("select DISTINCT(temp_rec) from tbl_order where download_status='0' GROUP by temp_rec limit 10")->result();
+		foreach ($result0 as $row0) {
+			if (!empty($row0->temp_rec)) {
+				$temp_rec = $row0->temp_rec;
+				$new_temp_rec = time(); // yha temp rec nichay drd database ne temp rec banta ha
 
-			$items .= '{"query_type":"medicine_image","itemid":"' . $row->itemid . '","featured":"' . $row->featured . '","image":"' . $row->image . '","image2":"' . $row->image2 . '","image3":"' . $row->image3 . '","image4":"' . $row->image4 . '","title":"' . $title . '","description":"' . $description . '","status":"' . $row->status . '","date":"' . $row->date . '","time":"' . $row->time . '"},';
+				$result = $this->db->query("select id,order_id,i_code,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,sale_rate,remarks,date,time,count(id) as total_line from tbl_order where temp_rec='" . $temp_rec . "'")->result();
+				foreach ($result as $row) {
+					$total_line++;
+					$chemist_id = $row->chemist_id;
+				}
 
-			$qry .= "update tbl_medicine_image set download_status=1 where id='$row->id';";
+				$row2 = $this->db->query("SELECT code,slcd FROM `tbl_acm` WHERE `altercode`='" . $chemist_id . "'")->row();
+				if (!empty($row2->code)) {
+					$acno = $row2->code;
+					$slcd = $row2->slcd;
+				}
+				foreach ($result as $row) {
+					$remarks = $this->new_clean(htmlentities($row->remarks));
+					$remarks = base64_encode($remarks);
+
+					$items .= '{"query_type":"order_download","online_id":"' . $row->id . '","order_id": "' . $row->order_id . '","i_code": "' . $row->i_code . '","item_code": "' . $row->item_code . '","quantity": "' . $row->quantity . '","user_type": "' . $row->user_type . '","chemist_id": "' . $row->chemist_id . '","salesman_id": "' . $row->selesman_id . '","acno": "' . $acno . '","slcd": "' . $slcd . '","sale_rate": "' . $row->sale_rate . '","remarks": "' . $remarks . '","date": "' . $row->date . '","time": "' . $row->time . '","total_line": "' . $total_line . '","temp_rec": "' . $row->temp_rec . '","new_temp_rec": "' . $new_temp_rec . '","order_status": "0"},';
+
+					$qry .= "update tbl_order set download_status=1 where id='$row->id';";
+				}
+			}
+		}
+		if (empty($items)) {
+			$result = $this->db->query("select * from tbl_medicine_image where download_status=0 limit 100")->result();
+			foreach ($result as $row) {
+				$description = htmlentities($row->description);
+				$description = str_replace("'", "&prime;", $description);
+				$description = base64_encode($description);
+				$title = base64_encode($row->title);
+
+				$items .= '{"query_type":"medicine_image","itemid":"' . $row->itemid . '","featured":"' . $row->featured . '","image":"' . $row->image . '","image2":"' . $row->image2 . '","image3":"' . $row->image3 . '","image4":"' . $row->image4 . '","title":"' . $title . '","description":"' . $description . '","status":"' . $row->status . '","date":"' . $row->date . '","time":"' . $row->time . '"},';
+
+				$qry .= "update tbl_order set download_status=1 where id='$row->id';";
+			}
 		}
 
 		if (empty($items)) {

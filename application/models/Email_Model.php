@@ -31,8 +31,6 @@ class Email_Model extends CI_Model
 		}
 		if($user_email_id!="")
 		{
-			$subject = ($subject);
-			$message = ($message);
 			$email_function = "password";
 			$mail_server = "";
 
@@ -47,6 +45,7 @@ class Email_Model extends CI_Model
 			'mail_server'=>$mail_server,
 			'date'=>$date,
 			'time'=>$time,
+			'status'=>0,
 			);
 			$this->Scheme_Model->insert_fun("tbl_email_send",$dt);
 		}
