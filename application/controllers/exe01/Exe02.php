@@ -100,6 +100,20 @@ class Exe02 extends CI_Controller
 		}
 	}
 
+	public function download_order_again()
+	{
+		$data = json_decode(file_get_contents('php://input'), true);
+		$items = $data["items"];
+		foreach ($items as $row) {
+			if (!empty($row["order_id"])) {
+				echo $order_id = $row["order_id"];
+
+				$this->db->query("update `tbl_order` set download_status=0 WHERE `order_id`='$order_id'");
+			}
+		}
+		//$this->insert_message_on_server();
+	}
+
 	public function download_query_for_local_server()
 	{
 		$qry 	= "";
