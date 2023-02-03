@@ -71,6 +71,7 @@ class Exe02 extends CI_Controller
 		if (!empty($q->temp_rec)) {
 			$temp_rec = $q->temp_rec;
 
+			$total_line = 0;
 			$result = $this->db->query("select id,order_id,i_code,item_code,quantity,user_type,chemist_id,selesman_id,temp_rec,sale_rate,remarks,date,time from tbl_order where temp_rec='" . $temp_rec . "'")->result();
 			foreach ($result as $row) {
 				$total_line++;
