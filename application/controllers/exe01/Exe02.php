@@ -114,11 +114,11 @@ class Exe02 extends CI_Controller
 		//$this->insert_message_on_server();
 	}
 
-	public function download_query_for_local_server()
+	public function download_query_for_local_server($limit=10)
 	{
 		$qry 	= "";
 		$items 	= "";
-		$result0 = $this->db->query("select DISTINCT(temp_rec) from tbl_order where download_status='0' GROUP by temp_rec limit 10")->result();
+		$result0 = $this->db->query("select DISTINCT(temp_rec) from tbl_order where download_status='0' GROUP by temp_rec limit $limit")->result();
 		foreach ($result0 as $row0) {
 			if (!empty($row0->temp_rec)) {
 				$temp_rec = $row0->temp_rec;
@@ -149,14 +149,14 @@ class Exe02 extends CI_Controller
 		if (empty($items)) {
 			$result = $this->db->query("select * from tbl_medicine_image where download_status=0 limit 100")->result();
 			foreach ($result as $row) {
-				$description = htmlentities($row->description);
-				$description = str_replace("'", "&prime;", $description);
-				$description = base64_encode($description);
-				$title = base64_encode($row->title);
+				$description 	= htmlentities($row->description);
+				$description 	= str_replace("'", "&prime;", $description);
+				$description 	= base64_encode($description);
+				$title 			= base64_encode($row->title);
 
-				$items .= '{"query_type":"medicine_image","itemid":"' . $row->itemid . '","featured":"' . $row->featured . '","image":"' . $row->image . '","image2":"' . $row->image2 . '","image3":"' . $row->image3 . '","image4":"' . $row->image4 . '","title":"' . $title . '","description":"' . $description . '","status":"' . $row->status . '","date":"' . $row->date . '","time":"' . $row->time . '"},';
+				$items .= '{"query_type":"medicine_image","itemid":"'.$row->itemid.'","featured":"'.$row->featured.'","image":"'.$row->image.'","image2":"'.$row->image2.'","image3":"' . $row->image3.'","image4":"'.$row->image4.'","title":"'.$title.'","description":"'.$description.'","status":"'.$row->status.'","date":"'.$row->date.'","time":"'.$row->time.'"},';
 
-				$qry .= "update tbl_order set download_status=1 where id='$row->id';";
+				$qry .= "update tbl_medicine_image set download_status=1 where id='$row->id';";
 			}
 		}
 
@@ -187,7 +187,7 @@ class Exe02 extends CI_Controller
 		}
 
 		if (empty($items)) {
-			$result = $this->db->query("select * from tbl_staffdetail_other where download_status=0 limit 100")->result();
+			$result = $this->db->query("select * from tbl_staffdetail_other where download_status=0 limit 50")->result();
 			foreach ($result as $row) {
 
 				$code 			= $row->code;
@@ -227,7 +227,7 @@ class Exe02 extends CI_Controller
 					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_ENCODING => '',
 					CURLOPT_MAXREDIRS => 0,
-					CURLOPT_TIMEOUT => 10,
+					CURLOPT_TIMEOUT => 60,
 					CURLOPT_FOLLOWLOCATION => true,
 					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 					CURLOPT_CUSTOMREQUEST => 'POST',
@@ -245,10 +245,29 @@ class Exe02 extends CI_Controller
 				$arr = explode(";", $qry);
 				foreach ($arr as $row_q) {
 					if ($row_q != "") {
+						/*echo $row_q;
+						echo "<br>";*/
 						$this->db->query("$row_q");
 					}
 				}
 			}
+		}
+	}
+	
+	public function upload_order_to_gstvno()
+	{
+		$isdone="";
+		$data  = json_decode(file_get_contents('php://input'), true);
+		$items = $data["items"];
+		foreach ($items as $row) {
+			if (!empty($row["gstvno"]) && !empty($row["order_id"])) {
+				$this->db->query("update tbl_order set gstvno='$gstvno' where order_id='$order_id'");
+				$isdone="yes";
+			}
+		}		
+		if($isdone=="yes")
+		{
+			echo "done";
 		}
 	}
 }
