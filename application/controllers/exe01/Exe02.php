@@ -13,6 +13,15 @@ class Exe02 extends CI_Controller
 		return $k;
 		//return preg_replace('/[^A-Za-z0-9\#]/', '', $string); // Removes special chars.
 	}
+	
+	function remove_backslash($str)
+	{
+		$str = preg_replace('/\\\\/i', '', $str);
+		$str = str_replace('/\/', '/', $str);
+		$str = str_replace('\\', '/', $str);
+		return $str;
+	}
+	
 	public function insert_message_on_server()
 	{
 		/********************** */
@@ -227,7 +236,7 @@ class Exe02 extends CI_Controller
 					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_ENCODING => '',
 					CURLOPT_MAXREDIRS => 0,
-					CURLOPT_TIMEOUT => 60,
+					CURLOPT_TIMEOUT => 180,
 					CURLOPT_FOLLOWLOCATION => true,
 					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 					CURLOPT_CUSTOMREQUEST => 'POST',
@@ -254,6 +263,24 @@ class Exe02 extends CI_Controller
 		}
 	}
 	
+	public function order_error_download()
+	{
+		$items = "";
+		$time = time();
+		$day1 = date("Y-m-d", strtotime("-1 days", $time));
+		$result = $this->db->query("select DISTINCT(order_id) from tbl_order where date>='$day1' GROUP by temp_rec")->result();
+		foreach($result as $row){
+			
+			$items .= '{"order_id":"'.$row->order_id.'"},';
+		}
+		if(!empty($items)){
+			if ($items != '') {
+				$items = substr($items, 0, -1);
+			}
+			echo '[' . $items . ']';
+		}
+	}
+	
 	public function upload_order_to_gstvno()
 	{
 		$isdone="";
@@ -268,6 +295,174 @@ class Exe02 extends CI_Controller
 		if($isdone=="yes")
 		{
 			echo "done";
+		}
+	}
+	
+	public function upload_medicine()
+	{
+		header("Content-type: application/json; charset=utf-8");
+		$isdone="";
+		$data = json_decode(file_get_contents('php://input'), true);
+		$items = $data["items"];
+		foreach ($items as $row) {
+			if (!empty($row["i_code"])) {
+				$i_code 	= $row["i_code"];
+				$item_code 	= $row["item_code"];
+				$item_name 	= $row["item_name"];
+				$title 		= $row["title"];
+				$packing 	= $row["packing"];
+				
+				$expiry 	= $row["expiry"];
+				$batch_no 	= $row["batch_no"];
+				$batchqty 	= $row["batchqty"];
+				$salescm1 	= $row["salescm1"];
+				$salescm2 	= $row["salescm2"];
+				$sale_rate 	= $row["sale_rate"];
+				$mrp 		= $row["mrp"];
+				$final_price = $row["final_price"];
+				$costrate 	= $row["costrate"];
+				$margin 	= $row["margin"];
+				$compcode 	= $row["compcode"];
+				$comp_altercode = $row["comp_altercode"];
+				$company_name 	= $row["company_name"];
+				$company_full_name 	= $row["company_full_name"];
+				$division 	= $row["division"];
+				
+				$qscm 		= $row["qscm"];
+				$hscm 		= $row["hscm"];
+				$misc_settings = $row["misc_settings"];
+				$item_date 	= $row["item_date"];
+				$itemcat 	= $row["itemcat"];
+				$gstper 	= $row["gstper"];
+				$itemjoinid = $row["itemjoinid"];
+				$present 	= $row["present"];
+				$featured 	= $row["featured"];
+				if($featured=="0" || $featured==""){
+					$featured = "0";
+				}
+				$discount 	= $row["discount"];
+				
+				$image1 	= $row["image1"];
+				$image2 	= $row["image2"];
+				$image3 	= $row["image3"];
+				$image4 	= $row["image4"];
+				$title2 	= $row["title2"];
+				$description = $row["description"];
+				$time 		= $row["time"];
+				$status 	= $row["status"];
+				if($status=="0" || $status==""){
+					$status = "0";
+				}
+				
+				$itemjoinid = base64_decode($itemjoinid);
+				$title2 = base64_decode($title2);
+				$description = base64_decode($description);
+				
+				$json_check = 0;
+				
+				$dt = array(
+					'i_code'=>$i_code,
+					'item_code'=>$item_code,
+					'item_name'=>$item_name,
+					'packing'=>$packing,
+					'expiry'=>$expiry,
+					'batch_no'=>$batch_no,
+					'batchqty'=>$batchqty,
+					'salescm1'=>$salescm1,
+					'salescm2'=>$salescm2,
+					'sale_rate'=>$sale_rate,
+					'mrp'=>$mrp,
+					'final_price'=>$final_price,
+					'costrate'=>$costrate,
+					'margin'=>$margin,
+					'compcode'=>$compcode,
+					'comp_altercode'=>$comp_altercode,
+					'company_name'=>$company_name,
+					'company_full_name'=>$company_full_name,
+					'division'=>$division,
+					'qscm'=>$qscm,
+					'hscm'=>$hscm,
+					'misc_settings'=>$misc_settings,
+					'item_date'=>$item_date,
+					'itemcat'=>$itemcat,
+					'gstper'=>$gstper,
+					'itemjoinid'=>$itemjoinid,
+					'present'=>$present,
+					'featured'=>$featured,
+					'discount'=>$discount,
+					'image1'=>$image1,
+					'image2'=>$image2,
+					'image3'=>$image3,
+					'image4'=>$image4,
+					'image4'=>$image4,
+					'title2'=>$title2,
+					'description'=>$description,
+					'time'=>$time,
+					'status'=>$status,
+					'json_check'=>$json_check,
+				);
+
+				if (!empty($row["i_code"])) {
+					$row1 = $this->db->query("select i_code from tbl_medicine_test where i_code='" . $i_code . "' order by id desc")->row();
+					if (empty($row1->i_code)) {
+						$this->Scheme_Model->insert_fun("tbl_medicine_test", $dt);
+						$type = "insert";
+					} else {
+						$where = array('i_code'=>$i_code);
+						$this->Scheme_Model->edit_fun("tbl_medicine_test", $dt, $where);
+						$type = "update";
+					}
+					$isdone = "yes";
+				}
+			}
+		}
+		if($isdone=="yes")
+		{
+			$isdone = "done";
+			echo '{"isdone":"'.$isdone.'","i_code":"'.$i_code.'","type":"'.$type.'"}';
+		}
+	}
+	
+	public function upload_chemist()
+	{
+		header("Content-type: application/json; charset=utf-8");
+		$isdone="";
+		$data = json_decode(file_get_contents('php://input'), true);
+		$items = $data["items"];
+		foreach ($items as $row) {
+			if (!empty($row["code"])) {
+				$code 		= $row["code"];
+				$altercode 	= $row["altercode"];
+				$groupcode 	= $row["groupcode"];
+				$name 		= $row["name"];
+				$type 		= $row["type"];
+				
+				$trimname 	= $row["trimname"];
+				$address 	= $row["address"];
+				$address1 	= $row["address1"];
+				$address2 	= $row["address2"];
+				$address3 	= $row["address3"];
+				$telephone 	= $row["telephone"];
+				$telephone1 = $row["telephone1"];
+				$mobile 	= $row["mobile"];
+				$email 		= $row["email"];
+				$gstno 		= $row["gstno"];
+				$status 	= $row["status"];
+				$statecode 	= $row["statecode"];
+				$invexport 	= $row["invexport"];
+				$slcd 		= $row["slcd"];
+								
+				
+				$sql = "insert into tbl_acm_test (code,altercode,groupcode,name,type,trimname,address,address1,address2,address3,telephone,telephone1,mobile,email,gstno,status,statecode,invexport,slcd) values ('$code','$altercode','$groupcode','$name','$type','$trimname','$address','$address1','$address2','$address3','$telephone','$telephone1','$mobile','$email','$gstno','$status','$statecode','$invexport','$slcd')";
+				$this->db->query("$sql");
+				
+				$isdone="yes";
+			}
+		}
+		if($isdone=="yes")
+		{
+			$isdone = "done";
+			echo '{"isdone":"'.$isdone.'","code":"'.$code.'"}';
 		}
 	}
 }
