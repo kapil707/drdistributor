@@ -1,6 +1,6 @@
-	<?= $this->session->flashdata('message'); ?>
+<?= $this->session->flashdata('message'); ?>
 	<?php
-	if($this->session->userdata('user_type')!="") { ?>
+	if($this->session->userdata('user_type')=="Admin" || $this->session->userdata('user_type')=="Super_Admin") { ?>
 	<div class="notika-status-area">
         <div class="container">
             <div class="row">

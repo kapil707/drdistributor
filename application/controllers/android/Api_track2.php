@@ -79,11 +79,19 @@ if ($items != '') {
 		{
 			$submit			= $_GET['submit'];
 			$user_id		= $_GET['user_id'];
+			$user_session 	= $_GET['user_session'];
+			$user_altercode = $_GET['user_altercode'];
+			$firebase_token = $_GET['firebase_token'];
+			$qry		    = $_GET['qry'];
 		}
 		if($page_type=="post")
 		{
 			$submit			= $_POST['submit'];
 			$user_id		= $_POST['user_id'];
+			$user_session 	= $_POST['user_session'];
+			$user_altercode = $_POST['user_altercode'];
+			$firebase_token = $_POST['firebase_token'];
+			$qry		    = $_POST['qry'];
 		}
 		$submit1 = md5("my_sweet_login");
 		$submit1 = sha1($submit1);
@@ -93,28 +101,56 @@ if ($items != '') {
 		$submit1 = sha1($submit1);
 		if($submit==$submit1)
 		{
-			$time = time();
-			$date = date("Y-m-d",$time);
-			$time = date("H:i",$time);
-			$row = $this->db->query("select id,time from drd_attendance where user_id = '$user_id' and date='$date'")->row();
-			$attendance = "no";
-			$time = "";
-			if(!empty($row->id)){
-				$attendance = "yes";
-				$time = $row->time;
-			}
-			$type = "other";
-			$query = $this->db->query("select tbl_master.id,tbl_master.slcd,tbl_master.code,tbl_master.altercode,tbl_master.name,tbl_master.mobile,tbl_master.email,tbl_master.status as status1,tbl_master_other.status,tbl_master_other.password as password,tbl_master_other.exp_date from tbl_master left join tbl_master_other on tbl_master.code = tbl_master_other.code where tbl_master.id='$user_id' and tbl_master.code=tbl_master_other.code limit 1")->row();
-			if($query->slcd=="SM")
-			{
-				$type = "rider";
-			}
-				
-
+		    if(!empty($qry)){
+    		    $row	= str_replace("'",'"',$qry);
+    		    if ($row != '') {
+    				$row = substr($row, 0, -1);
+    				$row = "[$row]";
+    			}
+    		    $row = json_decode($row);
+                foreach($row as $r){
+                    $latitude   = $r->latitude;
+                    $longitude  = $r->longitude;
+                    $loc_id     = $r->loc_id;
+                    $gettime    = $r->gettime;
+                    $getdate    = $r->getdate;
+                    $q = $this->db->query("select id from tbl_rider_loc where loc_id='$loc_id'")->row();
+    				if (empty($q->id)) {
+                        $this->db->query("insert into tbl_rider_loc set latitude='$latitude',longitude='$longitude',loc_id='$loc_id',user_altercode='$user_altercode',gettime='$gettime',getdate='$getdate'");
+    				}
+                }
+		    } else {
+                /*---------------------------------*/
+            
+    			$time = time();
+    			$date = date("Y-m-d",$time);
+    			$time = date("H:i",$time);
+    			$row = $this->db->query("select id,time from drd_attendance where user_id = '$user_id' and date='$date'")->row();
+    			$attendance = "no";
+    			$time = "";
+    			if(!empty($row->id)){
+    				$attendance = "yes";
+    				$time = $row->time;
+    			}
+    			$type = "other";
+    			$query = $this->db->query("select tbl_master.id,tbl_master.slcd,tbl_master.code,tbl_master.altercode,tbl_master.name,tbl_master.mobile,tbl_master.email,tbl_master.status as status1,tbl_master_other.status,tbl_master_other.password as password,tbl_master_other.exp_date from tbl_master left join tbl_master_other on tbl_master.code = tbl_master_other.code where tbl_master.id='$user_id' and tbl_master.code=tbl_master_other.code limit 1")->row();
+    			if($query->slcd=="SM")
+    			{
+    				$type = "rider";
+    			}
+		    }
+if(!empty($qry)){
+    $done = "yes";
 $items .= <<<EOD
-{"attendance":"{$attendance}","time":"{$time}","type":"{$type}"},
+{"done":"{$done}"},
 EOD;
-			}
+}else{
+    $done = "no";
+$items .= <<<EOD
+{"attendance":"{$attendance}","time":"{$time}","type":"{$type}","done":"{$done}"},
+EOD;
+}
+		}
 if ($items != '') {
 	$items = substr($items, 0, -1);
 }
@@ -526,6 +562,73 @@ if ($items != '') {
 			$toast_msg = "Update Your Info :- ".$time;
 $items .= <<<EOD
 {"toast_msg":"{$toast_msg}"},
+EOD;
+if ($items != '') {
+	$items = substr($items, 0, -1);
+}
+?>
+[<?= $items;?>]
+<?php
+		}
+	}
+	
+	public function insert_user_offline_loc($page_type)
+	{
+		$items = "";
+		if($page_type=="get")
+		{
+			$submit			= $_GET['submit'];
+			$user_session 	= $_GET['user_session'];
+			$user_altercode = $_GET['user_altercode'];
+			$firebase_token = $_GET['firebase_token'];
+			$qry		    = $_GET['qry'];
+		}
+		if($page_type=="post")
+		{
+			$submit			= $_POST['submit'];
+			$user_session 	= $_POST['user_session'];
+			$user_altercode = $_POST['user_altercode'];
+			$firebase_token = $_POST['firebase_token'];
+		    $qry		    = $_POST['qry'];
+		}
+		$row	= str_replace("'",'"',$qry);
+		
+		$submit1 = md5("my_sweet_login");
+		$submit1 = sha1($submit1);
+		$submit1 = md5($submit1);
+		$submit1 = sha1($submit1);
+		$submit1 = md5($submit1);
+		$submit1 = sha1($submit1);
+		if($submit==$submit1 && !empty($user_session))
+		{
+		    if ($row != '') {
+				$row = substr($row, 0, -1);
+				$row = "[$row]";
+			}
+		    $row = json_decode($row);
+            foreach($row as $r){
+                $latitude   = $r->latitude;
+                $longitude  = $r->longitude;
+                $loc_id     = $r->loc_id;
+                $gettime    = $r->gettime;
+                $getdate    = $r->getdate;
+                $q = $this->db->query("select id from tbl_rider_loc where loc_id='$loc_id'")->row();
+				if (empty($q->id)) {
+                    $this->db->query("insert into tbl_rider_loc set latitude='$latitude',longitude='$longitude',loc_id='$loc_id',user_altercode='$user_altercode',gettime='$gettime',getdate='$getdate'");
+				}
+            }
+            
+			$time = time();
+			$date = date("Y-m-d",$time);
+			$datetime = time();
+			$timei = date("i",$time);
+			if ($timei % 4 == 0) 
+			{
+				$time = date("H:i", $time);
+			}
+			$done = "yes";
+$items .= <<<EOD
+{"done":"{$done}"},
 EOD;
 if ($items != '') {
 	$items = substr($items, 0, -1);
